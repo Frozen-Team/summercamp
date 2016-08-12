@@ -1,7 +1,7 @@
 package main
 
 import (
-	_ "summer_camp/routers"
+	_ "bitbucket.org/SummerCampDev/summercamp/routers"
 	"github.com/astaxie/beego"
 )
 
