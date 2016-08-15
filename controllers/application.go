@@ -7,8 +7,8 @@ import (
 // keys which must be in meta map (not in external meta maps. External meta maps contains additional data, which is then
 // merge with data under keys described below)
 const (
-	errorKey     = "error"
-	errorTypeKey = "error-type"
+	AJAXKeyError     = "error"
+	AJAXKEyErrorType = "error-type"
 )
 
 // ApplicationController is a base controller for all controllers in the project.
@@ -17,56 +17,52 @@ type ApplicationController struct {
 	beego.Controller
 }
 
-// buildMeta make a result meta map by merging error, errorType and externalMeta data into one map.
-// if externalMeta contains key-value pairs which may override specified error and errorType, these values
-// are skipped so the original arguments are primer.
-func buildMeta(error bool, errorType interface{}, externalMeta map[string]interface{}) map[string]interface{} {
-	resMeta := map[string]interface{}{
-		errorKey:     error,
-		errorTypeKey: errorType,
-	}
-	if externalMeta != nil {
-		for key, value := range externalMeta {
-			if key != errorKey && key != errorTypeKey {
-				resMeta[key] = value
-			}
-		}
-	}
-	return resMeta
-}
-
 // ServeSuccessMeta serve success AJAX as described in ServeSuccess plus some external meta data
-func (a *ApplicationController) ServeSuccessMeta(data interface{}, meta map[string]interface{}) {
-	a.serveAJAX(data, buildMeta(false, "", meta))
+func (a *ApplicationController) ServeAJAXSuccessMeta(data interface{}, meta map[string]interface{}) {
+	a.serveAJAX(true, "", data, meta)
 }
 
-// ResponseSuccess response AJAX success with false "error" and empty "error-type"
+// ServeAJAXSuccess response AJAX success with false "error" and empty "error-type"
 // The specified data is passed directly to responseAJAX.
-func (a *ApplicationController) ServeSuccess(data interface{}) {
-	a.ServeSuccessMeta(data, nil)
+func (a *ApplicationController) ServeAJAXSuccess(data interface{}) {
+	a.ServeAJAXSuccessMeta(data, nil)
 }
 
 // ServeErrorMeta serve error AJAX as described in ServeError plus some external meta data
-func (a *ApplicationController) ServeErrorMeta(error interface{}, data interface{}, meta map[string]interface{}) {
-	a.serveAJAX(data, buildMeta(true, error, meta))
+func (a *ApplicationController) ServeAJAXErrorMeta(error interface{}, data interface{}, meta map[string]interface{}) {
+	a.serveAJAX(false, error, data, meta)
 }
 
-// ResponseError response AJAX error with true "error" and "error-type" equals to specified error argument
+// ServeAJAXError response AJAX error with true "error" and "error-type" equals to specified error argument
 // The specified data is passed directly to responseAJAX.
-func (a *ApplicationController) ServeError(error interface{}, data interface{}) {
-	a.ServeErrorMeta(error, data, nil)
+func (a *ApplicationController) ServeAJAXError(error interface{}, data interface{}) {
+	a.ServeAJAXErrorMeta(error, data, nil)
 }
 
-// responseAJAX response with the json with two keys: "meta" and "data" value of which corresponds
-// to the specified arguments.
-func (a *ApplicationController) serveAJAX(data interface{}, meta map[string]interface{}) {
+// serveAJAX response with the json with two keys: "meta" and "data".
+// result meta consists of argument 'meta' map  merged with error and errorType into one map.
+// if 'meta' argument contains key-value pairs which may override specified error and errorType, these values
+// are skipped so the original arguments are primer.
+func (a *ApplicationController) serveAJAX(error bool, errorType interface{}, data interface{}, meta map[string]interface{}) {
 	response := struct {
 		Meta map[string]interface{} `json:"meta"`
 		Data interface{}            `json:"data"`
 	}{
-		Meta: meta,
+		Meta: map[string]interface{}{
+			AJAXKeyError:     error,
+			AJAXKEyErrorType: errorType,
+		},
 		Data: data,
 	}
+
+	if meta != nil {
+		for key, value := range meta {
+			if key != AJAXKeyError && key != AJAXKEyErrorType {
+				response.Meta[key] = value
+			}
+		}
+	}
+
 	a.Data["json"] = &response
 	a.ServeJSON()
 }
