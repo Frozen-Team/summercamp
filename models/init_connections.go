@@ -13,24 +13,26 @@ import (
 var o orm.Ormer // postgres orm
 
 func init() {
-	dbUser := beego.AppConfig.String("db_user")
-	dbPassword := beego.AppConfig.String("db_password")
-	dbHost := beego.AppConfig.String("db_host")
-	dbName := beego.AppConfig.String("db_name")
-	sslMode := beego.AppConfig.String("ssl_mode")
+	dbDriverName := beego.AppConfig.String("db.driver_name")
+	dbAliasName := beego.AppConfig.String("db.alias_name")
+	dbUser := beego.AppConfig.String("db.user")
+	dbPassword := beego.AppConfig.String("db.password")
+	dbHost := beego.AppConfig.String("db.host")
+	dbName := beego.AppConfig.String("db.name")
+	sslMode := beego.AppConfig.String("db.ssl_mode")
 
 	dbInfo := fmt.Sprintf("postgresql://%s:%s@%s/%s?sslmode=%s",
 		dbUser, dbPassword, dbHost, dbName, sslMode)
 
-	err := orm.RegisterDriver("postgres", orm.DRPostgres)
+	err := orm.RegisterDriver(dbDriverName, orm.DRPostgres)
 	if err != nil {
-		beego.BeeLogger.Error("failed to register postgres driver. Error: %s", err)
+		beego.BeeLogger.Error("failed to register "+dbDriverName+" driver. Error: %s", err)
 		os.Exit(1)
 	}
 
-	err = orm.RegisterDataBase("default", "postgres", dbInfo)
+	err = orm.RegisterDataBase(dbAliasName, dbDriverName, dbInfo)
 	if err != nil {
-		beego.BeeLogger.Error("failed to register postgres database. Error: %s", err)
+		beego.BeeLogger.Error("failed to register "+dbDriverName+" database. Error: %s", err)
 		os.Exit(1)
 	}
 
