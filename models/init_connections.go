@@ -10,9 +10,13 @@ import (
 	_ "github.com/lib/pq" // this import is used by orm.RegisterDataBase
 )
 
-var o orm.Ormer // postgres orm
+var DB orm.Ormer // postgres orm
 
 func init() {
+	InitDB()
+}
+
+func InitDB() {
 	dbDriverName := beego.AppConfig.String("db.driver_name")
 	dbAliasName := beego.AppConfig.String("db.alias_name")
 	dbUser := beego.AppConfig.String("db.user")
@@ -38,7 +42,7 @@ func init() {
 
 	registerModels()
 
-	o = orm.NewOrm()
+	DB = orm.NewOrm()
 }
 
 // all models will be registered here
