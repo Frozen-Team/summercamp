@@ -1,29 +1,57 @@
 package models
 
-import "time"
+import (
+	"github.com/astaxie/beego"
+	"time"
+)
 
-type Speciality int
+type Speciality string
 
 const (
-	SpecManager Speciality = iota
-	SpecClient
-	SpecExecutor
+	SpecManager  Speciality = "manager"
+	SpecClient   Speciality = "client"
+	SpecExecutor Speciality = "executor"
 )
 
 type User struct {
-	Id           int        `db:"id"`
-	Type         Speciality `db:"type"`
-	FirstName    string     `db:"first_name"`
-	LastName     string     `db:"last_name"`
-	Email        string     `db:"email"`
-	Password     string     `db:"password" json:"-"`
-	PasswordSalt string     `db:"password_salt" json:"-"`
-	Balance      int        `db:"balance"`
-	Bid          int        `db:"bid"`
-	BraintreeID  string     `db:"braintree_id"`
-	Country      string     `db:"country"`
-	City         string     `db:"city"`
-	CreateTime   time.Time  `db:"create_time"`
-	UpdateTime   time.Time  `db:"update_time"`
-	Timezone     int        `db:"timezone"`
+	Id           int        `orm:"column(id)"`
+	Type         Speciality `orm:"column(type)"`
+	FirstName    string     `orm:"column(first_name)"`
+	LastName     string     `orm:"column(last_name)"`
+	Email        string     `orm:"column(email)"`
+	Password     string     `orm:"column(password)" json:"-"`
+	PasswordSalt string     `orm:"column(password_salt)" json:"-"`
+	Balance      int        `orm:"column(balance)"`
+	Bid          int        `orm:"column(bid)"`
+	BraintreeID  string     `orm:"column(braintree_id)"`
+	Country      string     `orm:"column(country)"`
+	City         string     `orm:"column(city)"`
+	CreateTime   time.Time  `orm:"column(create_time)"`
+	UpdateTime   time.Time  `orm:"column(update_time)"`
+	Timezone     int        `orm:"column(timezone)"`
+}
+
+// TableName specify the table name for User model. This name is used in the orm RegisterModel
+func (u *User) TableName() string {
+	return "users"
+}
+
+// Save creates a user record in the db
+func (u *User) Save() bool {
+	_, err := DB.Insert(u)
+	return u.processError(err, "save")
+}
+
+// Delete deletes the user record from the db
+func (u *User) Delete() bool {
+	_, err := DB.Delete(u)
+	return u.processError(err, "delete")
+}
+
+func (u *User) processError(err error, action string) bool {
+	if err != nil {
+		beego.BeeLogger.Error("Failed to "+action+" user `%v` to db. Error: %s", *u, err)
+		return false
+	}
+	return true
 }
