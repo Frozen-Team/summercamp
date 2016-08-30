@@ -18,35 +18,34 @@ func init() {
 
 // Run the migrations
 func (m *Users_20160830_204310) Up() {
-	m.SQL("DO $$" +
-		"BEGIN" +
-		"  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'speciality') THEN" +
-		"    CREATE TYPE speciality AS ENUM ('manager', 'client', 'executor');" +
-		"  END IF;" +
-		"END$$;" +
-		"" +
-		"CREATE EXTENSION IF NOT EXISTS citext;" +
-		"" +
-		"CREATE TABLE public.users" +
-		"(" +
-		"  id SERIAL PRIMARY KEY NOT NULL," +
-		"  type SPECIALITY NOT NULL," +
-		"  first_name TEXT NOT NULL," +
-		"  last_name TEXT NOT NULL," +
-		"  email CITEXT NOT NULL," +
-		"  password TEXT NOT NULL," +
-		"  password_salt TEXT NOT NULL," +
-		"  balance INT NOT NULL," +
-		"  bid INT NOT NULL," +
-		"  braintree_id TEXT NOT NULL," +
-		"  country TEXT NOT NULL," +
-		"  city TEXT NOT NULL," +
-		"  create_time TIMESTAMP NOT NULL," +
-		"  update_time TIMESTAMP NOT NULL," +
-		"  timezone INT NOT NULL" +
-		"        );" +
-		"CREATE UNIQUE INDEX users_id_uindex ON public.users (id);" +
-		"CREATE UNIQUE INDEX users_email_uindex ON public.users (email);")
+	m.SQL(`
+	DO $$
+	BEGIN
+		IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'speciality') THEN
+			CREATE TYPE speciality AS ENUM ('manager', 'client', 'executor');
+		END IF;
+	END$$;
+	CREATE EXTENSION IF NOT EXISTS citext;
+	CREATE TABLE public.users
+	(
+		id SERIAL PRIMARY KEY NOT NULL,
+		type SPECIALITY NOT NULL,
+		first_name TEXT NOT NULL,
+		last_name TEXT NOT NULL,
+		email CITEXT NOT NULL,
+		password TEXT NOT NULL,
+		password_salt TEXT NOT NULL,
+		balance INT NOT NULL,
+		bid INT NOT NULL,
+		braintree_id TEXT NOT NULL,
+		country TEXT NOT NULL,
+		city TEXT NOT NULL,
+		create_time TIMESTAMP NOT NULL,
+		update_time TIMESTAMP NOT NULL,
+		timezone INT NOT NULL
+	);
+	CREATE UNIQUE INDEX users_id_uindex ON public.users (id);
+	CREATE UNIQUE INDEX users_email_uindex ON public.users (email);`)
 
 }
 

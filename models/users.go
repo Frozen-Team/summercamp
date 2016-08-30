@@ -50,8 +50,30 @@ func (u *User) Delete() bool {
 
 func (u *User) processError(err error, action string) bool {
 	if err != nil {
-		beego.BeeLogger.Error("Failed to "+action+" user `%v` to db. Error: %s", *u, err)
+		beego.BeeLogger.Error("failed to "+action+" user `%v` to db. Error: %s", *u, err)
 		return false
 	}
 	return true
+}
+
+// UserGetByID fetch the user from users table by id
+func UserGetByID(id int) (*User, bool) {
+	user := User{Id: id}
+	err := DB.Read(&user)
+	if err != nil {
+		beego.BeeLogger.Error("failed to fetch the user by id: %v error: %s", id, err)
+		return nil, false
+	}
+	return &user, true
+}
+
+// UserGetAll fetches all users from the users table
+func UserGetAll() ([]User, bool) {
+	var users []User
+	_, err := DB.QueryTable(UserObj).All(&users)
+	if err != nil {
+		beego.BeeLogger.Error("failed to fetch all users. Error: %s", err)
+		return nil, false
+	}
+	return users, true
 }
