@@ -40,17 +40,16 @@ func (m *Users_20160830_204310) Up() {
 		braintree_id TEXT NOT NULL,
 		country TEXT NOT NULL,
 		city TEXT NOT NULL,
+		timezone INT NOT NULL
 		create_time TIMESTAMP NOT NULL,
 		update_time TIMESTAMP NOT NULL,
-		timezone INT NOT NULL
 	);
 	CREATE UNIQUE INDEX users_id_uindex ON public.users (id);
 	CREATE UNIQUE INDEX users_email_uindex ON public.users (email);`)
-
 }
 
 // Reverse the migrations
 func (m *Users_20160830_204310) Down() {
-	m.SQL("DROP TABLE public.users;")
-
+	m.SQL(`DROP TABLE public.users;
+	DROP TYPE IF EXISTS SPECIALITY;`)
 }

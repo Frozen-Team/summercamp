@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/astaxie/beego"
+	"bitbucket.org/SummerCampDev/summercamp/models/utils"
 	"time"
 )
 
@@ -14,7 +14,7 @@ const (
 )
 
 type User struct {
-	Id           int        `orm:"column(id)"`
+	ID           int        `orm:"column(id)"`
 	Type         Speciality `orm:"column(type)"`
 	FirstName    string     `orm:"column(first_name)"`
 	LastName     string     `orm:"column(last_name)"`
@@ -26,9 +26,9 @@ type User struct {
 	BraintreeID  string     `orm:"column(braintree_id)"`
 	Country      string     `orm:"column(country)"`
 	City         string     `orm:"column(city)"`
+	Timezone     int        `orm:"column(timezone)"`
 	CreateTime   time.Time  `orm:"column(create_time)"`
 	UpdateTime   time.Time  `orm:"column(update_time)"`
-	Timezone     int        `orm:"column(timezone)"`
 }
 
 // TableName specify the table name for User model. This name is used in the orm RegisterModel
@@ -38,42 +38,35 @@ func (u *User) TableName() string {
 
 // Save creates a user record in the db
 func (u *User) Save() bool {
-	_, err := DB.Insert(u)
-	return u.processError(err, "save")
+	var err error
+	var action string
+
+	if u.ID == 0 {
+		_, err = DB.Insert(u)
+		action = "create"
+	} else {
+		_, err = DB.Update(u)
+		action = "update"
+	}
+	return utils.ProcessError(err, action+" user")
 }
 
 // Delete deletes the user record from the db
 func (u *User) Delete() bool {
 	_, err := DB.Delete(u)
-	return u.processError(err, "delete")
-}
-
-func (u *User) processError(err error, action string) bool {
-	if err != nil {
-		beego.BeeLogger.Error("failed to "+action+" user `%v` to db. Error: %s", *u, err)
-		return false
-	}
-	return true
+	return utils.ProcessError(err, "delete user")
 }
 
 // UserGetByID fetch the user from users table by id
 func UserGetByID(id int) (*User, bool) {
-	user := User{Id: id}
+	user := User{ID: id}
 	err := DB.Read(&user)
-	if err != nil {
-		beego.BeeLogger.Error("failed to fetch the user by id: %v error: %s", id, err)
-		return nil, false
-	}
-	return &user, true
+	return &user, utils.ProcessError(err, "fetch the user by id")
 }
 
 // UserGetAll fetches all users from the users table
 func UserGetAll() ([]User, bool) {
 	var users []User
 	_, err := DB.QueryTable(UserObj).All(&users)
-	if err != nil {
-		beego.BeeLogger.Error("failed to fetch all users. Error: %s", err)
-		return nil, false
-	}
-	return users, true
+	return users, utils.ProcessError(err, "fetch all users")
 }
