@@ -47,5 +47,5 @@ func InitDB() {
 
 // all models will be registered here
 func registerModels() {
-
+	orm.RegisterModel(UserObj)
 }
