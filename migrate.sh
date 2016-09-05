@@ -14,7 +14,7 @@ if [ ! -x $GOPATH/bin/bee ]; then
     $(go get github.com/beego/bee)
     if [ ! -x $GOPATH/bin/bee ]; then
         echo -e "${RED}Unable to install github.com/beego/bee${NC}"
-        echo -e "You should install goimports manualy: go get github.com/beego/bee to run migration via bee${NC}"
+        echo -e "You should install bee manualy: go get github.com/beego/bee to run migration via bee${NC}"
         exit 1
     fi
 fi

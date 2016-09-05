@@ -1,9 +1,8 @@
 package models
 
 import (
-	"time"
-
 	"fmt"
+	"time"
 
 	"bitbucket.org/SummerCampDev/summercamp/models/utils"
 )

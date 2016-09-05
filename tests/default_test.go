@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	_ "bitbucket.org/SummerCampDev/summercamp/routers"
-
 	"github.com/astaxie/beego"
 	. "github.com/smartystreets/goconvey/convey"
 )
