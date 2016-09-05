@@ -1,17 +1,24 @@
 package models
 
 import (
-	"bitbucket.org/SummerCampDev/summercamp/models/utils"
 	"time"
+
+	"fmt"
+
+	"bitbucket.org/SummerCampDev/summercamp/models/utils"
 )
 
 type Speciality string
 
 const (
-	SpecManager  Speciality = "manager"
-	SpecClient   Speciality = "client"
-	SpecExecutor Speciality = "executor"
+	SpecTypeManager  Speciality = "manager"
+	SpecTypeClient   Speciality = "client"
+	SpecTypeExecutor Speciality = "executor"
 )
+
+func (s Speciality) Valid() bool {
+	return s == SpecTypeManager || s == SpecTypeClient || s == SpecTypeExecutor
+}
 
 type User struct {
 	ID           int        `orm:"column(id)"`
@@ -58,15 +65,25 @@ func (u *User) Delete() bool {
 }
 
 // UserGetByID fetch the user from users table by id
-func UserGetByID(id int) (*User, bool) {
+func (u *User) FetchByID(id int) (*User, bool) {
 	user := User{ID: id}
 	err := DB.Read(&user)
 	return &user, utils.ProcessError(err, "fetch the user by id")
 }
 
 // UserGetAll fetches all users from the users table
-func UserGetAll() ([]User, bool) {
+func (u *User) FetchAll() ([]User, bool) {
 	var users []User
 	_, err := DB.QueryTable(UserObj).All(&users)
 	return users, utils.ProcessError(err, "fetch all users")
+}
+
+// FetchAllByType fetch users from users table by speciality
+func (u *User) FetchAllByType(s Speciality) ([]User, bool) {
+	if !s.Valid() {
+		return nil, utils.ProcessError(fmt.Errorf("Not valid Speciality '%s'", s), "fetch users by type")
+	}
+	result := []User{}
+	_, err := DB.QueryTable(UserObj).Filter("User__Type__exact", s).All(&result)
+	return result, utils.ProcessError(err, "fetch users by type")
 }
