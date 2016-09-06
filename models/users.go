@@ -83,6 +83,6 @@ func (u *User) FetchAllByType(s Speciality) ([]User, bool) {
 		return nil, utils.ProcessError(fmt.Errorf("Not valid Speciality '%s'", s), "fetch users by type")
 	}
 	result := []User{}
-	_, err := DB.QueryTable(UserObj).Filter("User__Type__exact", s).All(&result)
+	_, err := DB.QueryTable(UserObj).Filter("Type__exact", s).All(&result)
 	return result, utils.ProcessError(err, "fetch users by type")
 }
