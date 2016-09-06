@@ -41,7 +41,7 @@ func (m *Users_20160830_204310) Up() {
 		country TEXT NOT NULL,
 		city TEXT NOT NULL,
 		timezone INT NOT NULL,
-		create_time TIMESTAMP NOT NULL,
+		create_time TIMESTAMP NOT NULL DEFAULT CURRENT_DATE,
 		update_time TIMESTAMP NOT NULL
 	);
 	CREATE UNIQUE INDEX users_id_uindex ON public.users (id);
