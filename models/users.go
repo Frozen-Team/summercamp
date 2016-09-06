@@ -1,8 +1,9 @@
 package models
 
 import (
-	"bitbucket.org/SummerCampDev/summercamp/models/utils"
 	"time"
+
+	"bitbucket.org/SummerCampDev/summercamp/models/utils"
 )
 
 type Speciality string

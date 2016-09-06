@@ -13,10 +13,13 @@ import (
 var DB orm.Ormer // postgres orm
 
 func init() {
-	InitDB()
+	beego.AddAPPStartHook(func() error {
+		DB = InitDB()
+		return nil
+	})
 }
 
-func InitDB() {
+func InitDB() orm.Ormer {
 	dbDriverName := beego.AppConfig.String("db.driver_name")
 	dbAliasName := beego.AppConfig.String("db.alias_name")
 	dbUser := beego.AppConfig.String("db.user")
@@ -42,7 +45,7 @@ func InitDB() {
 
 	registerModels()
 
-	DB = orm.NewOrm()
+	return orm.NewOrm()
 }
 
 // all models will be registered here
