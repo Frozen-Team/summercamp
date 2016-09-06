@@ -9,7 +9,7 @@ import (
 )
 
 // the path from the project root folder
-const FixturesPath = "tests/fixtures"
+var FixturesPath = "tests/fixtures"
 
 func PrepareTestDB() {
 	db, err := orm.GetDB(beego.AppConfig.String("db.alias_name"))
