@@ -18,7 +18,7 @@ func init() {
 	beego.TestBeegoInit(apppath)
 }
 
-// MainTest is a sample to run an endpoint test
+// TestMain is a sample to run an endpoint test
 func TestMain(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
