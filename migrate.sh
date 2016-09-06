@@ -2,7 +2,9 @@
 
 RED='\033[0;31m'
 NC='\033[0m'
-source ./conf/db.conf
+
+source database/migrate.conf
+
 if [ -z "$GOPATH" ]; then
     echo "${RED}GOPATH variable not set. Migration aborted.${NC}"
     exit 1
@@ -14,7 +16,7 @@ if [ ! -x $GOPATH/bin/bee ]; then
     $(go get github.com/beego/bee)
     if [ ! -x $GOPATH/bin/bee ]; then
         echo -e "${RED}Unable to install github.com/beego/bee${NC}"
-        echo -e "You should install bee manualy: go get github.com/beego/bee to run migration via bee${NC}"
+        echo -e "You should install bee manually: go get github.com/beego/bee to run migration via bee${NC}"
         exit 1
     fi
 fi
