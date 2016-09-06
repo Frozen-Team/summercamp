@@ -1,7 +1,7 @@
 package setup
 
 import (
-	"log"
+	"os"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
@@ -14,10 +14,12 @@ const FixturesPath = "tests/fixtures"
 func PrepareTestDB() {
 	db, err := orm.GetDB(beego.AppConfig.String("db.alias_name"))
 	if err != nil {
-		log.Fatal("GetDB error: " + err.Error())
+		beego.BeeLogger.Error("GetDB error: %v", err)
+		os.Exit(1)
 	}
 	err = testfixtures.LoadFixtures(FixturesPath, db, &testfixtures.PostgreSQLHelper{})
 	if err != nil {
-		log.Fatal("LoadFixtures error: " + err.Error())
+		beego.BeeLogger.Error("LoadFixtures error: %v", err)
+		os.Exit(1)
 	}
 }
