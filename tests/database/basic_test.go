@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	_ "bitbucket.org/SummerCampDev/summercamp/tests/setup"
+	"bitbucket.org/SummerCampDev/summercamp/tests/setup"
 	_ "github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	. "github.com/smartystreets/goconvey/convey"
@@ -20,6 +20,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestDefault(t *testing.T) {
+	setup.PrepareTestDB()
 	Convey("adsgsdga", t, func() {
 		So(1, ShouldEqual, 2)
 	})
