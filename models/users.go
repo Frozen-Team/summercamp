@@ -63,22 +63,25 @@ func (u *User) Delete() bool {
 	return utils.ProcessError(err, "delete user")
 }
 
+type usersAPI struct{}
+
+var Users *usersAPI
 // UserGetByID fetch the user from users table by id
-func (u *User) FetchByID(id int) (*User, bool) {
+func (u *usersAPI) FetchByID(id int) (*User, bool) {
 	user := User{ID: id}
 	err := DB.Read(&user)
 	return &user, utils.ProcessError(err, "fetch the user by id")
 }
 
 // UserGetAll fetches all users from the users table
-func (u *User) FetchAll() ([]User, bool) {
+func (u *usersAPI) FetchAll() ([]User, bool) {
 	var users []User
 	_, err := DB.QueryTable(UserObj).All(&users)
 	return users, utils.ProcessError(err, "fetch all users")
 }
 
 // FetchAllByType fetch users from users table by speciality
-func (u *User) FetchAllByType(s Speciality) ([]User, bool) {
+func (u *usersAPI) FetchAllByType(s Speciality) ([]User, bool) {
 	if !s.Valid() {
 		return nil, utils.ProcessError(fmt.Errorf("Not valid Speciality '%s'", s), "fetch users by type")
 	}
