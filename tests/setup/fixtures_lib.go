@@ -52,13 +52,13 @@ func (c *filter) CheckString(s string) bool {
 	}
 }
 
-type fixturesSearcher struct {
+type fixturesSearch struct {
 	fixtureName string
 	data        []map[string]string
 	filters     []filter
 }
 
-func (f *fixturesSearcher) Filter(key string, t int, value string) *fixturesSearcher {
+func (f *fixturesSearch) Filter(key string, t int, value string) *fixturesSearch {
 	f.filters = append(f.filters, filter{
 		key:   key,
 		fType: t,
@@ -66,11 +66,11 @@ func (f *fixturesSearcher) Filter(key string, t int, value string) *fixturesSear
 	})
 	return f
 }
-func (f *fixturesSearcher) checkFixture(fx map[string]string) bool {
+func (f *fixturesSearch) checkFixture(fx map[string]string) bool {
 	for _, f := range f.filters {
 		val, ok := fx[f.key]
 		if !ok {
-			panic(fmt.Errorf("Can't filter by field %s. Fixture %v doesn't contains key such key", f.key, fx))
+			panic(fmt.Errorf("Can't filter by field %s. Fixture %v doesn't contains such key", f.key, fx))
 		}
 		if !f.CheckString(val) {
 			return false
@@ -78,7 +78,7 @@ func (f *fixturesSearcher) checkFixture(fx map[string]string) bool {
 	}
 	return true
 }
-func (f *fixturesSearcher) All() []map[string]string {
+func (f *fixturesSearch) All() []map[string]string {
 	result := []map[string]string{}
 	for _, d := range f.data {
 		if f.checkFixture(d) {
@@ -87,19 +87,19 @@ func (f *fixturesSearcher) All() []map[string]string {
 	}
 	return result
 }
-func (f *fixturesSearcher) One() (map[string]string, error) {
+func (f *fixturesSearch) First() (map[string]string, error) {
 	data := f.All()
 	if len(data) == 0 {
 		return nil, errors.New("No such fixture")
 	}
 	return data[0], nil
 }
-func (f *fixturesSearcher) Count() int {
+func (f *fixturesSearch) Count() int {
 	data := f.All()
 	return len(data)
 }
 
-func GetFixture(name string) *fixturesSearcher {
+func GetFixture(name string) *fixturesSearch {
 	file, err := ioutil.ReadFile(filepath.Join(FixturesPath, name+".yml"))
 	if err != nil {
 		panic(err)
@@ -109,7 +109,7 @@ func GetFixture(name string) *fixturesSearcher {
 	if err != nil {
 		panic(err)
 	}
-	result := new(fixturesSearcher)
+	result := new(fixturesSearch)
 	result.data = fixtures
 	result.fixtureName = name
 	return result
