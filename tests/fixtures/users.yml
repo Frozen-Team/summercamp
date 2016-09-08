@@ -1,3 +1,20 @@
+# Executors
+-
+  id: 1
+  type: executor
+  first_name: yaroslav
+  last_name: mytsyo
+  email: saturn4er@gmail.com
+  password: 56789
+  password_salt: 9999
+  balance: 1
+  bid: 1
+  braintree_id: agsdsgsdsgs
+  country: Ukraine
+  city: Kyiv
+  timezone: 3
+  create_time: 2016-09-03 12:30:12
+  update_time: 2016-09-03 12:30:12
 -
   id: 2
   type: executor

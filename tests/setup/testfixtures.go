@@ -8,8 +8,8 @@ import (
 	"gopkg.in/testfixtures.v1"
 )
 
-// the path from the project root folder
-const FixturesPath = "tests/fixtures"
+// FixturesPath is the path where fixtures files stores
+var FixturesPath = "tests/fixtures"
 
 func PrepareTestDB() {
 	db, err := orm.GetDB(beego.AppConfig.String("db.alias_name"))
