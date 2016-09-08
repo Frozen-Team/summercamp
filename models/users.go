@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"bitbucket.org/SummerCampDev/summercamp/models/utils"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Speciality string
@@ -57,6 +58,13 @@ func (u *User) Save() bool {
 	return utils.ProcessError(err, action+" user")
 }
 
+// SetPassword method generate the encrypted password based on the given string
+func (u *User) SetPassword(password string) bool {
+	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	u.Password = string(encryptedPassword)
+	return utils.ProcessError(err, "generate bcrypt password")
+}
+
 // Delete deletes the user record from the db
 func (u *User) Delete() bool {
 	_, err := DB.Delete(u)
@@ -66,6 +74,7 @@ func (u *User) Delete() bool {
 type usersAPI struct{}
 
 var Users *usersAPI
+
 // FetchByID fetch the user from users table by id
 func (u *usersAPI) FetchByID(id int) (*User, bool) {
 	user := User{ID: id}
