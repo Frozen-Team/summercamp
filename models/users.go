@@ -48,7 +48,10 @@ func (u *User) Save() bool {
 	var err error
 	var action string
 
+	u.UpdateTime = time.Now()
+
 	if u.ID == 0 {
+		u.CreateTime = time.Now()
 		_, err = DB.Insert(u)
 		action = "create"
 	} else {

@@ -8,15 +8,15 @@ import (
 )
 
 type UserReg struct {
-	Email           string  `json:"email" valid:"Required; Email"`
-	Type            string  `json:"type" valid:"Required"`
-	FirstName       string  `json:"first_name" valid:"Required"`
-	LastName        string  `json:"last_name" valid:"Required"`
-	Password        string  `json:"password" valid:"Required"` //TODO: think about password restrictions
-	PasswordConfirm string  `json:"password_confirm" valid:"Required"`
-	Country         string  `json:"country" valid:"Required"`
-	City            string  `json:"city" valid:"Required"`
-	Errors          []error `json:"-"`
+	Email           string            `json:"email" valid:"Required; Email"`
+	Type            models.Speciality `json:"type" valid:"Required;Match(executor|manager|client)"`
+	FirstName       string            `json:"first_name" valid:"Required"`
+	LastName        string            `json:"last_name" valid:"Required"`
+	Password        string            `json:"password" valid:"Required"` //TODO: think about password restrictions
+	PasswordConfirm string            `json:"password_confirm" valid:"Required"`
+	Country         string            `json:"country" valid:"Required"`
+	City            string            `json:"city" valid:"Required"`
+	Errors          []error           `json:"-"`
 }
 
 // Register validates the input data and if everything is OK, initialize the models.User struct with
@@ -34,7 +34,7 @@ func (ur *UserReg) Register() (*models.User, bool) {
 		return nil, false
 	}
 
-	user := &models.User{Email: ur.Email, FirstName: ur.FirstName, LastName: ur.LastName, Country: ur.Country, City: ur.City}
+	user := &models.User{Email: ur.Email, Type: ur.Type, FirstName: ur.FirstName, LastName: ur.LastName, Country: ur.Country, City: ur.City}
 
 	ok = user.SetPassword(ur.Password)
 	if !ok {
