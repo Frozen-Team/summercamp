@@ -17,7 +17,7 @@ type ApplicationController struct {
 	beego.Controller
 }
 
-// ServeSuccessMeta serve success AJAX as described in ServeSuccess plus some external meta data
+// ServeAJAXSuccessMeta serve success AJAX as described in ServeSuccess plus some external meta data
 func (a *ApplicationController) ServeAJAXSuccessMeta(data interface{}, meta map[string]interface{}) {
 	a.serveAJAX(true, "", data, meta)
 }
@@ -28,7 +28,7 @@ func (a *ApplicationController) ServeAJAXSuccess(data interface{}) {
 	a.ServeAJAXSuccessMeta(data, nil)
 }
 
-// ServeErrorMeta serve error AJAX as described in ServeError plus some external meta data
+// ServeAJAXErrorMeta serve error AJAX as described in ServeError plus some external meta data
 func (a *ApplicationController) ServeAJAXErrorMeta(error interface{}, data interface{}, meta map[string]interface{}) {
 	a.serveAJAX(false, error, data, meta)
 }

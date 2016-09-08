@@ -66,14 +66,14 @@ func (u *User) Delete() bool {
 type usersAPI struct{}
 
 var Users *usersAPI
-// UserGetByID fetch the user from users table by id
+// FetchByID fetch the user from users table by id
 func (u *usersAPI) FetchByID(id int) (*User, bool) {
 	user := User{ID: id}
 	err := DB.Read(&user)
 	return &user, utils.ProcessError(err, "fetch the user by id")
 }
 
-// UserGetAll fetches all users from the users table
+// FetchAll fetches all users from the users table
 func (u *usersAPI) FetchAll() ([]User, bool) {
 	var users []User
 	_, err := DB.QueryTable(UserObj).All(&users)

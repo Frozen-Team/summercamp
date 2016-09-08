@@ -8,7 +8,7 @@ import (
 	"gopkg.in/testfixtures.v1"
 )
 
-// the path from the project root folder
+// FixturesPath is the path where fixtures files stores
 var FixturesPath = "tests/fixtures"
 
 func PrepareTestDB() {
