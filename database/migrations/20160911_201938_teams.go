@@ -22,7 +22,8 @@ func (m *Teams_20160911_201938) Up() {
 	(
 	    id SERIAL PRIMARY KEY NOT NULL,
 	    name TEXT NOT NULL,
-	    description TEXT
+	    description TEXT,
+	    create_time TIMESTAMP NOT NULL DEFAULT CURRENT_DATE
 	);
 	CREATE UNIQUE INDEX teams_id_uindex ON public.teams (id);
 	CREATE UNIQUE INDEX teams_name_uindex ON public.teams (name);`)

@@ -19,7 +19,7 @@ func init() {
 	})
 }
 
-func InitDB(){
+func InitDB() {
 	dbDriverName := beego.AppConfig.String("db.driver_name")
 	dbAliasName := beego.AppConfig.String("db.alias_name")
 	dbUser := beego.AppConfig.String("db.user")
@@ -50,4 +50,5 @@ func InitDB(){
 // all models will be registered here
 func registerModels() {
 	orm.RegisterModel(UserObj)
+	orm.RegisterModel(TeamObj)
 }
