@@ -7,7 +7,7 @@ import (
 )
 
 type Team struct {
-	ID          int       `json:"id"`
+	ID          int       `json:"id" orm:"column(id)"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	CreateTime  time.Time `json:"create_time"`

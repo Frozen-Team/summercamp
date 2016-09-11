@@ -6,7 +6,6 @@
   last_name: mytsyo
   email: saturn4er@gmail.com
   password: 56789
-  password_salt: 9999
   balance: 1
   bid: 1
   braintree_id: agsdsgsdsgs
@@ -22,7 +21,6 @@
   last_name: holovko
   email: olehgol260@gmail.com
   password: 12345
-  password_salt: 6789
   balance: 1
   bid: 1
   braintree_id: 1234
