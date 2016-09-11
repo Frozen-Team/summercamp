@@ -21,21 +21,20 @@ func (s Speciality) Valid() bool {
 }
 
 type User struct {
-	ID           int        `orm:"column(id)"`
-	Type         Speciality `orm:"column(type)"`
-	FirstName    string     `orm:"column(first_name)"`
-	LastName     string     `orm:"column(last_name)"`
-	Email        string     `orm:"column(email)"`
-	Password     string     `orm:"column(password)" json:"-"`
-	PasswordSalt string     `orm:"column(password_salt)" json:"-"`
-	Balance      int        `orm:"column(balance)"`
-	Bid          int        `orm:"column(bid)"`
-	BraintreeID  string     `orm:"column(braintree_id)"`
-	Country      string     `orm:"column(country)"`
-	City         string     `orm:"column(city)"`
-	Timezone     int        `orm:"column(timezone)"`
-	CreateTime   time.Time  `orm:"column(create_time)"`
-	UpdateTime   time.Time  `orm:"column(update_time)"`
+	ID          int        `orm:"column(id)"`
+	Type        Speciality `orm:"column(type)"`
+	FirstName   string     `orm:"column(first_name)"`
+	LastName    string     `orm:"column(last_name)"`
+	Email       string     `orm:"column(email)"`
+	Password    string     `orm:"column(password)" json:"-"`
+	Balance     int        `orm:"column(balance)"`
+	Bid         int        `orm:"column(bid)"`
+	BraintreeID string     `orm:"column(braintree_id)"`
+	Country     string     `orm:"column(country)"`
+	City        string     `orm:"column(city)"`
+	Timezone    int        `orm:"column(timezone)"`
+	CreateTime  time.Time  `orm:"column(create_time)"`
+	UpdateTime  time.Time  `orm:"column(update_time)"`
 }
 
 // TableName specify the table name for User model. This name is used in the orm RegisterModel

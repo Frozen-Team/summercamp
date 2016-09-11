@@ -15,8 +15,8 @@ func TestRegistrationForm(t *testing.T) {
 			Type:            models.SpecTypeExecutor,
 			FirstName:       "oleh",
 			LastName:        "holovko",
-			Password:        "12345",
-			PasswordConfirm: "12345",
+			Password:        "1234%",
+			PasswordConfirm: "1234%",
 			Country:         "country",
 			City:            "city",
 		}
