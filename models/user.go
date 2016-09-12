@@ -33,8 +33,8 @@ type User struct {
 	Country     string     `orm:"column(country)"`
 	City        string     `orm:"column(city)"`
 	Timezone    int        `orm:"column(timezone)"`
-	CreateTime  time.Time  `orm:"column(create_time)"`
-	UpdateTime  time.Time  `orm:"column(update_time)"`
+	CreateTime  time.Time  `orm:"column(create_time);auto_now_add;type(datetime)"`
+	UpdateTime  time.Time  `orm:"column(update_time);auto_now;type(datetime)"`
 }
 
 // TableName specify the table name for User model. This name is used in the orm RegisterModel
@@ -47,10 +47,7 @@ func (u *User) Save() bool {
 	var err error
 	var action string
 
-	u.UpdateTime = time.Now()
-
 	if u.ID == 0 {
-		u.CreateTime = time.Now()
 		_, err = DB.Insert(u)
 		action = "create"
 	} else {

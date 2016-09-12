@@ -10,7 +10,7 @@ import (
 
 func TestRegistrationForm(t *testing.T) {
 	Convey("Test registration form", t, func() {
-		ur := forms.UserReg{
+		ur := forms.UserRegistration{
 			Email:           "valid@mail.com",
 			Type:            models.SpecTypeExecutor,
 			FirstName:       "oleh",
@@ -53,6 +53,17 @@ func TestRegistrationForm(t *testing.T) {
 			spec := models.Speciality(ur.Type)
 
 			So(spec.Valid(), ShouldBeFalse)
+
+			user, ok := ur.Register()
+
+			So(user, ShouldBeNil)
+			So(ok, ShouldBeFalse)
+			So(len(ur.Errors), ShouldNotEqual, 0)
+		})
+
+		Convey("Very long password", func() {
+			ur.Password = "%1111111111111111111111111111111111111111111111111111111111111111111111111111"
+			ur.PasswordConfirm = "%1111111111111111111111111111111111111111111111111111111111111111111111111111"
 
 			user, ok := ur.Register()
 

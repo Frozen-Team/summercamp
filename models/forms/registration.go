@@ -7,7 +7,7 @@ import (
 	"github.com/astaxie/beego/validation"
 )
 
-type UserReg struct {
+type UserRegistration struct {
 	FormModel
 	Email           string            `json:"email" valid:"Required; Email"`
 	Type            models.Speciality `json:"type" valid:"Required;Match(executor|manager|client)"`
@@ -19,7 +19,7 @@ type UserReg struct {
 	City            string            `json:"city" valid:"Required"`
 }
 
-func (ur *UserReg) Valid(v *validation.Validation) {
+func (ur *UserRegistration) Valid(v *validation.Validation) {
 	if !isStrongPass(ur.Password) {
 		v.SetError("Password", "password-weak")
 	}
@@ -30,7 +30,7 @@ func (ur *UserReg) Valid(v *validation.Validation) {
 
 // Register validates the input data and if everything is OK, initialize the models.User struct with
 // the data from Registration struct and save the record to the db.
-func (ur *UserReg) Register() (*models.User, bool) {
+func (ur *UserRegistration) Register() (*models.User, bool) {
 	errs, ok := validate(ur)
 	if !ok {
 		ur.Errors = errs
