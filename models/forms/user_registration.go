@@ -31,9 +31,7 @@ func (ur *UserRegistration) Valid(v *validation.Validation) {
 // Register validates the input data and if everything is OK, initialize the models.User struct with
 // the data from Registration struct and save the record to the db.
 func (ur *UserRegistration) Register() (*models.User, bool) {
-	errs, ok := validate(ur)
-	if !ok {
-		ur.Errors = errs
+	if ok := ur.validate(ur); !ok {
 		return nil, false
 	}
 
@@ -46,12 +44,12 @@ func (ur *UserRegistration) Register() (*models.User, bool) {
 		City:      ur.City,
 	}
 
-	ok = user.SetPassword(ur.Password)
-	if !ok {
+	if ok := user.SetPassword(ur.Password); !ok {
 		ur.addError("user-password-set-failed")
 		return nil, false
 	}
-	ok = user.Save()
+
+	ok := user.Save()
 	if !ok {
 		ur.addError("user-save-failed")
 	}
