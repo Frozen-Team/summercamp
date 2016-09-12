@@ -4,19 +4,28 @@ import (
 	"unicode"
 
 	"bitbucket.org/SummerCampDev/summercamp/models"
-	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/validation"
 )
 
 type UserReg struct {
+	FormModel
 	Email           string            `json:"email" valid:"Required; Email"`
 	Type            models.Speciality `json:"type" valid:"Required;Match(executor|manager|client)"`
 	FirstName       string            `json:"first_name" valid:"Required"`
 	LastName        string            `json:"last_name" valid:"Required"`
-	Password        string            `json:"password" valid:"Required"` //TODO: think about password restrictions
-	PasswordConfirm string            `json:"password_confirm" valid:"Required"`
+	Password        string            `json:"password" valid:"Required; MaxSize(64)"`
+	PasswordConfirm string            `json:"password_confirm" valid:"Required; MaxSize(64)"`
 	Country         string            `json:"country" valid:"Required"`
 	City            string            `json:"city" valid:"Required"`
-	Errors          []string          `json:"-"`
+}
+
+func (ur *UserReg) Valid(v *validation.Validation) {
+	if !isStrongPass(ur.Password) {
+		v.SetError("Password", "password-weak")
+	}
+	if ur.Password != ur.PasswordConfirm {
+		v.SetError("PasswordConfirm", "passwords-mismatch")
+	}
 }
 
 // Register validates the input data and if everything is OK, initialize the models.User struct with
@@ -25,17 +34,6 @@ func (ur *UserReg) Register() (*models.User, bool) {
 	errs, ok := validate(ur)
 	if !ok {
 		ur.Errors = errs
-		return nil, false
-	}
-
-	if !isStrongPass(ur.Password) {
-		ur.Errors = append(ur.Errors, "password-weak")
-		return nil, false
-	}
-
-	if ur.Password != ur.PasswordConfirm {
-		ur.Errors = append(ur.Errors, "passwords-mismatch")
-		beego.Warning(ur.Errors[0])
 		return nil, false
 	}
 
@@ -50,12 +48,12 @@ func (ur *UserReg) Register() (*models.User, bool) {
 
 	ok = user.SetPassword(ur.Password)
 	if !ok {
-		ur.Errors = append(ur.Errors, "user-password-set-failed")
+		ur.addError("user-password-set-failed")
 		return nil, false
 	}
 	ok = user.Save()
 	if !ok {
-		ur.Errors = append(ur.Errors, "user-save-failed")
+		ur.addError("user-save-failed")
 	}
 	return user, ok
 }
@@ -64,9 +62,8 @@ func (ur *UserReg) Register() (*models.User, bool) {
 // The password must contain at least 2 of the following: upper letter, lower letter or number OR it must contain
 // some special symbol which is not any of the described before.
 func isStrongPass(p string) bool {
-	len := len(p)
 	var num, upper, lower byte
-	if len < 5 {
+	if len(p) < 5 {
 		return false
 	}
 	for _, c := range p {

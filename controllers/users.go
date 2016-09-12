@@ -7,18 +7,18 @@ type UsersController struct {
 }
 
 // Register reads the data from the request body into forms.UserReg struct and attempts to save a user to db
-// POST /users
+// @route POST /users
 func (uc *UsersController) Register() {
 	regForm := new(forms.UserReg)
 
 	if ok := uc.unmarshalJSON(regForm); !ok {
-		uc.ServeAJAXError([]string{"bad-data"}, nil)
+		uc.ServeAJAXError(nil, "bad-data")
 		return
 	}
 
 	user, ok := regForm.Register()
 	if !ok {
-		uc.ServeAJAXError(regForm.Errors, nil)
+		uc.ServeAJAXError(nil, regForm.Errors)
 		return
 	}
 
