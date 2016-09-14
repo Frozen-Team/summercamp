@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 
+	_ "bitbucket.org/SummerCampDev/summercamp/routers"
+
 	"bitbucket.org/SummerCampDev/summercamp/models"
 	"bitbucket.org/SummerCampDev/summercamp/models/forms"
 	"github.com/astaxie/beego"
