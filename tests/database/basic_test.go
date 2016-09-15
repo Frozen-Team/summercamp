@@ -9,15 +9,11 @@ import (
 
 	"bitbucket.org/SummerCampDev/summercamp/models"
 	"bitbucket.org/SummerCampDev/summercamp/tests/setup"
-	"github.com/astaxie/beego"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestMain(m *testing.M) {
-	beego.AddAPPStartHook(func() error {
-		models.InitDB()
-		return nil
-	})
+	models.InitDB()
 	setup.PrepareTestDB()
 	os.Exit(m.Run())
 }
