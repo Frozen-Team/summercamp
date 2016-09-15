@@ -19,4 +19,5 @@ func init() {
 		os.Exit(1)
 	}
 	beego.TestBeegoInit(apppath)
+	beego.BConfig.WebConfig.EnableXSRF = false
 }

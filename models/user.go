@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"bitbucket.org/SummerCampDev/summercamp/models/utils"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Speciality string
@@ -20,21 +21,20 @@ func (s Speciality) Valid() bool {
 }
 
 type User struct {
-	ID           int        `orm:"column(id)"`
-	Type         Speciality `orm:"column(type)"`
-	FirstName    string     `orm:"column(first_name)"`
-	LastName     string     `orm:"column(last_name)"`
-	Email        string     `orm:"column(email)"`
-	Password     string     `orm:"column(password)" json:"-"`
-	PasswordSalt string     `orm:"column(password_salt)" json:"-"`
-	Balance      int        `orm:"column(balance)"`
-	Bid          int        `orm:"column(bid)"`
-	BraintreeID  string     `orm:"column(braintree_id)"`
-	Country      string     `orm:"column(country)"`
-	City         string     `orm:"column(city)"`
-	Timezone     int        `orm:"column(timezone)"`
-	CreateTime   time.Time  `orm:"column(create_time)"`
-	UpdateTime   time.Time  `orm:"column(update_time)"`
+	ID          int        `orm:"column(id)"`
+	Type        Speciality `orm:"column(type)"`
+	FirstName   string     `orm:"column(first_name)"`
+	LastName    string     `orm:"column(last_name)"`
+	Email       string     `orm:"column(email)"`
+	Password    string     `orm:"column(password)" json:"-"`
+	Balance     int        `orm:"column(balance)"`
+	Bid         int        `orm:"column(bid)"`
+	BraintreeID string     `orm:"column(braintree_id)"`
+	Country     string     `orm:"column(country)"`
+	City        string     `orm:"column(city)"`
+	Timezone    int        `orm:"column(timezone)"`
+	CreateTime  time.Time  `orm:"column(create_time);auto_now_add;type(datetime)"`
+	UpdateTime  time.Time  `orm:"column(update_time);auto_now;type(datetime)"`
 }
 
 // TableName specify the table name for User model. This name is used in the orm RegisterModel
@@ -57,6 +57,13 @@ func (u *User) Save() bool {
 	return utils.ProcessError(err, action+" user")
 }
 
+// SetPassword method generate the encrypted password based on the given string
+func (u *User) SetPassword(password string) bool {
+	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	u.Password = string(encryptedPassword)
+	return utils.ProcessError(err, "generate bcrypt password")
+}
+
 // Delete deletes the user record from the db
 func (u *User) Delete() bool {
 	_, err := DB.Delete(u)
@@ -66,6 +73,7 @@ func (u *User) Delete() bool {
 type usersAPI struct{}
 
 var Users *usersAPI
+
 // FetchByID fetch the user from users table by id
 func (u *usersAPI) FetchByID(id int) (*User, bool) {
 	user := User{ID: id}
