@@ -10,7 +10,7 @@ type Team struct {
 	ID          int       `json:"id" orm:"column(id)"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
-	CreateTime  time.Time `json:"create_time"`
+	CreateTime  time.Time `json:"create_time" orm:"auto_now_add;type(datetime)"`
 }
 
 // TableName specify the table name for Team model. This name is used in the orm RegisterModel
@@ -23,7 +23,6 @@ func (t *Team) Save() bool {
 	var action string
 
 	if t.ID == 0 {
-		t.CreateTime = time.Now()
 		_, err = DB.Insert(t)
 		action = "create"
 	} else {
