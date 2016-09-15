@@ -21,31 +21,30 @@ type ApplicationController struct {
 
 // ServeAJAXSuccessMeta serve success AJAX as described in ServeSuccess plus some external meta data
 func (a *ApplicationController) ServeAJAXSuccessMeta(data interface{}, meta map[string]interface{}) {
-	a.serveAJAX(false, "", data, meta)
+	a.serveAJAX(false, data, meta, "")
 }
 
-// ServeAJAXSuccess response AJAX success with false "error" and empty "error-type"
-// The specified data is passed directly to responseAJAX.
+// ServeAJAXSuccess response success ajax with the given data into json format
 func (a *ApplicationController) ServeAJAXSuccess(data interface{}) {
 	a.ServeAJAXSuccessMeta(data, nil)
 }
 
 // ServeAJAXErrorMeta serve error AJAX as described in ServeError plus some external meta data
-func (a *ApplicationController) ServeAJAXErrorMeta(errors interface{}, data interface{}, meta map[string]interface{}) {
-	a.serveAJAX(true, errors, data, meta)
+func (a *ApplicationController) ServeAJAXErrorMeta(data interface{}, meta map[string]interface{}, errors ...interface{}) {
+	a.serveAJAX(true, data, meta, errors)
 }
 
-// ServeAJAXError response AJAX error with true "error" and "error-type" equals to specified error argument
+// ServeAJAXError response AJAX error with true "has-error" and "errors" equals to the all occured errors
 // The specified data is passed directly to responseAJAX.
-func (a *ApplicationController) ServeAJAXError(error interface{}, data interface{}) {
-	a.ServeAJAXErrorMeta(error, data, nil)
+func (a *ApplicationController) ServeAJAXError(data interface{}, errors ...interface{}) {
+	a.ServeAJAXErrorMeta(data, nil, errors)
 }
 
 // serveAJAX response with the json with two keys: "meta" and "data".
 // result meta consists of argument 'meta' map  merged with error and errorType into one map.
 // if 'meta' argument contains key-value pairs which may override specified error and errorType, these values
 // are skipped so the original arguments are primer.
-func (a *ApplicationController) serveAJAX(hasError bool, errors interface{}, data interface{}, meta map[string]interface{}) {
+func (a *ApplicationController) serveAJAX(hasError bool, data interface{}, meta map[string]interface{}, errors ...interface{}) {
 	response := struct {
 		Meta map[string]interface{} `json:"meta"`
 		Data interface{}            `json:"data"`
