@@ -13,7 +13,7 @@ func TestTeamMembersAPI(t *testing.T) {
 		Convey("Test fetch teams by id", func() {
 			teams, ok := models.TeamMembers.FetchTeamsByMember(1)
 			So(ok, ShouldBeTrue)
-			So(teams, ShouldHaveLength, 2)
+			So(teams, ShouldHaveLength, setup.GetFixture("team_members").Filter("team_id", setup.Equal, "1").Count())
 		})
 
 		Convey("Test fetch all", func() {
@@ -25,13 +25,29 @@ func TestTeamMembersAPI(t *testing.T) {
 		Convey("Test fetch members by team", func() {
 			members, ok := models.TeamMembers.FetchMembersByTeam(1)
 			So(ok, ShouldBeTrue)
-			So(members, ShouldHaveLength, 2)
+			So(members, ShouldHaveLength, setup.GetFixture("team_members").Filter("user_id", setup.Equal, "1").Count())
 		})
 
 		Convey("Test fetch by id", func() {
 			teamMember, ok := models.TeamMembers.FetchByID(1)
 			So(ok, ShouldBeTrue)
 			So(teamMember, ShouldNotBeNil)
+		})
+	})
+}
+
+func TestTeamMemberSave(t *testing.T) {
+	Convey("Test team member model", t, func() {
+		teamMember := models.TeamMember{UserID: 3, TeamID: 3}
+
+		Convey("Test Save and Delete", func() {
+			ok := teamMember.Save()
+
+			So(ok, ShouldBeTrue)
+			So(teamMember.ID, ShouldNotEqual, 0)
+
+			ok = teamMember.Delete()
+			So(ok, ShouldBeTrue)
 		})
 	})
 }

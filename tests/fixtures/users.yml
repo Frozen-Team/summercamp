@@ -29,3 +29,18 @@
   timezone: 1
   create_time: 2016-01-01 12:30:12
   update_time: 2016-01-01 12:30:12
+-
+  id: 3
+  type: executor
+  first_name: oleh
+  last_name: holovko
+  email: olehgol260_@gmail.com
+  password: 12345
+  balance: 1
+  bid: 1
+  braintree_id: 1234
+  country: Ukraine
+  city: Kyiv
+  timezone: 1
+  create_time: 2016-01-01 12:30:12
+  update_time: 2016-01-01 12:30:12
