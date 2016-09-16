@@ -1,9 +1,26 @@
-#!/bin/sh
+#!/bin/bash
 
 RED='\033[0;31m'
 NC='\033[0m'
 
 source database/migrate.conf
+
+databases=( summercamp summercamp_test )
+
+containsDb () {
+  local e
+  for e in "${databases[@]}"; do
+    if [ "$e" == "$1" ] ; then
+     return 0
+    fi
+  done
+  return 1
+}
+
+if ! containsDb "$1" ; then
+    echo "invalid database chosen. Choose any of: [ ${databases[@]} ]"
+    exit 1
+fi
 
 if [ -z "$GOPATH" ]; then
     echo "${RED}GOPATH variable not set. Migration aborted.${NC}"
@@ -21,4 +38,4 @@ if [ ! -x $GOPATH/bin/bee ]; then
     fi
 fi
 
-bee migrate $1 -driver="$driver" -conn="$driver://$dsn"
+bee migrate $2 -driver="$driver" -conn="$driver://$dsn"
