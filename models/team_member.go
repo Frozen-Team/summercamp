@@ -10,7 +10,7 @@ type TeamMember struct {
 	ID         int       `json:"id" orm:"column(id)"`
 	TeamID     int       `json:"team_id" orm:"column(team_id)"`
 	UserID     int       `json:"user_id" orm:"column(user_id)"`
-	CreateTime time.Time `json:"create_time" orm:"column(create_time) auto_now_add;type(datetime)"`
+	CreateTime time.Time `json:"create_time" orm:"column(create_time);auto_now_add;type(datetime)"`
 }
 
 // TableName specify the table name for Team model. This name is used in the orm RegisterModel
@@ -31,6 +31,15 @@ func (tm *TeamMember) Save() bool {
 	}
 
 	return utils.ProcessError(err, action+" team member")
+}
+
+func (tm *TeamMember) Delete() bool {
+	if tm.ID == 0 {
+		return false
+	}
+	_, err := DB.Delete(tm)
+
+	return utils.ProcessError(err, " delete team member")
 }
 
 type teamsMembersAPI struct{}
