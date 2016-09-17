@@ -6,6 +6,7 @@ import (
 	"bitbucket.org/SummerCampDev/summercamp/models/utils"
 )
 
+// TeamMember represents a member with UserID who is in the team with TeamID.
 type TeamMember struct {
 	ID         int       `json:"id" orm:"column(id)"`
 	TeamID     int       `json:"team_id" orm:"column(team_id)"`
@@ -13,11 +14,13 @@ type TeamMember struct {
 	CreateTime time.Time `json:"create_time" orm:"column(create_time);auto_now_add;type(datetime)"`
 }
 
-// TableName specify the table name for Team model. This name is used in the orm RegisterModel
+// TableName specify the table name for Team model. This name is used in the orm RegisterModel.
 func (tm *TeamMember) TableName() string {
 	return "team_members"
 }
 
+// Save insert a new record to the db if ID field is of default value. Otherwise an existing
+// record is updated.
 func (tm *TeamMember) Save() bool {
 	var err error
 	var action string
@@ -33,6 +36,8 @@ func (tm *TeamMember) Save() bool {
 	return utils.ProcessError(err, action+" team member")
 }
 
+// Delete deletes a record from the db. If the record is successfully deleted, the return value
+// is true, false - otherwise.
 func (tm *TeamMember) Delete() bool {
 	if tm.ID == 0 {
 		return false
@@ -42,8 +47,11 @@ func (tm *TeamMember) Delete() bool {
 	return utils.ProcessError(err, " delete team member")
 }
 
+// teamsMembersAPI is an empty struct which is a receiver of helper methods
+// which can be useful while working with TeamMember model and are not directly relate to it
 type teamsMembersAPI struct{}
 
+// TeamMembers is an object via which we can access helper methods for the TeamMember model
 var TeamMembers *teamsMembersAPI
 
 // FetchByID fetch a team from the teams table by id
