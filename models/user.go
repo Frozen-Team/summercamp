@@ -70,6 +70,12 @@ func (u *User) Delete() bool {
 	return utils.ProcessError(err, "delete user")
 }
 
+// Teams returns teams for the current user. If everything is okay, the second
+// returned value is true, false - otherwise.
+func (u *User) Teams() ([]int, bool) {
+	return TeamMembers.FetchTeamsByMember(u.ID)
+}
+
 type usersAPI struct{}
 
 var Users *usersAPI

@@ -33,6 +33,12 @@ func (t *Team) Save() bool {
 	return utils.ProcessError(err, action+" team")
 }
 
+// Members return all members` ids for the current team. If there is no error, the second
+// return value is true, false - otherwise
+func (t *Team) Members() ([]int, bool) {
+	return TeamMembers.FetchMembersByTeam(t.ID)
+}
+
 type teamsAPI struct{}
 
 var Teams *teamsAPI
