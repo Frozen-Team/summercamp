@@ -5,22 +5,18 @@ NC='\033[0m'
 
 source database/migrate.conf
 
-databases=( summercamp summercamp_test )
+DB_TYPE=$1
 
-containsDb () {
-  local e
-  for e in "${databases[@]}"; do
-    if [ "$e" == "$1" ] ; then
-     return 0
-    fi
-  done
-  return 1
-}
+case "$DB_TYPE" in
+    "test")
+    dsn=$dsn_test
+    ;;
+    "dev"|*)
+    dsn=$dsn_dev
+    ;;
+esac
 
-if ! containsDb "$1" ; then
-    echo "invalid database chosen. Choose any of: [ ${databases[@]} ]"
-    exit 1
-fi
+[[ -z "$DB_TYPE" ]] && ROLLBACK=$1 || ROLLBACK=$2
 
 if [ -z "$GOPATH" ]; then
     echo "${RED}GOPATH variable not set. Migration aborted.${NC}"
@@ -38,4 +34,4 @@ if [ ! -x $GOPATH/bin/bee ]; then
     fi
 fi
 
-bee migrate $2 -driver="$driver" -conn="$driver://$dsn"
+bee migrate $ROLLBACK -driver="$driver" -conn="$driver://$dsn"
