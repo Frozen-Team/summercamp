@@ -5,7 +5,7 @@ NC='\033[0m'
 
 source database/migrate.conf
 MODE="dev"
-SUBCMD="migrate"
+
 function error {
     >&2 echo -e $RED$1$NC
     exit
@@ -22,8 +22,8 @@ case $1 in
         ;;
     *)
         # Checking if it's not a key
-        if [ $1 != -* ]
-          then
+        if [[ $1 != \-* ]];
+        then
           error "Unknown command '$1'"
         fi
 esac
