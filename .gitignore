@@ -1,3 +1,5 @@
+## Ignore bower components
+public/bower_components
 ## Ignore vendor sources files
 vendor/*/
 
