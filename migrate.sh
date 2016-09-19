@@ -6,7 +6,7 @@ NC='\033[0m'
 source database/migrate.conf
 MODE="dev"
 
-usage="./$(basename "$0") [-h|--help] [<migration_action>] [-db|--database=<db_type>] -- the script to apply migrations to the specified db
+usage="./$(basename "$0") [-h|--help] [<migration_action>] [-db|--database <db_type>] -- the script to apply migrations to the specified db
 
 where:
     -h|--help           show this info
@@ -18,18 +18,22 @@ where:
                         If this is empty, the dev database is used
 "
 
+# maybe some other commands will appear, so to not mess up with SUBCMD, this case is separated from the next one
 function error {
     >&2 echo -e $RED$1$NC
     exit
 }
 
-# maybe some other commands will appear, so to not mess up with SUBCMD, this case is separated from the next one
-case $1 in
- -h|--help)
- echo "$usage"
- exit
- ;;
-esac
+for i in $@
+do
+    case $i in
+     -h|--help)
+     echo "$usage"
+     exit
+     ;;
+    esac
+done
+
 
 # check rollback
 case $1 in
