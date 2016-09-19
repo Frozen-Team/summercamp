@@ -3,9 +3,10 @@ package controllers
 import (
 	"encoding/json"
 
+	"net/http"
+
 	"bitbucket.org/SummerCampDev/summercamp/models"
 	"github.com/astaxie/beego"
-	"net/http"
 )
 
 // keys which must be in meta map (not in external meta maps. External meta maps contains additional data, which is then
@@ -39,7 +40,7 @@ func (a *ApplicationController) serveAJAXErrorMeta(data interface{}, meta map[st
 	a.serveAJAX(true, data, meta, errors)
 }
 
-// ServeAJAXError response AJAX error with true "has-error" and "errors" equals to the all occured errors
+// serveAJAXError response AJAX error with true "has-error" and "errors" equals to the all occured errors
 // The specified data is passed directly to responseAJAX.
 func (a *ApplicationController) serveAJAXError(data interface{}, errors ...interface{}) {
 	a.serveAJAXErrorMeta(data, nil, errors)
@@ -73,7 +74,7 @@ func (a *ApplicationController) serveAJAX(hasError bool, data interface{}, meta 
 	a.ServeJSON()
 }
 
-// authorisedUser returns true if the user is authorised, false otherwise
+// isAuthorised returns true if the user is authorised, false otherwise
 func (a *ApplicationController) isAuthorised() bool {
 	return a.authorisedUser() != nil
 }
@@ -85,14 +86,13 @@ func (a *ApplicationController) authorisedUser() *models.User {
 		return nil
 	}
 	if id, ok := u.(int); ok {
-		if user, ok := models.Users.FetchByID(id); ok {
-			return user
-		}
-		return nil
+		user, _ := models.Users.FetchByID(id)
+		return user
 	}
 	return nil
 }
-// AuthoriseUser set user id to session.
+
+// authoriseUser set user id to session.
 func (a *ApplicationController) authoriseUser(id int) {
 	a.SetSession(SessionKeyUser, id)
 }
