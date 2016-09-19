@@ -74,12 +74,12 @@ func (a *ApplicationController) serveAJAX(hasError bool, data interface{}, meta 
 	a.ServeJSON()
 }
 
-// isAuthorised returns true if the user is authorised, false otherwise
+// isAuthorized returns true if the user is authorised, false otherwise
 func (a *ApplicationController) isAuthorised() bool {
 	return a.authorisedUser() != nil
 }
 
-// authorisedUser returns authorised user. Returns nil, if user is not authorised.
+// authorizedUser returns authorised user. Returns nil, if user is not authorised.
 func (a *ApplicationController) authorisedUser() *models.User {
 	u := a.GetSession(SessionKeyUser)
 	if u == nil {
@@ -92,9 +92,14 @@ func (a *ApplicationController) authorisedUser() *models.User {
 	return nil
 }
 
-// authoriseUser set user id to session.
-func (a *ApplicationController) authoriseUser(id int) {
-	a.SetSession(SessionKeyUser, id)
+// authorizeUser set user id to session.
+func (a *ApplicationController) authorizeUser(user *models.User) {
+	a.SetSession(SessionKeyUser, user.ID)
+}
+
+// authorizeUser set user id to session.
+func (a *ApplicationController) deauthorizeUser(user *models.User) {
+	a.DelSession(SessionKeyUser)
 }
 
 // redirectToSpecialityIndex redirects to index path according to passed Speciality.

@@ -24,3 +24,40 @@ func (uc *Users) Register() {
 
 	uc.serveAJAXSuccess(user)
 }
+
+// Login reads the data from the request body into forms.UserLogin struct, attempts to query a user from the db
+// by email and checks password. In case of success the user is authorized
+// @route POST /users/login
+func (uc *Users) Login() {
+	user := uc.authorisedUser()
+	if user != nil {
+		uc.serveAJAXSuccess(user)
+	}
+
+	loginForm := new(forms.UserLogin)
+
+	if ok := uc.unmarshalJSON(loginForm); !ok {
+		uc.serveAJAXError(nil, "bad-data")
+		return
+	}
+
+	user, ok := loginForm.Login()
+	if !ok {
+		uc.serveAJAXError(nil, loginForm.Errors)
+		return
+	}
+	uc.authorizeUser(user)
+	uc.serveAJAXSuccess(user)
+}
+
+// Logout deauthorizes logged in User otherwise responses "bad-request"
+// @route POST /users/login
+func (uc *Users) Logout() {
+	user := uc.authorisedUser()
+	if user != nil {
+		uc.deauthorizeUser(user)
+		uc.serveAJAXSuccess(nil)
+	}
+
+	uc.serveAJAXError(nil, "bad-request")
+}
