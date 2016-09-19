@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"bitbucket.org/SummerCampDev/summercamp/models/utils"
+	"github.com/astaxie/beego"
 )
 
 type TransactionType string
@@ -27,6 +28,10 @@ type Transaction struct {
 	CreateTime time.Time       `json:"create_time" orm:"column(create_time);auto_now_add;type(datetime)"`
 }
 
+func (t *Transaction) TableName() string {
+	return "transactions"
+}
+
 func (t *Transaction) Save() bool {
 	var err error
 	var action string
@@ -46,4 +51,52 @@ func (t *Transaction) Save() bool {
 func (t *Transaction) Delete() bool {
 	_, err := DB.Delete(t)
 	return utils.ProcessError(err, "delete user")
+}
+
+type TransactionsAPI struct{}
+
+var Transactions *TransactionsAPI
+
+func (t *TransactionsAPI) FetchByID(id int) (*Transaction, bool) {
+	transaction := Transaction{ID: id}
+	err := DB.Read(&transaction)
+	return &transaction, utils.ProcessError(err, "fetch the transaction by id")
+}
+
+func (t *TransactionsAPI) FetchTransferByUserID(userID int) ([]Transaction, bool) {
+	return t.fetchTransactionsByUserIDAndType(userID, TransactionTypeTransfer)
+}
+
+func (t *TransactionsAPI) FetchBalanceByUserID(userID int) ([]Transaction, bool) {
+	return t.fetchTransactionsByUserIDAndType(userID, TransactionTypeBalance)
+}
+
+func (t *TransactionsAPI) FetchDepositsByUserID(userID int) ([]Transaction, bool) {
+	return t.fetchTransactionsByUserIDAndType(userID, TransactionTypeBalance, "amount>0")
+}
+
+func (t *TransactionsAPI) FetchWithdrawalsByUserID(userID int) ([]Transaction, bool) {
+	return t.fetchTransactionsByUserIDAndType(userID, TransactionTypeBalance, "amount<0")
+}
+
+func (t *TransactionsAPI) fetchTransactionsByUserIDAndType(userID int, ttype TransactionType, extraFilters ...interface{}) ([]Transaction, bool) {
+	if !ttype.Valid() {
+		beego.BeeLogger.Error("invalid transaction type. Type: %v", ttype)
+		return nil, false
+	}
+	query := "SELECT * FROM transactions WHERE user_id=$1 AND type=$2"
+
+	if extraFilters != nil {
+		for _, filterI := range extraFilters {
+			if filter, ok := filterI.(string); ok {
+				query += " AND " + filter
+			}
+		}
+	}
+	var transactions []Transaction
+
+	query += " ORDER BY create_time DESC;"
+	_, err := DB.Raw(query, userID, ttype).QueryRows(&transactions)
+
+	return transactions, utils.ProcessError(err, " fetch transactions")
 }
