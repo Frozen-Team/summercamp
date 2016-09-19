@@ -4,29 +4,63 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 source database/migrate.conf
-
-DB_TYPE=$1
-
-case "$DB_TYPE" in
-    "test")
-    dsn=$dsn_test
-    ;;
-    "dev"|*)
-    dsn=$dsn_dev
-    ;;
+MODE="dev"
+SUBCMD="migrate"
+function error {
+    >&2 echo -e $RED$1$NC
+    exit
+}
+case $1 in
+    rollback)
+        SUBCMD="rollback"
+        ;;
+    reset)
+        SUBCMD="reset"
+        ;;
+    refresh)
+        SUBCMD="refresh"
+        ;;
+    *)
+        # Checking if it's not a key
+        if [ $1 != -* ]
+          then
+          error "Unknown command '$1'"
+        fi
 esac
+while [[ $# -gt 1 ]]
+    do
+    key="$1"
 
-[[ -z "$DB_TYPE" ]] && ROLLBACK=$1 || ROLLBACK=$2
-
+    case $key in
+        -m|--mode)
+        MODE="$2"
+        shift # past argument
+        ;;
+    esac
+    shift
+done
+case $MODE in
+    dev)
+        DSN=$dsn_dev
+        ;;
+    prod)
+        DSN=$dsn_prod
+        ;;
+    test)
+        DSN=$dsn_test
+        ;;
+    *)
+        error "Unknown mode"
+        ;;
+esac
 if [ -z "$GOPATH" ]; then
-    echo "${RED}GOPATH variable not set. Migration aborted.${NC}"
-    exit 1
+    error "GOPATH variable not set. Migration aborted."
 fi
 
 if [ ! -x $GOPATH/bin/bee ]; then
     echo -e "${RED}Bee not found in GOPATH.${NC}"
     echo -e "Installing bee to continue..."
-    $(go get github.com/beego/bee)
+    go get github.com/beego/bee
     if [ ! -x $GOPATH/bin/bee ]; then
         echo -e "${RED}Unable to install github.com/beego/bee${NC}"
         echo -e "You should install bee manually: go get github.com/beego/bee to run migration via bee${NC}"
@@ -34,4 +68,5 @@ if [ ! -x $GOPATH/bin/bee ]; then
     fi
 fi
 
-bee migrate $ROLLBACK -driver="$driver" -conn="$driver://$dsn"
+echo "Running bee migrate $SUBCMD -driver="$driver" -conn="$driver://$DSN""
+bee migrate $SUBCMD -driver="$driver" -conn="$driver://$DSN"
