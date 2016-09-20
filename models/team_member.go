@@ -61,7 +61,7 @@ func (tm *teamsMembersAPI) FetchByID(id int) (*TeamMember, bool) {
 	return &teamMember, utils.ProcessError(err, "fetch the team member by id")
 }
 
-// FetchAll fetches all teams from the users table
+// FetchAll fetches all teams from the team_members table
 func (tm *teamsMembersAPI) FetchAll() ([]TeamMember, bool) {
 	var teamMembers []TeamMember
 	_, err := DB.QueryTable(TeamMemberObj).All(&teamMembers)
