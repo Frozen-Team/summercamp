@@ -75,13 +75,13 @@ func (tm *teamsMembersAPI) FetchTeamsByMember(teamMemberID int) ([]Team, bool) {
 	if err != nil {
 		return nil, utils.ProcessError(err, "fetch teamMembers by member id")
 	}
-	teamsIDs := make([]int, len(teamMembers))
+	teamIDs := make([]int, len(teamMembers))
 	for _, teamMember := range teamMembers {
-		teamsIDs = append(teamsIDs, teamMember.TeamID)
+		teamIDs = append(teamIDs, teamMember.TeamID)
 	}
 	var teams []Team
-	_, err = DB.QueryTable(TeamModel).Filter("id__in", teamsIDs).All(&teams)
-	return teams, utils.ProcessError(err, "fetch teams by teamsIDs")
+	_, err = DB.QueryTable(TeamModel).Filter("id__in", teamIDs).All(&teams)
+	return teams, utils.ProcessError(err, "fetch teams by teamIDs")
 }
 
 // FetchMembersByTeam fetch all members of the team with the given teamID
@@ -91,11 +91,11 @@ func (tm *teamsMembersAPI) FetchMembersByTeam(teamID int) ([]User, bool) {
 	if err != nil {
 		return nil, utils.ProcessError(err, "fetch members by team")
 	}
-	usersIDs := make([]int, len(teamMembers))
+	userIDs := make([]int, len(teamMembers))
 	for _, teamMember := range teamMembers {
-		usersIDs = append(usersIDs, teamMember.UserID)
+		userIDs = append(userIDs, teamMember.UserID)
 	}
 	var users []User
-	_, err = DB.QueryTable(UserModel).Filter("id__in", usersIDs).All(&users)
-	return users, utils.ProcessError(err, "fetch teams by teamsIDs")
+	_, err = DB.QueryTable(UserModel).Filter("id__in", userIDs).All(&users)
+	return users, utils.ProcessError(err, "fetch members by userIDs")
 }
