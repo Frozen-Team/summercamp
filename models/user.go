@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"bitbucket.org/SummerCampDev/summercamp/models/utils"
-	"github.com/astaxie/beego/orm"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -66,9 +65,9 @@ func (u *User) SetPassword(password string) bool {
 }
 
 // CheckPassword method checks if given plain password matches hashed password
-func (u *User) CheckPassword(password string) (bool, bool) {
-	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	return u.Password == string(encryptedPassword), utils.ProcessError(err, "check bcrypt password")
+func (u *User) CheckPassword(password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
+	return utils.ProcessError(err, "check bcrypt password")
 }
 
 // Delete deletes the user record from the db
@@ -91,12 +90,8 @@ func (u *usersAPI) FetchByID(id int) (*User, bool) {
 // FetchByEmail fetches the user from users table by email
 func (u *usersAPI) FetchByEmail(email string) (*User, bool) {
 	var user User
-	err := DB.QueryTable(UserObj).One(&user)
-	// Suppress no rows error
-	if err != nil && err != orm.ErrNoRows {
-		return nil, utils.ProcessError(err, "fetch the user by email")
-	}
-	return &user, true
+	err := DB.QueryTable(UserObj).Filter("email", email).One(&user)
+	return &user, utils.ProcessError(err, "fetch the user by email")
 }
 
 // FetchAll fetches all users from the users table

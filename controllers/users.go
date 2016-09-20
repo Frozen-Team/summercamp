@@ -29,9 +29,9 @@ func (uc *Users) Register() {
 // by email and checks password. In case of success the user is authorized
 // @route POST /users/login
 func (uc *Users) Login() {
-	user := uc.authorisedUser()
+	user := uc.authorizedUser()
 	if user != nil {
-		uc.serveAJAXSuccess(user)
+		uc.serveAJAXError(nil, "user-already-authorized")
 	}
 
 	loginForm := new(forms.UserLogin)
@@ -53,11 +53,10 @@ func (uc *Users) Login() {
 // Logout deauthorizes logged in User otherwise responses "bad-request"
 // @route POST /users/login
 func (uc *Users) Logout() {
-	user := uc.authorisedUser()
-	if user != nil {
-		uc.deauthorizeUser(user)
-		uc.serveAJAXSuccess(nil)
+	user := uc.authorizedUser()
+	if user == nil {
+		uc.serveAJAXError(nil, "bad-request")
 	}
-
-	uc.serveAJAXError(nil, "bad-request")
+	uc.deauthorizeUser(user)
+	uc.serveAJAXSuccess(nil)
 }
