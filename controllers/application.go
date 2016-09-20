@@ -3,6 +3,9 @@ package controllers
 import (
 	"encoding/json"
 
+	"net/http"
+
+	"bitbucket.org/SummerCampDev/summercamp/models"
 	"github.com/astaxie/beego"
 )
 
@@ -12,6 +15,9 @@ const (
 	AJAXKeyHasError = "has-error"
 	AJAXKeyErrors   = "errors"
 )
+const (
+	SessionKeyUser = "user"
+)
 
 // ApplicationController is a base controller for all controllers in the project.
 // It contains common helper methods.
@@ -19,25 +25,25 @@ type ApplicationController struct {
 	beego.Controller
 }
 
-// ServeAJAXSuccessMeta serve success AJAX as described in ServeSuccess plus some external meta data
-func (a *ApplicationController) ServeAJAXSuccessMeta(data interface{}, meta map[string]interface{}) {
+// serveAJAXSuccessMeta serve success AJAX as described in ServeSuccess plus some external meta data.
+func (a *ApplicationController) serveAJAXSuccessMeta(data interface{}, meta map[string]interface{}) {
 	a.serveAJAX(false, data, meta, "")
 }
 
-// ServeAJAXSuccess response success ajax with the given data into json format
-func (a *ApplicationController) ServeAJAXSuccess(data interface{}) {
-	a.ServeAJAXSuccessMeta(data, nil)
+// serveAJAXSuccess response success ajax with the given data into json format
+func (a *ApplicationController) serveAJAXSuccess(data interface{}) {
+	a.serveAJAXSuccessMeta(data, nil)
 }
 
-// ServeAJAXErrorMeta serve error AJAX as described in ServeError plus some external meta data
-func (a *ApplicationController) ServeAJAXErrorMeta(data interface{}, meta map[string]interface{}, errors ...interface{}) {
+// serveAJAXErrorMeta serve error AJAX as described in ServeError plus some external meta data
+func (a *ApplicationController) serveAJAXErrorMeta(data interface{}, meta map[string]interface{}, errors ...interface{}) {
 	a.serveAJAX(true, data, meta, errors)
 }
 
-// ServeAJAXError response AJAX error with true "has-error" and "errors" equals to the all occured errors
+// serveAJAXError response AJAX error with true "has-error" and "errors" equals to the all occured errors
 // The specified data is passed directly to responseAJAX.
-func (a *ApplicationController) ServeAJAXError(data interface{}, errors ...interface{}) {
-	a.ServeAJAXErrorMeta(data, nil, errors)
+func (a *ApplicationController) serveAJAXError(data interface{}, errors ...interface{}) {
+	a.serveAJAXErrorMeta(data, nil, errors)
 }
 
 // serveAJAX response with the json with two keys: "meta" and "data".
@@ -66,6 +72,42 @@ func (a *ApplicationController) serveAJAX(hasError bool, data interface{}, meta 
 
 	a.Data["json"] = &response
 	a.ServeJSON()
+}
+
+// isAuthorised returns true if the user is authorised, false otherwise
+func (a *ApplicationController) isAuthorised() bool {
+	return a.authorisedUser() != nil
+}
+
+// authorisedUser returns authorised user. Returns nil, if user is not authorised.
+func (a *ApplicationController) authorisedUser() *models.User {
+	u := a.GetSession(SessionKeyUser)
+	if u == nil {
+		return nil
+	}
+	if id, ok := u.(int); ok {
+		user, _ := models.Users.FetchByID(id)
+		return user
+	}
+	return nil
+}
+
+// authoriseUser set user id to session.
+func (a *ApplicationController) authoriseUser(id int) {
+	a.SetSession(SessionKeyUser, id)
+}
+
+// redirectToSpecialityIndex redirects to index path according to passed Speciality.
+func (r *ApplicationController) redirectToSpecialityIndex(s models.Speciality) {
+	switch s {
+	case models.SpecTypeExecutor:
+		r.Redirect(beego.URLFor("Executor.Index"), http.StatusMovedPermanently)
+	case models.SpecTypeClient:
+		r.Redirect(beego.URLFor("Client.Index"), http.StatusMovedPermanently)
+	case models.SpecTypeManager:
+		r.Redirect(beego.URLFor("Manager.Index"), http.StatusMovedPermanently)
+	}
+	beego.BeeLogger.Error("Trying to redirect to bad speciality index path '%d'", s)
 }
 
 // unmarshalJSON parses a json object from request body and fills the fields of the v interface.
