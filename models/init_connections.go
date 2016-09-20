@@ -49,6 +49,7 @@ func InitDB() {
 
 // all models will be registered here
 func registerModels() {
-	orm.RegisterModel(UserObj)
-	orm.RegisterModel(TeamObj)
+	orm.RegisterModel(UserModel)
+	orm.RegisterModel(TeamModel)
+	orm.RegisterModel(TeamMemberModel)
 }
