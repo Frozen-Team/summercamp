@@ -18,7 +18,7 @@ func init() {
 
 // Run the migrations
 func (m *TransactionModel_20160919_230037) Up() {
-	m.SQL(`CREATE TYPE transaction_type AS ENUM ('balance', 'transaction');
+	m.SQL(`CREATE TYPE transaction_type AS ENUM ('balance', 'transfer');
 		CREATE TABLE public.transactions
 (
     id SERIAL PRIMARY KEY NOT NULL,
@@ -26,7 +26,7 @@ func (m *TransactionModel_20160919_230037) Up() {
     project_id INT,
     type TRANSACTION_TYPE NOT NULL,
     amount INT CHECK (amount<>0),
-    comment INT,
+    comment TEXT,
     create_time TIMESTAMP DEFAULT now() NOT NULL,
     CONSTRAINT transactions_users_id_fk FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
