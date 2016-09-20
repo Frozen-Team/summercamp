@@ -2,7 +2,7 @@ package models
 
 // model objects
 var (
-	UserObj       = new(User)
-	TeamObj       = new(Team)
-	TeamMemberObj = new(TeamMember)
+	UserModel       = new(User)
+	TeamModel       = new(Team)
+	TeamMemberModel = new(TeamMember)
 )
