@@ -6,6 +6,7 @@ import (
 
 	"os"
 
+	"bitbucket.org/SummerCampDev/summercamp/models"
 	"github.com/astaxie/beego"
 )
 
@@ -20,4 +21,10 @@ func init() {
 	}
 	beego.TestBeegoInit(apppath)
 	beego.BConfig.WebConfig.EnableXSRF = false
+
+	beego.AddAPPStartHook(func() error {
+		models.InitDB()
+		return nil
+	})
+	PrepareTestDB()
 }

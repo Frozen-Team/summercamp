@@ -52,4 +52,5 @@ func registerModels() {
 	orm.RegisterModel(UserObj)
 	orm.RegisterModel(TeamObj)
 	orm.RegisterModel(TransactionObj)
+	orm.RegisterModel(TeamMemberModel)
 }
