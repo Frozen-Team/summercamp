@@ -1,6 +1,9 @@
 package models
 
-import "bitbucket.org/SummerCampDev/summercamp/models/utils"
+import (
+	"bitbucket.org/SummerCampDev/summercamp/models/utils"
+	"github.com/astaxie/beego"
+)
 
 type Skill struct {
 	ID   int    `json:"id" orm:"column(id)"`
@@ -40,22 +43,37 @@ func (s *Skill) Delete() bool {
 }
 
 // skillsAPI is an empty struct which is a receiver of helper methods
-// which can be useful while working with TeamMember model and are not directly relate to it
+// which can be useful while working with Skill model.
 type skillsAPI struct{}
 
-// TeamMembers is an object via which we can access helper methods for the TeamMember model
+// Skills is an object via which we can access helper methods for the Skill model.
 var Skills *skillsAPI
 
-// FetchByID fetch a team from the teams table by id
+// FetchByID fetch a a skill from the skills table by id
 func (s *skillsAPI) FetchByID(id int) (*Skill, bool) {
 	skill := Skill{ID: id}
 	err := DB.Read(&skill)
 	return &skill, utils.ProcessError(err, "fetch the skill by id")
 }
 
-// NewSkill is a wrapper to initialize a new skill object
+// NewSkill is a wrapper to initialize a new skill object.
 func (s *skillsAPI) NewSkill(name string) *Skill {
 	return &Skill{
 		Name: name,
 	}
+}
+
+// FetchSkillsByNames fetch skills by their names. For some possible use, the 'name' field
+// of the model is also initialized.
+func (s *skillsAPI) FetchSkillsByNames(skillNames ...string) ([]Skill, bool) {
+	if len(skillNames) == 0 {
+		beego.Warning("Empty skill names are passed to FetchIDsByNames")
+		return nil, false
+	}
+
+	var skills []Skill
+
+	_, err := DB.QueryTable(SkillModel).Filter("name__in", skillNames).All(&skills)
+
+	return skills, utils.ProcessError(err, " fetch skills by names")
 }
