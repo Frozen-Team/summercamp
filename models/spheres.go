@@ -38,3 +38,24 @@ func (s *Sphere) Delete() bool {
 
 	return utils.ProcessError(err, " delete sphere")
 }
+
+// spheresAPI is an empty struct which is a receiver of helper methods
+// which can be useful while working with TeamMember model and are not directly relate to it
+type spheresAPI struct{}
+
+// TeamMembers is an object via which we can access helper methods for the TeamMember model
+var Spheres *spheresAPI
+
+// FetchByID fetch a team from the teams table by id
+func (s *spheresAPI) FetchByID(id int) (*Sphere, bool) {
+	sphere := Sphere{ID: id}
+	err := DB.Read(&sphere)
+	return &sphere, utils.ProcessError(err, "fetch the sphere by id")
+}
+
+// NewSphere is a wrapper to initialize a new sphere object
+func (s *spheresAPI) NewSphere(name string) *Sphere {
+	return &Sphere{
+		Name: name,
+	}
+}
