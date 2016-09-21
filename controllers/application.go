@@ -74,13 +74,13 @@ func (a *ApplicationController) serveAJAX(hasError bool, data interface{}, meta 
 	a.ServeJSON()
 }
 
-// isAuthorized returns true if the user is authorised, false otherwise
-func (a *ApplicationController) isAuthorised() bool {
-	return a.authorisedUser() != nil
+// isAuthorized returns true if the user is authorized, false otherwise
+func (a *ApplicationController) isAuthorized() bool {
+	return a.authorizedUser() != nil
 }
 
-// authorizedUser returns authorised user. Returns nil, if user is not authorised.
-func (a *ApplicationController) authorisedUser() *models.User {
+// authorizedUser returns authorized user. Returns nil, if the user is not authorized.
+func (a *ApplicationController) authorizedUser() *models.User {
 	u := a.GetSession(SessionKeyUser)
 	if u == nil {
 		return nil
