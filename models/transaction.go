@@ -5,6 +5,7 @@ import (
 
 	"bitbucket.org/SummerCampDev/summercamp/models/utils"
 	"github.com/astaxie/beego"
+	"os/user"
 )
 
 type TransactionType string
@@ -19,13 +20,13 @@ func (tt TransactionType) Valid() bool {
 }
 
 type Transaction struct {
-	ID         int             `json:"id" orm:"column(id)"`
-	UserID     int             `json:"user_id" orm:"column(user_id)"`
-	ProjectID  int             `json:"project_id" orm:"column(project_id)"`
-	Type       TransactionType `json:"type" orm:"column(type)"`
-	Amount     int             `json:"amount" orm:"column(amount)"`
-	Comment    string          `json:"comment" orm:"column(comment)"`
-	CreateTime time.Time       `json:"create_time" orm:"column(create_time);auto_now_add;type(datetime)"`
+	ID          int             `json:"id" orm:"column(id)"`
+	UserID      int             `json:"user_id" orm:"column(user_id)"`
+	ProjectID   int             `json:"project_id" orm:"column(project_id)"`
+	Type        TransactionType `json:"type" orm:"column(type)"`
+	Amount      int             `json:"amount" orm:"column(amount)"`
+	Description string          `json:"description" orm:"column(description)"`
+	CreateTime  time.Time       `json:"create_time" orm:"column(create_time);auto_now_add;type(datetime)"`
 }
 
 func (t *Transaction) TableName() string {
@@ -61,6 +62,25 @@ func (t *TransactionsAPI) FetchByID(id int) (*Transaction, bool) {
 	transaction := Transaction{ID: id}
 	err := DB.Read(&transaction)
 	return &transaction, utils.ProcessError(err, "fetch the transaction by id")
+}
+
+func (t *TransactionsAPI) NewBalance(userID, amount int, description string) *Transaction {
+	return &Transaction{
+		UserID:      userID,
+		Amount:      amount,
+		Type:        TransactionTypeBalance,
+		Description: description,
+	}
+}
+
+func (t *TransactionsAPI) NewTransfer(userID, projectID, amount int, description string) *Transaction {
+	return &Transaction{
+		UserID:      userID,
+		ProjectID:   projectID,
+		Amount:      amount,
+		Type:        TransactionTypeTransfer,
+		Description: description,
+	}
 }
 
 func (t *TransactionsAPI) FetchTransferByUserID(userID int) ([]Transaction, bool) {
