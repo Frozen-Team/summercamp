@@ -31,5 +31,5 @@ CREATE UNIQUE INDEX spheres_name_uindex ON public.spheres (name);
 
 // Reverse the migrations
 func (m *Spheres_20160921_225323) Down() {
-	m.SQL(`DROP TABLES IF EXISTS public.spheres;`)
+	m.SQL(`DROP TABLE IF EXISTS public.spheres;`)
 }
