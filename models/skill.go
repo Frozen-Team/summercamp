@@ -38,3 +38,24 @@ func (s *Skill) Delete() bool {
 
 	return utils.ProcessError(err, " delete skill")
 }
+
+// skillsAPI is an empty struct which is a receiver of helper methods
+// which can be useful while working with TeamMember model and are not directly relate to it
+type skillsAPI struct{}
+
+// TeamMembers is an object via which we can access helper methods for the TeamMember model
+var Skills *skillsAPI
+
+// FetchByID fetch a team from the teams table by id
+func (s *skillsAPI) FetchByID(id int) (*Skill, bool) {
+	skill := Skill{ID: id}
+	err := DB.Read(&skill)
+	return &skill, utils.ProcessError(err, "fetch the skill by id")
+}
+
+// NewSkill is a wrapper to initialize a new skill object
+func (s *skillsAPI) NewSkill(name string) *Skill {
+	return &Skill{
+		Name: name,
+	}
+}
