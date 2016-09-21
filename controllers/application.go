@@ -97,7 +97,7 @@ func (a *ApplicationController) authorizeUser(user *models.User) {
 	a.SetSession(SessionKeyUser, user.ID)
 }
 
-// authorizeUser set user id to session.
+// deauthorizeUser removes user id from the session.
 func (a *ApplicationController) deauthorizeUser(user *models.User) {
 	a.DelSession(SessionKeyUser)
 }

@@ -57,14 +57,14 @@ func (u *User) Save() bool {
 	return utils.ProcessError(err, action+" user")
 }
 
-// SetPassword method generate the encrypted password based on the given string
+// SetPassword generate the encrypted password based on the given string
 func (u *User) SetPassword(password string) bool {
 	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	u.Password = string(encryptedPassword)
 	return utils.ProcessError(err, "generate bcrypt password")
 }
 
-// CheckPassword method checks if given plain password matches hashed password
+// CheckPassword checks if given plain password matches hashed password
 func (u *User) CheckPassword(password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
 	return utils.ProcessError(err, "check bcrypt password")
