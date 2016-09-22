@@ -22,7 +22,7 @@ func (m *Projects_20160920_212034) Up() {
 (
     id SERIAL PRIMARY KEY NOT NULL,
     description TEXT NOT NULL,
-    budget INT NOT NULL,
+    budget INT NOT NULL CHECK (budget > 0),
     client_id INT NOT NULL,
     create_time TIMESTAMP DEFAULT now() NOT NULL,
     update_time TIMESTAMP DEFAULT now() NOT NULL,
