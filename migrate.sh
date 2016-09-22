@@ -6,14 +6,14 @@ NC='\033[0m'
 source database/migrate.conf
 MODE="dev"
 
-usage="./$(basename "$0") [-h|--help] [<migration_action>] [-db|--database <db_type>] -- the script to apply migrations to the specified db
+usage="./$(basename "$0") [-h|--help] [<migration_action>] [-m|--mode <mode>] -- the script to apply migrations to the specified db
 
 where:
     -h|--help           show this info
 
     <migration_action>  is one of the following: rollback, reset or refresh. If this is empty, simple 'bee migrate' is executed
 
-    -db|--database      specifies the database type. <db_type> is one of the following: test, dev, prod. According to
+    -m|--mode      specifies the database type. <mode> is one of the following: test, dev, prod. According to
                         the specified value, the correct connection string is being chosen.
                         If this is empty, the dev database is used
 "
@@ -53,6 +53,7 @@ case $1 in
           error "Unknown command '$1'"
         fi
 esac
+
 while [[ $# -gt 1 ]]
     do
     key="$1"
