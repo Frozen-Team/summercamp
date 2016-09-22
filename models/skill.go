@@ -6,8 +6,9 @@ import (
 )
 
 type Skill struct {
-	ID   int    `json:"id" orm:"column(id)"`
-	Name string `json:"name" orm:"column(name)"`
+	ID       int    `json:"id" orm:"column(id)"`
+	SphereID int    `json:"sphere_id" orm:"column(sphere_id)"`
+	Name     string `json:"name" orm:"column(name)"`
 }
 
 func (s *Skill) TableName() string {
@@ -57,9 +58,10 @@ func (s *skillsAPI) FetchByID(id int) (*Skill, bool) {
 }
 
 // NewSkill is a wrapper to initialize a new skill object.
-func (s *skillsAPI) NewSkill(name string) *Skill {
+func (s *skillsAPI) NewSkill(name string, sphereID int) *Skill {
 	return &Skill{
-		Name: name,
+		Name:     name,
+		SphereID: sphereID,
 	}
 }
 

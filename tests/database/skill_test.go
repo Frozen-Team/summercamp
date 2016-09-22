@@ -9,7 +9,7 @@ import (
 
 func TestSkillModel(t *testing.T) {
 	Convey("Test skill model", t, func() {
-		skill := models.Skills.NewSkill("Golang")
+		skill := models.Skills.NewSkill("Golang", 1)
 
 		ok := skill.Save()
 
