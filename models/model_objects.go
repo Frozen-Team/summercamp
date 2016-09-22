@@ -6,4 +6,5 @@ var (
 	TeamModel        = new(Team)
 	TransactionModel = new(Transaction)
 	TeamMemberModel  = new(TeamMember)
+	ProjectModel     = new(Project)
 )
