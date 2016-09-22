@@ -40,13 +40,13 @@ func (s *Sphere) Delete() bool {
 }
 
 // spheresAPI is an empty struct which is a receiver of helper methods
-// which can be useful while working with TeamMember model and are not directly relate to it
+// which can be useful while working with Sphere model and are not directly relate to it
 type spheresAPI struct{}
 
-// TeamMembers is an object via which we can access helper methods for the TeamMember model
+// Spheres is an object via which we can access helper methods for the Sphere model
 var Spheres *spheresAPI
 
-// FetchByID fetch a team from the teams table by id
+// FetchByID fetch a sphere from the spheres table by id
 func (s *spheresAPI) FetchByID(id int) (*Sphere, bool) {
 	sphere := Sphere{ID: id}
 	err := DB.Read(&sphere)
