@@ -50,7 +50,7 @@ type skillsAPI struct{}
 // Skills is an object via which we can access helper methods for the Skill model.
 var Skills *skillsAPI
 
-// FetchByID fetch a a skill from the skills table by id
+// FetchByID fetch a skill from the skills table by id
 func (s *skillsAPI) FetchByID(id int) (*Skill, bool) {
 	skill := Skill{ID: id}
 	err := DB.Read(&skill)
