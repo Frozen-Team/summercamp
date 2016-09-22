@@ -64,7 +64,8 @@ func (s *skillsAPI) NewSkill(name string) *Skill {
 }
 
 // FetchSkillsByNames fetch skills by their names. For some possible use, the 'name' field
-// of the model is also initialized.
+// of the model is also initialized. If some of the skills are not present in the db, the method
+// still returns true and those skills, which were successfully fetched
 func (s *skillsAPI) FetchSkillsByNames(skillNames ...string) ([]Skill, bool) {
 	if len(skillNames) == 0 {
 		beego.Warning("Empty skill names are passed to FetchIDsByNames")
@@ -74,6 +75,28 @@ func (s *skillsAPI) FetchSkillsByNames(skillNames ...string) ([]Skill, bool) {
 	var skills []Skill
 
 	_, err := DB.QueryTable(SkillModel).Filter("name__in", skillNames).All(&skills)
+	if err != nil {
+		return nil, utils.ProcessError(err, " fetch skills by names")
+	}
 
-	return skills, utils.ProcessError(err, " fetch skills by names")
+	if len(skills) != len(skillNames) {
+		beego.BeeLogger.Warning("the following skills '%#v' cannot be fetched from the db",
+			findMissing(skills, skillNames))
+	}
+
+	return skills, true
+}
+
+// findMissing find that skill names from skillNames which are not in skills
+func findMissing(skills []Skill, skillNames []string) []string {
+	var results []string
+	for _, skillName := range skillNames {
+		for _, skill := range skills {
+			if skillName == skill.Name {
+				break
+			}
+		}
+		results = append(results, skillName)
+	}
+	return results
 }

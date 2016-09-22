@@ -26,5 +26,36 @@ func TestSkillsAPI(t *testing.T) {
 			So(ok, ShouldBeTrue)
 			So(skill, ShouldNotBeNil)
 		})
+
+		Convey("test fetch skills by their names", func() {
+			Convey("all match list", func() {
+				skillNames := []string{"Go", "C"}
+				skills, ok := models.Skills.FetchSkillsByNames(skillNames...)
+				So(ok, ShouldBeTrue)
+				So(skills, ShouldHaveLength, len(skillNames))
+			})
+
+			Convey("1 match", func() {
+				skillNames := []string{"Go", "PHP"}
+				skills, ok := models.Skills.FetchSkillsByNames(skillNames...)
+				So(ok, ShouldBeTrue)
+				So(skills, ShouldHaveLength, 1)
+			})
+
+			Convey("no match", func() {
+				skillNames := []string{"JS", "PHP"}
+				skills, ok := models.Skills.FetchSkillsByNames(skillNames...)
+				So(ok, ShouldBeTrue)
+				So(skills, ShouldHaveLength, 0)
+
+			})
+
+			Convey("invalid list: empty list", func() {
+				skillNames := []string{}
+				skills, ok := models.Skills.FetchSkillsByNames(skillNames...)
+				So(ok, ShouldBeFalse)
+				So(skills, ShouldBeNil)
+			})
+		})
 	})
 }
