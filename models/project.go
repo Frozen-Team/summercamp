@@ -40,3 +40,21 @@ func (p *Project) Delete() bool {
 	_, err := DB.Delete(p)
 	return utils.ProcessError(err, " delete project")
 }
+
+type projectsAPI struct{}
+
+var Projects *projectsAPI
+
+// FetchByID fetches a project from the projects table by id.
+func (t *projectsAPI) FetchByID(id int) (*Project, bool) {
+	project := Project{ID: id}
+	err := DB.Read(&project)
+	return &project, utils.ProcessError(err, " fetch the project by id")
+}
+
+// FetchAllByClient fetches all projects for the given user.
+func (p *projectsAPI) FetchAllByClient(clientID int) ([]Project, bool) {
+	var projects []Project
+	_, err := DB.QueryTable(ProjectModel).Filter("client_id", clientID).All(&projects)
+	return projects, utils.ProcessError(err, " fetch projects by client")
+}
