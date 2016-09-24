@@ -84,7 +84,7 @@ func (u *usersAPI) FetchByID(id int) (*User, bool) {
 // FetchByEmail fetches the user from users table by email
 func (u *usersAPI) FetchByEmail(email string) (*User, bool) {
 	var user User
-	err := DB.QueryTable(UserObj).Filter("email", email).One(&user)
+	err := DB.QueryTable(UserModel).Filter("email", email).One(&user)
 	return &user, utils.ProcessError(err, "fetch the user by email")
 }
 

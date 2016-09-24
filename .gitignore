@@ -25,6 +25,9 @@ _cgo_export.*
 _testmain.go
 
 *.exe
+*.exe~
+*.zip
+*.tmp
 *.test
 *.prof
 
@@ -62,3 +65,6 @@ summercamp
 
 #godeps
 Godeps/Readme
+
+# ignore swagger
+swagger/
