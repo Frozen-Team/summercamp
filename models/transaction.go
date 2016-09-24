@@ -5,7 +5,6 @@ import (
 
 	"bitbucket.org/SummerCampDev/summercamp/models/utils"
 	"github.com/astaxie/beego"
-	"os/user"
 )
 
 type TransactionType string

@@ -7,4 +7,6 @@ var (
 	TransactionModel = new(Transaction)
 	TeamMemberModel  = new(TeamMember)
 	SphereModel     = new(Sphere)
+	SkillModel      = new(Skill)
+	ProjectModel     = new(Project)
 )
