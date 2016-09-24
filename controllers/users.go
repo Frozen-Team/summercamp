@@ -27,7 +27,7 @@ func (uc *Users) Register() {
 
 // Current serves the info about the current user. If the user is not authorized,
 // a error is served.
-// @route GET /users/me
+// @route GET /users/current
 func (uc *Users) Current() {
 	user := uc.authorisedUser()
 	if user != nil {
