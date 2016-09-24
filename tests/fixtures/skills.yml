@@ -6,3 +6,11 @@
   id: 2
   name: C
   sphere_id: 1
+-
+  id: 3
+  name: Haskell
+  sphere_id: 1
+-
+  id: 4
+  name: C++
+  sphere_id: 1
