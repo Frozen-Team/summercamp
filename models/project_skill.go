@@ -56,15 +56,19 @@ func (ps *ProjectSkillsAPI) SaveSkillsForProject(projectID int, skillIDs ...int)
 		return false
 	}
 
+	var failedSkills []int
 	for _, skillID := range skillIDs {
 		projectSkill := ProjectSkill{
 			ProjectID: projectID,
 			SkillID:   skillID,
 		}
 		if ok := projectSkill.Save(); !ok {
-			return false
+			failedSkills = append(failedSkills, skillID)
 		}
 	}
-
-	return true
+	ok := len(failedSkills) == 0
+	if !ok {
+		beego.BeeLogger.Warning("Failed to save project skills for skills with ids: '%v'", failedSkills)
+	}
+	return ok
 }
