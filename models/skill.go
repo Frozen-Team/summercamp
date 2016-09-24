@@ -43,6 +43,11 @@ func (s *Skill) Delete() bool {
 	return utils.ProcessError(err, " delete skill")
 }
 
+// Projects is a wrapper for a method of ProjectSkillsAPI to fetch projects by a skill id.
+func (s *Skill) Projects() ([]Project, bool) {
+	return ProjectSkills.FetchProjectsBySkill(s.ID)
+}
+
 // skillsAPI is an empty struct which is a receiver of helper methods
 // which can be useful while working with Skill model.
 type skillsAPI struct{}

@@ -72,3 +72,32 @@ func (ps *ProjectSkillsAPI) SaveSkillsForProject(projectID int, skillIDs ...int)
 	}
 	return ok
 }
+
+// FetchSkillsByProject fetch all skills for a given project
+func (ps *ProjectSkillsAPI) FetchSkillsByProject(projectID int) ([]Skill, bool) {
+	var skills []Skill
+	_, err := DB.Raw(`
+	SELECT skills.id,
+	       skills.name,
+	       skills.sphere_id
+	FROM project_skills ps
+	LEFT OUTER JOIN skills ON skills.id=ps.skill_id
+	WHERE ps.project_id=$1;`, projectID).QueryRows(&skills)
+	return skills, utils.ProcessError(err, " fetch skills by a project id")
+}
+
+// FetchProjectsBySkills fetch all projects for a given skill id
+func (ps *ProjectSkillsAPI) FetchProjectsBySkill(skillID int) ([]Project, bool) {
+	var projects []Project
+	_, err := DB.Raw(`
+	SELECT projects.id,
+	       projects.description,
+	       projects.budget,
+	       projects.client_id,
+	       projects.create_time,
+	       projects.update_time
+	FROM project_skills ps
+	LEFT OUTER JOIN projects ON projects.id=ps.project_id
+	WHERE ps.skill_id=$1;`, skillID).QueryRows(&projects)
+	return projects, utils.ProcessError(err, " fetch projects by a skill id")
+}
