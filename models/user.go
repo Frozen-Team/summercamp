@@ -76,6 +76,12 @@ func (u *User) Delete() bool {
 	return utils.ProcessError(err, "delete user")
 }
 
+// Teams returns teams for the current user. If everything is okay, the second
+// returned value is true, false - otherwise.
+func (u *User) Teams() ([]Team, bool) {
+	return TeamMembers.FetchTeamsByMember(u.ID)
+}
+
 type usersAPI struct{}
 
 var Users *usersAPI
@@ -97,7 +103,7 @@ func (u *usersAPI) FetchByEmail(email string) (*User, bool) {
 // FetchAll fetches all users from the users table
 func (u *usersAPI) FetchAll() ([]User, bool) {
 	var users []User
-	_, err := DB.QueryTable(UserObj).All(&users)
+	_, err := DB.QueryTable(UserModel).All(&users)
 	return users, utils.ProcessError(err, "fetch all users")
 }
 
@@ -107,6 +113,6 @@ func (u *usersAPI) FetchAllByType(s Speciality) ([]User, bool) {
 		return nil, utils.ProcessError(fmt.Errorf("Not valid Speciality '%s'", s), "fetch users by type")
 	}
 	result := []User{}
-	_, err := DB.QueryTable(UserObj).Filter("Type__exact", s).All(&result)
+	_, err := DB.QueryTable(UserModel).Filter("Type__exact", s).All(&result)
 	return result, utils.ProcessError(err, "fetch users by type")
 }
