@@ -51,6 +51,10 @@ func InitDB() {
 func registerModels() {
 	orm.RegisterModel(UserModel)
 	orm.RegisterModel(TeamModel)
+	orm.RegisterModel(TransactionModel)
 	orm.RegisterModel(TeamMemberModel)
 	orm.RegisterModel(ProjectSkillModel)
+	orm.RegisterModel(SphereModel)
+	orm.RegisterModel(SkillModel)
+	orm.RegisterModel(ProjectModel)
 }
