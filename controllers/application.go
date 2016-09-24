@@ -37,13 +37,13 @@ func (a *ApplicationController) serveAJAXSuccess(data interface{}) {
 
 // serveAJAXErrorMeta serve error AJAX as described in ServeError plus some external meta data
 func (a *ApplicationController) serveAJAXErrorMeta(data interface{}, meta map[string]interface{}, errors ...interface{}) {
-	a.serveAJAX(true, data, meta, errors)
+	a.serveAJAX(true, data, meta, errors...)
 }
 
 // serveAJAXError response AJAX error with true "has-error" and "errors" equals to the all occured errors
 // The specified data is passed directly to responseAJAX.
 func (a *ApplicationController) serveAJAXError(data interface{}, errors ...interface{}) {
-	a.serveAJAXErrorMeta(data, nil, errors)
+	a.serveAJAXErrorMeta(data, nil, errors...)
 }
 
 // serveAJAX response with the json with two keys: "meta" and "data".
