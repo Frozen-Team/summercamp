@@ -24,3 +24,15 @@ func (uc *Users) Register() {
 
 	uc.serveAJAXSuccess(user)
 }
+
+// Current serves the info about the current user. If the user is not authorized,
+// a error is served.
+func (uc *Users) Current() {
+	user := uc.authorisedUser()
+	if user != nil {
+		uc.serveAJAXError(nil, "unauthorized")
+		return
+	}
+
+	uc.serveAJAXSuccess(user)
+}
