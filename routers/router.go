@@ -8,6 +8,7 @@ import (
 func init() {
 	usersNS := beego.NewNamespace("/users",
 		beego.NSRouter("", &controllers.Users{}, "post:Register"),
+		beego.NSRouter("/me", &controllers.Users{}, "get:Current"),
 	)
 
 	beego.AddNamespace(usersNS)
