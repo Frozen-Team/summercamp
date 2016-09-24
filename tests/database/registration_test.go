@@ -11,9 +11,21 @@ import (
 
 	"bitbucket.org/SummerCampDev/summercamp/models"
 	"bitbucket.org/SummerCampDev/summercamp/models/forms"
+	"bitbucket.org/SummerCampDev/summercamp/tests/setup"
 	"github.com/astaxie/beego"
 	. "github.com/smartystreets/goconvey/convey"
 )
+
+func TestUserModel(t *testing.T) {
+	Convey("Test User model", t, func() {
+		Convey("Test FetchAll", func() {
+			c := setup.GetFixture("users").Count()
+			users, ok := models.Users.FetchAll()
+			So(ok, ShouldBeTrue)
+			So(users, ShouldHaveLength, c)
+		})
+	})
+}
 
 func TestRegistrationAction(t *testing.T) {
 	Convey("Test registration action", t, func() {
@@ -22,14 +34,10 @@ func TestRegistrationAction(t *testing.T) {
 		w := httptest.NewRecorder()
 		beego.BeeApp.Handlers.ServeHTTP(w, r)
 		beego.Trace("testing", "TestRegistrationAction", "Code[%d]\n%s", w.Code, w.Body.String())
-		Convey("Subject: Test Station Endpoint\n", func() {
-			Convey("Status Code Should Be 200", func() {
-				So(w.Code, ShouldEqual, 200)
-			})
-			Convey("The Result Should Not Be Empty", func() {
-				So(w.Body.Len(), ShouldBeGreaterThan, 0)
-			})
-		})
+
+		So(w.Code, ShouldEqual, 200)
+		So(w.Body.Len(), ShouldBeGreaterThan, 0)
+
 	})
 }
 
@@ -46,6 +54,8 @@ func TestRegistrationForm(t *testing.T) {
 			City:            "city",
 		}
 
+		// TODO: add Delete method to user and remove user here if everything is okay so the tests with fixtures
+		// can succeed
 		Convey("Everything is okay", func() {
 			ur.Type = models.SpecTypeExecutor
 

@@ -33,6 +33,12 @@ func (t *Team) Save() bool {
 	return utils.ProcessError(err, action+" team")
 }
 
+// Members return all members` ids for the current team. If there is no error, the second
+// return value is true, false - otherwise
+func (t *Team) Members() ([]User, bool) {
+	return TeamMembers.FetchMembersByTeam(t.ID)
+}
+
 type teamsAPI struct{}
 
 var Teams *teamsAPI
@@ -47,6 +53,6 @@ func (t *teamsAPI) FetchByID(id int) (*Team, bool) {
 // FetchAll fetches all teams from the users table
 func (t *teamsAPI) FetchAll() ([]Team, bool) {
 	var teams []Team
-	_, err := DB.QueryTable(TeamObj).All(&teams)
+	_, err := DB.QueryTable(TeamModel).All(&teams)
 	return teams, utils.ProcessError(err, "fetch all teams")
 }
