@@ -8,18 +8,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type Speciality string
-
-const (
-	SpecTypeManager  Speciality = "manager"
-	SpecTypeClient   Speciality = "client"
-	SpecTypeExecutor Speciality = "executor"
-)
-
-func (s Speciality) Valid() bool {
-	return s == SpecTypeManager || s == SpecTypeClient || s == SpecTypeExecutor
-}
-
 type User struct {
 	ID          int        `orm:"column(id)"`
 	Type        Speciality `orm:"column(type)"`

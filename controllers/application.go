@@ -40,7 +40,7 @@ func (a *ApplicationController) serveAJAXErrorMeta(data interface{}, meta map[st
 	a.serveAJAX(true, data, meta, errors)
 }
 
-// serveAJAXError response AJAX error with true "has-error" and "errors" equals to the all occured errors
+// serveAJAXError response AJAX error with true "has-error" and "errors" equals to the all occurred errors
 // The specified data is passed directly to responseAJAX.
 func (a *ApplicationController) serveAJAXError(data interface{}, errors ...interface{}) {
 	a.serveAJAXErrorMeta(data, nil, errors)
