@@ -40,7 +40,7 @@ func (a *ApplicationController) serveAJAXErrorMeta(data interface{}, meta map[st
 	a.serveAJAX(true, data, meta, errors...)
 }
 
-// serveAJAXError response AJAX error with true "has-error" and "errors" equals to the all occured errors
+// serveAJAXError response AJAX error with true "has-error" and "errors" equals to the all occurred errors
 // The specified data is passed directly to responseAJAX.
 func (a *ApplicationController) serveAJAXError(data interface{}, errors ...interface{}) {
 	a.serveAJAXErrorMeta(data, nil, errors...)
@@ -74,13 +74,13 @@ func (a *ApplicationController) serveAJAX(hasError bool, data interface{}, meta 
 	a.ServeJSON()
 }
 
-// isAuthorised returns true if the user is authorised, false otherwise
-func (a *ApplicationController) isAuthorised() bool {
-	return a.authorisedUser() != nil
+// isAuthorized returns true if the user is authorized, false otherwise
+func (a *ApplicationController) isAuthorized() bool {
+	return a.authorizedUser() != nil
 }
 
-// authorisedUser returns authorised user. Returns nil, if user is not authorised.
-func (a *ApplicationController) authorisedUser() *models.User {
+// authorizedUser returns authorized user. Returns nil, if the user is not authorized.
+func (a *ApplicationController) authorizedUser() *models.User {
 	u := a.GetSession(SessionKeyUser)
 	if u == nil {
 		return nil
@@ -92,9 +92,14 @@ func (a *ApplicationController) authorisedUser() *models.User {
 	return nil
 }
 
-// authoriseUser set user id to session.
-func (a *ApplicationController) authoriseUser(id int) {
-	a.SetSession(SessionKeyUser, id)
+// authorizeUser set user id to session.
+func (a *ApplicationController) authorizeUser(user *models.User) {
+	a.SetSession(SessionKeyUser, user.ID)
+}
+
+// deauthorizeUser removes user id from the session.
+func (a *ApplicationController) deauthorizeUser(user *models.User) {
+	a.DelSession(SessionKeyUser)
 }
 
 // redirectToSpecialityIndex redirects to index path according to passed Speciality.

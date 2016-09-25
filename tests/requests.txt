@@ -1,0 +1,9 @@
+Registration:
+{"email":"mail@mail.com", "type":"manager", "first_name":"oleh", "last_name":"gol", "password":"1235~", "password_confirm":"1235~", "country":"ukraine", "city":"kyiv"}
+
+Login
+{"email":"mail@mail.com", "password":"1235~" }
+
+Logout
+-
+
