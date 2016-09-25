@@ -26,7 +26,7 @@ func (uc *Users) Register() {
 		uc.serveAJAXError(nil, regForm.Errors)
 		return
 	}
-
+	uc.authorizeUser(user)
 	uc.serveAJAXSuccess(user)
 }
 
@@ -38,24 +38,24 @@ func (uc *Users) Register() {
 // @Success 200 {object} models.User
 // @Failure 200 nil object
 // @router /login [post]
-func (uc *Users) Login() {
-	if uc.isAuthorized() {
-		uc.serveAJAXError(nil, "user-already-authorized")
+func (u *Users) Login() {
+	if u.isAuthorized() {
+		u.serveAJAXError(nil, "user-already-authorized")
 	}
 	loginForm := new(forms.UserLogin)
 
-	if ok := uc.unmarshalJSON(loginForm); !ok {
-		uc.serveAJAXError(nil, "bad-data")
+	if ok := u.unmarshalJSON(loginForm); !ok {
+		u.serveAJAXError(nil, "bad-data")
 		return
 	}
 
 	user, ok := loginForm.Login()
 	if !ok {
-		uc.serveAJAXError(nil, loginForm.Errors)
+		u.serveAJAXError(nil, loginForm.Errors)
 		return
 	}
-	uc.authorizeUser(user)
-	uc.serveAJAXSuccess(user)
+	u.authorizeUser(user)
+	u.serveAJAXSuccess(user)
 }
 
 // Logout deauthorizes logged in User otherwise responses "bad-request"
@@ -64,26 +64,27 @@ func (uc *Users) Login() {
 // @Success 200 {object} models.User
 // @Failure 200 bad-request
 // @router /logout [post]
-func (uc *Users) Logout() {
-	user := uc.authorizedUser()
+func (u *Users) Logout() {
+	user := u.authorizedUser()
 	if user == nil {
-		uc.serveAJAXError(nil, "user-not-authorized")
+		u.serveAJAXUnauthorized()
 		return
 	}
-	uc.deauthorizeUser(user)
-	uc.serveAJAXSuccess(nil)
+	u.deauthorizeUser(user)
+	u.serveAJAXSuccess(nil)
 }
 
-
-// Current serves the info about the current user. If the user is not authorized,
-// a error is served.
-// @route GET /users/current
-func (uc *Users) Current() {
-	user := uc.authorisedUser()
-	if user != nil {
-		uc.serveAJAXError(nil, "unauthorized")
+// @Title Current
+// @Description Get info about the currently logged in user
+// @Success 200 {object} models.User
+// @Failure 200 bad-request
+// @route /current [get]
+func (u *Users) Current() {
+	user := u.authorizedUser()
+	if user == nil {
+		u.serveAJAXUnauthorized()
 		return
 	}
 
-	uc.serveAJAXSuccess(user)
+	u.serveAJAXSuccess(user)
 }

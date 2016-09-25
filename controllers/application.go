@@ -46,6 +46,11 @@ func (a *ApplicationController) serveAJAXError(data interface{}, errors ...inter
 	a.serveAJAXErrorMeta(data, nil, errors...)
 }
 
+// serveAJAXUnauthorized is a convenient wrapper above serveAJAXError to serve "unauthorized" error
+func (a *ApplicationController) serveAJAXUnauthorized() {
+	a.serveAJAXError(nil, "unauthorized")
+}
+
 // serveAJAX response with the json with two keys: "meta" and "data".
 // result meta consists of argument 'meta' map  merged with error and errorType into one map.
 // if 'meta' argument contains key-value pairs which may override specified error and errorType, these values
