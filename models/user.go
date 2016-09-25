@@ -8,18 +8,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type Speciality string
-
-const (
-	SpecTypeManager  Speciality = "manager"
-	SpecTypeClient   Speciality = "client"
-	SpecTypeExecutor Speciality = "executor"
-)
-
-func (s Speciality) Valid() bool {
-	return s == SpecTypeManager || s == SpecTypeClient || s == SpecTypeExecutor
-}
-
 type User struct {
 	ID          int        `orm:"column(id)"`
 	Type        Speciality `orm:"column(type)"`
@@ -57,11 +45,17 @@ func (u *User) Save() bool {
 	return utils.ProcessError(err, action+" user")
 }
 
-// SetPassword method generate the encrypted password based on the given string
+// SetPassword generate the encrypted password based on the given string
 func (u *User) SetPassword(password string) bool {
 	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	u.Password = string(encryptedPassword)
 	return utils.ProcessError(err, "generate bcrypt password")
+}
+
+// CheckPassword checks if given plain password matches hashed password
+func (u *User) CheckPassword(password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
+	return utils.ProcessError(err, "check bcrypt password")
 }
 
 // Delete deletes the user record from the db
@@ -85,6 +79,13 @@ func (u *usersAPI) FetchByID(id int) (*User, bool) {
 	user := User{ID: id}
 	err := DB.Read(&user)
 	return &user, utils.ProcessError(err, "fetch the user by id")
+}
+
+// FetchByEmail fetches the user from users table by email
+func (u *usersAPI) FetchByEmail(email string) (*User, bool) {
+	var user User
+	err := DB.QueryTable(UserModel).Filter("email", email).One(&user)
+	return &user, utils.ProcessError(err, "fetch the user by email")
 }
 
 // FetchAll fetches all users from the users table
