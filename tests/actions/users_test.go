@@ -31,23 +31,34 @@ func TestRegistrationAction(t *testing.T) {
 
 func TestCurrentAction(t *testing.T) {
 	Convey("Test current action", t, func() {
-		//// login
-		body := bytes.NewReader([]byte(`{"email":"mail@mail.com", "password":"1235~"}`))
-		r_, _ := http.NewRequest("POST", "/v1/users/login", body)
-		w_ := httptest.NewRecorder()
-		beego.BeeApp.Handlers.ServeHTTP(w_, r_)
+		cookie := login()
 
-		r, _ := http.NewRequest("GET", "/v1/users/current", nil)
-		w := httptest.NewRecorder()
-		beego.BeeApp.Handlers.ServeHTTP(w, r)
+		Convey("With login: Test current action", func() {
+			r, _ := http.NewRequest("GET", "/v1/users/current", nil)
+			r.AddCookie(cookie)
+			w := httptest.NewRecorder()
+			beego.BeeApp.Handlers.ServeHTTP(w, r)
 
-		So(w.Code, ShouldEqual, 200)
-		So(w.Body.Len(), ShouldBeGreaterThan, 0)
+			So(w.Code, ShouldEqual, 200)
+			So(w.Body.Len(), ShouldBeGreaterThan, 0)
 
-		response, err := ReadResponse(w.Body)
-		So(err, ShouldBeNil)
+			response, err := ReadResponse(w.Body)
+			So(err, ShouldBeNil)
 
-		So(response.Meta.HasError, ShouldBeFalse)
-		So(response.Data, ShouldNotBeNil)
+			So(response.Meta.HasError, ShouldBeFalse)
+			So(response.Data, ShouldNotBeNil)
+		})
+
+		Convey("Without login: Test current action", func() {
+			r, _ := http.NewRequest("GET", "/v1/users/current", nil)
+			w := httptest.NewRecorder()
+			beego.BeeApp.Handlers.ServeHTTP(w, r)
+
+			response, err := ReadResponse(w.Body)
+			So(err, ShouldBeNil)
+
+			So(response.Meta.HasError, ShouldBeTrue)
+			So(response.Data, ShouldBeNil)
+		})
 	})
 }
