@@ -40,7 +40,7 @@ func (uc *Users) Register() {
 // @router /login [post]
 func (u *Users) Login() {
 	if u.isAuthorized() {
-		u.serveAJAXError(nil, "user-already-authorized")
+		u.serveAJAXUnauthorized()
 	}
 	loginForm := new(forms.UserLogin)
 
@@ -78,7 +78,7 @@ func (u *Users) Logout() {
 // @Description Get info about the currently logged in user
 // @Success 200 {object} models.User
 // @Failure 200 bad-request
-// @route /current [get]
+// @router /current [get]
 func (u *Users) Current() {
 	user := u.authorizedUser()
 	if user == nil {
