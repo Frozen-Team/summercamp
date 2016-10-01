@@ -9,7 +9,7 @@ import (
 
 func TestSphereModel(t *testing.T) {
 	Convey("Test sphere model", t, func() {
-		sphere := models.Spheres.NewSphere("Web")
+		sphere := models.Spheres.NewSphere("Desktop")
 
 		ok := sphere.Save()
 
