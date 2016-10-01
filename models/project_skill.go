@@ -8,7 +8,7 @@ import (
 type ProjectSkill struct {
 	ID        int `json:"id" orm:"column(id)"`
 	ProjectID int `json:"project_id" orm:"column(project_id)"`
-	SkillID   int `json:"skill_id" orm:"column(column_id)"`
+	SkillID   int `json:"skill_id" orm:"column(skill_id)"`
 }
 
 // TableName specify the table name for ProjectSkill model. This name is used in the orm RegisterModel
