@@ -7,3 +7,9 @@ Login
 Logout
 -
 
+UpdateField
+{"field":"first_name", "value":"NewFirstName"}
+{"field":"last_name", "value":"NewLastName"}
+{"field":"city", "value":"NewCity"}
+{"field":"country", "value":"NewCountry"}
+

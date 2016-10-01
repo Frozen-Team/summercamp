@@ -23,8 +23,28 @@ const (
 // It contains common helper methods.
 type ApplicationController struct {
 	beego.Controller
+	currentUser *models.User
+	skipAuthorizationActions []string
 }
 
+func (a *ApplicationController ) SkipAuthorizationActions(action ...string)  {
+	a.skipAuthorizationActions = append(a.skipAuthorizationActions, action...)
+}
+func (a *ApplicationController) Prepare() {
+	_, action := a.GetControllerAndAction()
+	for _, a:= range a.skipAuthorizationActions {
+		if a == action {
+			return
+		}
+	}
+	user := a.authorizedUser()
+	if user == nil {
+		a.serveAJAXUnauthorized()
+		a.StopRun()
+		return
+	}
+	a.currentUser = user
+}
 // serveAJAXSuccessMeta serve success AJAX as described in ServeSuccess plus some external meta data.
 func (a *ApplicationController) serveAJAXSuccessMeta(data interface{}, meta map[string]interface{}) {
 	a.serveAJAX(false, data, meta, "")
@@ -43,15 +63,15 @@ func (a *ApplicationController) serveAJAXErrorMeta(data interface{}, meta map[st
 
 // serveAJAXError response AJAX error with true "has-error" and "errors" equals to the all occurred errors
 // The specified data is passed directly to responseAJAX.
-func (a *ApplicationController) serveAJAXError(data interface{}, errors ...string) {
+func (a *ApplicationController) serveAJAXError(data interface{}, code int, errors ...string) {
+	a.setStatusCode(code)
 	a.serveAJAXErrorMeta(data, nil, errors...)
 }
 
 // serveAJAXBadRequest is a wrapper, which also sets the status code to 400
 func (a *ApplicationController) serveAJAXBadRequest(errors ...string) {
 	errors = append(errors, "bad-request")
-	a.setStatusCode(http.StatusBadRequest)
-	a.serveAJAXError(nil, errors...)
+	a.serveAJAXError(nil, http.StatusBadRequest, errors...)
 }
 
 // setStatusCode sets status code for the current response
@@ -61,8 +81,7 @@ func (a *ApplicationController) setStatusCode(code int) {
 
 // serveAJAXUnauthorized is a convenient wrapper above serveAJAXError to serve "unauthorized" error
 func (a *ApplicationController) serveAJAXUnauthorized() {
-	a.setStatusCode(http.StatusUnauthorized)
-	a.serveAJAXError(nil, "unauthorized")
+	a.serveAJAXError(nil, http.StatusUnauthorized, "unauthorized")
 }
 
 // serveAJAX response with the json with two keys: "meta" and "data".
@@ -119,19 +138,6 @@ func (a *ApplicationController) authorizeUser(user *models.User) {
 // deauthorizeUser removes user id from the session.
 func (a *ApplicationController) deauthorizeUser() {
 	a.DelSession(SessionKeyUser)
-}
-
-// redirectToSpecialityIndex redirects to index path according to passed Speciality.
-func (r *ApplicationController) redirectToSpecialityIndex(s models.Speciality) {
-	switch s {
-	case models.SpecTypeExecutor:
-		r.Redirect(beego.URLFor("Executor.Index"), http.StatusMovedPermanently)
-	case models.SpecTypeClient:
-		r.Redirect(beego.URLFor("Client.Index"), http.StatusMovedPermanently)
-	case models.SpecTypeManager:
-		r.Redirect(beego.URLFor("Manager.Index"), http.StatusMovedPermanently)
-	}
-	beego.BeeLogger.Error("Trying to redirect to bad speciality index path '%d'", s)
 }
 
 // unmarshalJSON parses a json object from request body and fills the fields of the v interface.
