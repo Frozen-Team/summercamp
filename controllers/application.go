@@ -37,18 +37,18 @@ func (a *ApplicationController) serveAJAXSuccess(data interface{}) {
 }
 
 // serveAJAXErrorMeta serve error AJAX as described in ServeError plus some external meta data
-func (a *ApplicationController) serveAJAXErrorMeta(data interface{}, meta map[string]interface{}, errors ...interface{}) {
+func (a *ApplicationController) serveAJAXErrorMeta(data interface{}, meta map[string]interface{}, errors ...string) {
 	a.serveAJAX(true, data, meta, errors...)
 }
 
 // serveAJAXError response AJAX error with true "has-error" and "errors" equals to the all occurred errors
 // The specified data is passed directly to responseAJAX.
-func (a *ApplicationController) serveAJAXError(data interface{}, errors ...interface{}) {
+func (a *ApplicationController) serveAJAXError(data interface{}, errors ...string) {
 	a.serveAJAXErrorMeta(data, nil, errors...)
 }
 
 // serveAJAXBadRequest is a wrapper, which also sets the status code to 400
-func (a *ApplicationController) serveAJAXBadRequest(errors ...interface{}) {
+func (a *ApplicationController) serveAJAXBadRequest(errors ...string) {
 	errors = append(errors, "bad-request")
 	a.setStatusCode(http.StatusBadRequest)
 	a.serveAJAXError(nil, errors...)
@@ -69,7 +69,7 @@ func (a *ApplicationController) serveAJAXUnauthorized() {
 // result meta consists of argument 'meta' map  merged with error and errorType into one map.
 // if 'meta' argument contains key-value pairs which may override specified error and errorType, these values
 // are skipped so the original arguments are primer.
-func (a *ApplicationController) serveAJAX(hasError bool, data interface{}, meta map[string]interface{}, errors ...interface{}) {
+func (a *ApplicationController) serveAJAX(hasError bool, data interface{}, meta map[string]interface{}, errors ...string) {
 	response := struct {
 		Meta map[string]interface{} `json:"meta"`
 		Data interface{}            `json:"data"`
