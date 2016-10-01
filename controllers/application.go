@@ -32,6 +32,7 @@ func (a *ApplicationController) serveAJAXSuccessMeta(data interface{}, meta map[
 
 // serveAJAXSuccess response success ajax with the given data into json format
 func (a *ApplicationController) serveAJAXSuccess(data interface{}) {
+	a.setStatusCode(http.StatusOK)
 	a.serveAJAXSuccessMeta(data, nil)
 }
 
@@ -46,8 +47,21 @@ func (a *ApplicationController) serveAJAXError(data interface{}, errors ...inter
 	a.serveAJAXErrorMeta(data, nil, errors...)
 }
 
+// serveAJAXBadRequest is a wrapper, which also sets the status code to 400
+func (a *ApplicationController) serveAJAXBadRequest(errors ...interface{}) {
+	errors = append(errors, "bad-request")
+	a.setStatusCode(http.StatusBadRequest)
+	a.serveAJAXError(nil, errors...)
+}
+
+// setStatusCode sets status code for the current response
+func (a *ApplicationController) setStatusCode(code int) {
+	a.Ctx.ResponseWriter.WriteHeader(code)
+}
+
 // serveAJAXUnauthorized is a convenient wrapper above serveAJAXError to serve "unauthorized" error
 func (a *ApplicationController) serveAJAXUnauthorized() {
+	a.setStatusCode(http.StatusUnauthorized)
 	a.serveAJAXError(nil, "unauthorized")
 }
 

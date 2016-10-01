@@ -22,7 +22,7 @@ func TestRegistrationAction(t *testing.T) {
 		w := httptest.NewRecorder()
 		beego.BeeApp.Handlers.ServeHTTP(w, r)
 		beego.Trace("testing", "TestRegistrationAction", "Code[%d]\n%s", w.Code, w.Body.String())
-
+		So(w.Code, ShouldEqual, http.StatusOK)
 		response, err := ReadResponse(w.Body)
 		So(err, ShouldBeNil)
 		So(response.Meta.HasError, ShouldBeFalse)
@@ -39,7 +39,7 @@ func TestCurrentAction(t *testing.T) {
 			w := httptest.NewRecorder()
 			beego.BeeApp.Handlers.ServeHTTP(w, r)
 
-			So(w.Code, ShouldEqual, 200)
+			So(w.Code, ShouldEqual, http.StatusOK)
 			So(w.Body.Len(), ShouldBeGreaterThan, 0)
 
 			response, err := ReadResponse(w.Body)
@@ -53,7 +53,7 @@ func TestCurrentAction(t *testing.T) {
 			r, _ := http.NewRequest("GET", "/v1/users/current", nil)
 			w := httptest.NewRecorder()
 			beego.BeeApp.Handlers.ServeHTTP(w, r)
-
+			So(w.Code, ShouldEqual, http.StatusUnauthorized)
 			response, err := ReadResponse(w.Body)
 			So(err, ShouldBeNil)
 

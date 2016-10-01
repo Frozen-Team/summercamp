@@ -17,13 +17,13 @@ func (uc *Users) Register() {
 	regForm := new(forms.UserRegistration)
 
 	if ok := uc.unmarshalJSON(regForm); !ok {
-		uc.serveAJAXError(nil, "bad-data")
+		uc.serveAJAXBadRequest()
 		return
 	}
 
 	user, ok := regForm.Register()
 	if !ok {
-		uc.serveAJAXError(nil, regForm.Errors)
+		uc.serveAJAXBadRequest(regForm.Errors)
 		return
 	}
 	uc.authorizeUser(user)
@@ -42,13 +42,13 @@ func (u *Users) Login() {
 	loginForm := new(forms.UserLogin)
 
 	if ok := u.unmarshalJSON(loginForm); !ok {
-		u.serveAJAXError(nil, "bad-data")
+		u.serveAJAXBadRequest()
 		return
 	}
 
 	user, ok := loginForm.Login()
 	if !ok {
-		u.serveAJAXError(nil, loginForm.Errors)
+		u.serveAJAXBadRequest(loginForm.Errors)
 		return
 	}
 	u.authorizeUser(user)
