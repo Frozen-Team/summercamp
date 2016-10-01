@@ -7,7 +7,7 @@ type Api struct {
 
 func (a *Api) Prepare() {
 	a.SkipAuthorizationActions("Ping")
-	a.Prepare()
+	a.ApplicationController.Prepare()
 }
 
 // @Title Ping
