@@ -39,9 +39,6 @@ func (uc *Users) Register() {
 // @Failure 200 nil object
 // @router /login [post]
 func (u *Users) Login() {
-	if u.isAuthorized() {
-		u.serveAJAXUnauthorized()
-	}
 	loginForm := new(forms.UserLogin)
 
 	if ok := u.unmarshalJSON(loginForm); !ok {
@@ -65,12 +62,7 @@ func (u *Users) Login() {
 // @Failure 200 bad-request
 // @router /logout [post]
 func (u *Users) Logout() {
-	user := u.authorizedUser()
-	if user == nil {
-		u.serveAJAXUnauthorized()
-		return
-	}
-	u.deauthorizeUser(user)
+	u.deauthorizeUser()
 	u.serveAJAXSuccess(nil)
 }
 
