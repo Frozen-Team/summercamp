@@ -6,11 +6,19 @@ import (
 	"bitbucket.org/SummerCampDev/summercamp/models/utils"
 )
 
+type AccessLevel int
+
+const (
+	LevelAdmin AccessLevel = 0
+	LevelReadOnly AccessLevel = 100
+)
+
 // TeamMember represents a member with UserID who is in the team with TeamID.
 type TeamMember struct {
-	ID         int       `json:"id" orm:"column(id)"`
-	TeamID     int       `json:"team_id" orm:"column(team_id)"`
-	UserID     int       `json:"user_id" orm:"column(user_id)"`
+	ID         int        `json:"id" orm:"column(id)"`
+	TeamID     int        `json:"team_id" orm:"column(team_id)"`
+	UserID     int        `json:"user_id" orm:"column(user_id)"`
+	Access     AccessLevel        `json:"access" orm:"column(access)"`
 	CreateTime time.Time `json:"create_time" orm:"column(create_time);auto_now_add;type(datetime)"`
 }
 
@@ -33,17 +41,13 @@ func (tm *TeamMember) Save() bool {
 		action = "update"
 	}
 
-	return utils.ProcessError(err, action+" team member")
+	return utils.ProcessError(err, action + " team member")
 }
 
-// Delete deletes a record from the db. If the record is successfully deleted, the return value
+// Delete deletes a team member record from the db. If the record is successfully deleted, the return value
 // is true, false - otherwise.
 func (tm *TeamMember) Delete() bool {
-	if tm.ID == 0 {
-		return false
-	}
 	_, err := DB.Delete(tm)
-
 	return utils.ProcessError(err, " delete team member")
 }
 

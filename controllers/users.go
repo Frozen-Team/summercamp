@@ -1,18 +1,28 @@
 package controllers
 
-import "bitbucket.org/SummerCampDev/summercamp/models/forms"
+import (
+	"bitbucket.org/SummerCampDev/summercamp/models/forms"
+	"strconv"
+	"bitbucket.org/SummerCampDev/summercamp/models"
+	"net/http"
+)
 
 // Operations about Users
 type Users struct {
 	ApplicationController
 }
 
+func (u *Users ) Prepare() {
+	u.SkipAuthorizationActions("Register", "Login")
+	u.ApplicationController.Prepare()
+}
 // Register reads the data from the request body into forms.UserReg struct and attempts to save a user to db
 // @Title Register
 // @Description User registration
 // @Param body body string true "Registration info"
 // @Success 200 {object} models.User
-// @router / [post]
+// @Failure 200 Nil object and error tag
+// @router /users/ [post]
 func (uc *Users) Register() {
 	regForm := new(forms.UserRegistration)
 
@@ -34,10 +44,10 @@ func (uc *Users) Register() {
 // by email and checks password. In case of success the user is authorized
 // @Title Login
 // @Description Login a user to the system
-// @Param body body string true "Body message"
+// @Param body body string true "Json body message with user credentials"
 // @Success 200 {object} models.User
 // @Failure 200 nil object
-// @router /login [post]
+// @router /users/login [post]
 func (u *Users) Login() {
 	loginForm := new(forms.UserLogin)
 
@@ -60,7 +70,7 @@ func (u *Users) Login() {
 // @Description Logout a user from the system
 // @Success 200 {object} models.User
 // @Failure 200 bad-request
-// @router /logout [post]
+// @router /users/logout [post]
 func (u *Users) Logout() {
 	u.deauthorizeUser()
 	u.serveAJAXSuccess(nil)
@@ -70,13 +80,48 @@ func (u *Users) Logout() {
 // @Description Get info about the currently logged in user
 // @Success 200 {object} models.User
 // @Failure 200 bad-request
-// @router /current [get]
+// @router /users/current [get]
 func (u *Users) Current() {
-	user := u.authorizedUser()
-	if user == nil {
-		u.serveAJAXUnauthorized()
+	u.serveAJAXSuccess(u.currentUser)
+}
+
+// @Title UpdateField
+// @Description Updates user field
+// @Param body body string true "A body that should contain a field name and new value"
+// @Success 200 {object} models.User
+// @Failure 401 Unauthorized
+// @Failure 400 bad-data
+// @router /users/update_field [post]
+func (u *Users) UpdateField() {
+	form := &forms.UserUpdate{}
+
+	if ok := u.unmarshalJSON(form); !ok {
+		u.serveAJAXBadRequest()
 		return
 	}
+	if _, ok := form.Update(u.currentUser); ok {
+		u.serveAJAXSuccess(u.currentUser)
+		return
+	}
+	u.serveAJAXError(nil, http.StatusInternalServerError, form.Errors)
+}
 
-	u.serveAJAXSuccess(user)
+// @Title GetUser
+// @Description Get info about a user by its id
+// @Param id path int true "An id of a user you want to get"
+// @Success 200 {object} models.User
+// @Failure 400 invalid-id or no-such-user
+// @router /users/:id [get]
+func (u *Users) GetUser() {
+	// TODO: Check if the requested user can be seen (publicly or privately)
+	if id, err := strconv.Atoi(u.Ctx.Input.Param(":id")); err != nil {
+		u.serveAJAXBadRequest("invalid-id")
+	} else {
+		user, ok := models.Users.FetchByID(id)
+		if ok {
+			u.serveAJAXSuccess(user)
+		} else {
+			u.serveAJAXBadRequest("no-such-user")
+		}
+	}
 }

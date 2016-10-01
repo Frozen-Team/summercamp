@@ -16,22 +16,29 @@ import (
 type beegoNewNamespace func(prefix string, params ...beego.LinkNamespace) *beego.Namespace
 
 func init() {
-	var bnn beegoNewNamespace
-	bnn = beego.NewNamespace
-
 	goto swaggerAfterFucked
 	// Here is a place where beego's swagger being extremely FUCKED UP
 	// Add your fucking things (other controllers) below
-	_ = beego.NewNamespace("/v1/users",
-		beego.NSInclude(&controllers.Users{}))
+	_ = beego.NewNamespace(
+		"/v1",
+		beego.NSInclude(&controllers.Users{}),
+		beego.NSInclude(&controllers.Teams{}),
+	)
 	swaggerAfterFucked:
 
-	usersNS := bnn("/v1/users",
+	beego.AddNamespace(beego.NewNamespace(
+		"/v1/users",
 		beego.NSRouter("", &controllers.Users{}, "post:Register"),
 		beego.NSRouter("/current", &controllers.Users{}, "get:Current"),
 		beego.NSRouter("/login", &controllers.Users{}, "post:Login"),
 		beego.NSRouter("/logout", &controllers.Users{}, "post:Logout"),
-	)
+		beego.NSRouter("/:id", &controllers.Users{}, "get:GetUser"),
+		beego.NSRouter("/update_field", &controllers.Users{}, "post:UpdateField"),
+	))
 
-	beego.AddNamespace(usersNS)
+	beego.AddNamespace(beego.NewNamespace(
+		"/v1/teams",
+		beego.NSRouter("", &controllers.Teams{}, "post:Register"),
+		beego.NSRouter("/:id", &controllers.Users{}, "delete:Delete"),
+	))
 }
