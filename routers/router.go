@@ -28,6 +28,7 @@ func init() {
 
 	usersNS := bnn("/v1/users",
 		beego.NSRouter("", &controllers.Users{}, "post:Register"),
+		beego.NSRouter("/current", &controllers.Users{}, "get:Current"),
 		beego.NSRouter("/login", &controllers.Users{}, "post:Login"),
 		beego.NSRouter("/logout", &controllers.Users{}, "post:Logout"),
 	)

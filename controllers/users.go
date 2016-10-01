@@ -7,7 +7,6 @@ type Users struct {
 	ApplicationController
 }
 
-
 // Register reads the data from the request body into forms.UserReg struct and attempts to save a user to db
 // @Title Register
 // @Description User registration
@@ -27,7 +26,7 @@ func (uc *Users) Register() {
 		uc.serveAJAXError(nil, regForm.Errors)
 		return
 	}
-
+	uc.authorizeUser(user)
 	uc.serveAJAXSuccess(user)
 }
 
@@ -39,24 +38,24 @@ func (uc *Users) Register() {
 // @Success 200 {object} models.User
 // @Failure 200 nil object
 // @router /login [post]
-func (uc *Users) Login() {
-	if uc.isAuthorized() {
-		uc.serveAJAXError(nil, "user-already-authorized")
+func (u *Users) Login() {
+	if u.isAuthorized() {
+		u.serveAJAXUnauthorized()
 	}
 	loginForm := new(forms.UserLogin)
 
-	if ok := uc.unmarshalJSON(loginForm); !ok {
-		uc.serveAJAXError(nil, "bad-data")
+	if ok := u.unmarshalJSON(loginForm); !ok {
+		u.serveAJAXError(nil, "bad-data")
 		return
 	}
 
 	user, ok := loginForm.Login()
 	if !ok {
-		uc.serveAJAXError(nil, loginForm.Errors)
+		u.serveAJAXError(nil, loginForm.Errors)
 		return
 	}
-	uc.authorizeUser(user)
-	uc.serveAJAXSuccess(user)
+	u.authorizeUser(user)
+	u.serveAJAXSuccess(user)
 }
 
 // Logout deauthorizes logged in User otherwise responses "bad-request"
@@ -65,12 +64,27 @@ func (uc *Users) Login() {
 // @Success 200 {object} models.User
 // @Failure 200 bad-request
 // @router /logout [post]
-func (uc *Users) Logout() {
-	user := uc.authorizedUser()
+func (u *Users) Logout() {
+	user := u.authorizedUser()
 	if user == nil {
-		uc.serveAJAXError(nil, "user-not-authorized")
+		u.serveAJAXUnauthorized()
 		return
 	}
-	uc.deauthorizeUser(user)
-	uc.serveAJAXSuccess(nil)
+	u.deauthorizeUser(user)
+	u.serveAJAXSuccess(nil)
+}
+
+// @Title Current
+// @Description Get info about the currently logged in user
+// @Success 200 {object} models.User
+// @Failure 200 bad-request
+// @router /current [get]
+func (u *Users) Current() {
+	user := u.authorizedUser()
+	if user == nil {
+		u.serveAJAXUnauthorized()
+		return
+	}
+
+	u.serveAJAXSuccess(user)
 }
