@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"bitbucket.org/SummerCampDev/summercamp/models/forms"
-	"strconv"
 	"bitbucket.org/SummerCampDev/summercamp/models"
+	"bitbucket.org/SummerCampDev/summercamp/models/forms"
 	"net/http"
+	"strconv"
 )
 
 // Operations about Users
@@ -12,10 +12,11 @@ type Users struct {
 	ApplicationController
 }
 
-func (u *Users ) Prepare() {
+func (u *Users) Prepare() {
 	u.SkipAuthorizationActions("Register", "Login")
 	u.ApplicationController.Prepare()
 }
+
 // Register reads the data from the request body into forms.UserReg struct and attempts to save a user to db
 // @Title Register
 // @Description User registration
@@ -103,7 +104,7 @@ func (u *Users) UpdateField() {
 		u.serveAJAXSuccess(u.currentUser)
 		return
 	}
-	u.serveAJAXError(nil, http.StatusInternalServerError, form.Errors)
+	u.serveAJAXError(nil, http.StatusInternalServerError, form.Errors...)
 }
 
 // @Title GetUser

@@ -23,7 +23,7 @@ func (tc *Teams) Register() {
 
 	team, ok := form.Register(tc.currentUser)
 	if !ok {
-		tc.serveAJAXBadRequest(form.Errors)
+		tc.serveAJAXBadRequest(form.Errors...)
 		return
 	}
 	tc.serveAJAXSuccess(team)
@@ -45,7 +45,7 @@ func (tc *Teams) Delete() {
 
 	team, ok := form.Register(tc.currentUser)
 	if !ok {
-		tc.serveAJAXBadRequest(form.Errors)
+		tc.serveAJAXBadRequest(form.Errors...)
 		return
 	}
 	tc.serveAJAXSuccess(team)
