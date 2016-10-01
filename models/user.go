@@ -9,20 +9,20 @@ import (
 )
 
 type User struct {
-	ID          int        `orm:"column(id)"`
-	Type        Speciality `orm:"column(type)"`
-	FirstName   string     `orm:"column(first_name)"`
-	LastName    string     `orm:"column(last_name)"`
-	Email       string     `orm:"column(email)"`
-	Password    string     `orm:"column(password)" json:"-"`
-	Balance     int        `orm:"column(balance)"`
-	Bid         int        `orm:"column(bid)"`
-	BraintreeID string     `orm:"column(braintree_id)"`
-	Country     string     `orm:"column(country)"`
-	City        string     `orm:"column(city)"`
-	Timezone    int        `orm:"column(timezone)"`
-	CreateTime  time.Time  `orm:"column(create_time);auto_now_add;type(datetime)"`
-	UpdateTime  time.Time  `orm:"column(update_time);auto_now;type(datetime)"`
+	ID          int        `json:"id" orm:"column(id)"`
+	Type        Speciality `json:"type" orm:"column(type)"`
+	FirstName   string     `json:"first_name" orm:"column(first_name)"`
+	LastName    string     `json:"last_name" orm:"column(last_name)"`
+	Email       string     `json:"email" orm:"column(email)"`
+	Password    string     `json:"-" orm:"column(password)"`
+	Balance     int        `json:"balance" orm:"column(balance)"`
+	Bid         int        `json:"bid" orm:"column(bid)"`
+	BraintreeID string     `json:"braintree_id" orm:"column(braintree_id)"`
+	Country     string     `json:"country" orm:"column(country)"`
+	City        string     `json:"city" orm:"column(city)"`
+	Timezone    int        `json:"timezone" orm:"column(timezone)"`
+	CreateTime  time.Time  `json:"create_time" orm:"column(create_time);auto_now_add;type(datetime)"`
+	UpdateTime  time.Time  `json:"update_time" orm:"column(update_time);auto_now;type(datetime)"`
 }
 
 // TableName specify the table name for User model. This name is used in the orm RegisterModel
