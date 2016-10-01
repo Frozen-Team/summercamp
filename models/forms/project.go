@@ -10,12 +10,12 @@ type Project struct {
 	SphereSkills []SphereSkills `json:"sphere_skills" valid:"Required"`
 }
 
-func (p *Project) Save() (*Project, bool) {
+func (p *Project) Save() (*models.Project, bool) {
 	if !p.validate(p) {
 		return nil, false
 	}
 
-	project := models.Project{
+	project := &models.Project{
 		ClientID:    p.ClientID,
 		Description: p.Description,
 		Budget:      p.Budget,

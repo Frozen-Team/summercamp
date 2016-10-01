@@ -23,7 +23,7 @@ func (uc *Users) Register() {
 
 	user, ok := regForm.Register()
 	if !ok {
-		uc.serveAJAXBadRequest(regForm.Errors)
+		uc.serveAJAXBadRequest(regForm.Errors...)
 		return
 	}
 	uc.authorizeUser(user)
@@ -51,7 +51,7 @@ func (u *Users) Login() {
 
 	user, ok := loginForm.Login()
 	if !ok {
-		u.serveAJAXBadRequest(loginForm.Errors)
+		u.serveAJAXBadRequest(loginForm.Errors...)
 		return
 	}
 	u.authorizeUser(user)
