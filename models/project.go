@@ -48,7 +48,7 @@ func (p *Project) Skills() ([]Skill, bool) {
 
 // Spheres is a wrapper for a method of ProjectSpheresAPI to fetch spheres by a project id.
 func (p *Project) Spheres() ([]Sphere, bool) {
-	return ProjectSpheres.FetchProjectsBySphere(p.ID)
+	return ProjectSpheres.FetchSpheresByProject(p.ID)
 }
 
 type projectsAPI struct{}
