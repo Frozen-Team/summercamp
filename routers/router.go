@@ -24,7 +24,9 @@ func init() {
 	// Add your fucking things (other controllers) below
 	_ = beego.NewNamespace("/v1/users",
 		beego.NSInclude(&controllers.Users{}))
-	swaggerAfterFucked:
+	_ = beego.NewNamespace("/v1/projects",
+		beego.NSInclude(&controllers.Projects{}))
+swaggerAfterFucked:
 
 	usersNS := bnn("/v1/users",
 		beego.NSRouter("", &controllers.Users{}, "post:Register"),
@@ -33,5 +35,10 @@ func init() {
 		beego.NSRouter("/logout", &controllers.Users{}, "post:Logout"),
 	)
 
+	projectsNS := bnn("/v1/projects",
+		beego.NSRouter("", &controllers.Projects{}, "post:Save"),
+	)
+
 	beego.AddNamespace(usersNS)
+	beego.AddNamespace(projectsNS)
 }
