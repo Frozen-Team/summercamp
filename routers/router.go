@@ -24,7 +24,7 @@ func init() {
 		beego.NSInclude(&controllers.Users{}),
 		beego.NSInclude(&controllers.Teams{}),
 	)
-	swaggerAfterFucked:
+swaggerAfterFucked:
 
 	beego.AddNamespace(beego.NewNamespace(
 		"/v1/users",
@@ -40,5 +40,10 @@ func init() {
 		"/v1/teams",
 		beego.NSRouter("", &controllers.Teams{}, "post:Register"),
 		beego.NSRouter("/:id", &controllers.Users{}, "delete:Delete"),
+	))
+
+	beego.AddNamespace(beego.NewNamespace(
+		"/v1/api",
+		beego.NSRouter("/ping", &controllers.Api{}, "get:Ping"),
 	))
 }
