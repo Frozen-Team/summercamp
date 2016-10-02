@@ -23,16 +23,16 @@ const (
 // It contains common helper methods.
 type ApplicationController struct {
 	beego.Controller
-	currentUser *models.User
+	currentUser              *models.User
 	skipAuthorizationActions []string
 }
 
-func (a *ApplicationController ) SkipAuthorizationActions(action ...string)  {
+func (a *ApplicationController) SkipAuthorizationActions(action ...string) {
 	a.skipAuthorizationActions = append(a.skipAuthorizationActions, action...)
 }
 func (a *ApplicationController) Prepare() {
 	_, action := a.GetControllerAndAction()
-	for _, a:= range a.skipAuthorizationActions {
+	for _, a := range a.skipAuthorizationActions {
 		if a == action {
 			return
 		}
@@ -45,6 +45,7 @@ func (a *ApplicationController) Prepare() {
 	}
 	a.currentUser = user
 }
+
 // serveAJAXSuccessMeta serve success AJAX as described in ServeSuccess plus some external meta data.
 func (a *ApplicationController) serveAJAXSuccessMeta(data interface{}, meta map[string]interface{}) {
 	a.serveAJAX(false, data, meta, "")
