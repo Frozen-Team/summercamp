@@ -45,7 +45,7 @@ func (us *UserSphere) Save() (*models.UserSphere, bool) {
 			return nil, false
 		}
 
-		return userSphere, true
+		return &userSphere, true
 
 	case UserSphereRemove:
 		userSphere := models.UserSphere{
