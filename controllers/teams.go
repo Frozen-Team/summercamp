@@ -13,20 +13,20 @@ type Teams struct {
 // @Param body body string true "Registration info"
 // @Success 200 {object} models.Team
 // @router / [post]
-func (tc *Teams) Register() {
+func (t *Teams) Register() {
 	form := new(forms.TeamRegistration)
 
-	if ok := tc.unmarshalJSON(form); !ok {
-		tc.serveAJAXBadRequest()
+	if ok := t.unmarshalJSON(form); !ok {
+		t.serveAJAXBadRequest()
 		return
 	}
 
-	team, ok := form.Register(tc.currentUser)
+	team, ok := form.Register(t.currentUser)
 	if !ok {
-		tc.serveAJAXBadRequest(form.Errors...)
+		t.serveAJAXBadRequest(form.Errors...)
 		return
 	}
-	tc.serveAJAXSuccess(team)
+	t.serveAJAXSuccess(team)
 }
 
 // @Title Delete
@@ -34,19 +34,21 @@ func (tc *Teams) Register() {
 // @Param objectId path int true "the team id you want to get"
 // @Success 200 {object} models.Team
 // @router /:objectId [delete]
-func (tc *Teams) Delete() {
+func (t *Teams) Delete() {
+// @router /teams/:objectId [delete]
+func (t *Teams) Delete() {
 	form := new(forms.TeamRegistration)
 
-	if ok := tc.unmarshalJSON(form); !ok {
-		tc.serveAJAXBadRequest()
+	if ok := t.unmarshalJSON(form); !ok {
+		t.serveAJAXBadRequest()
 		return
 
 	}
 
-	team, ok := form.Register(tc.currentUser)
+	team, ok := form.Register(t.currentUser)
 	if !ok {
-		tc.serveAJAXBadRequest(form.Errors...)
+		t.serveAJAXBadRequest(form.Errors...)
 		return
 	}
-	tc.serveAJAXSuccess(team)
+	t.serveAJAXSuccess(team)
 }
