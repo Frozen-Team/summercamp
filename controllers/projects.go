@@ -2,6 +2,7 @@ package controllers
 
 import "bitbucket.org/SummerCampDev/summercamp/models/forms"
 
+// Operations about Projects
 type Projects struct {
 	ApplicationController
 }
@@ -12,7 +13,7 @@ type Projects struct {
 // @Success 200 {object} models.Project
 // @Failure 400 possible errors, nil object
 // @Failure 401 unauthorized
-// @router /projects [post]
+// @router / [post]
 func (p *Projects) Save() {
 	newProjectForm := new(forms.Project)
 

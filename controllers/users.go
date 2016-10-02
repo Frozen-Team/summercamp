@@ -23,7 +23,7 @@ func (u *Users) Prepare() {
 // @Param body body string true "Registration info"
 // @Success 200 {object} models.User
 // @Failure 200 Nil object and error tag
-// @router /users/ [post]
+// @router / [post]
 func (uc *Users) Register() {
 	regForm := new(forms.UserRegistration)
 
@@ -48,7 +48,7 @@ func (uc *Users) Register() {
 // @Param body body string true "Json body message with user credentials"
 // @Success 200 {object} models.User
 // @Failure 200 nil object
-// @router /users/login [post]
+// @router /login [post]
 func (u *Users) Login() {
 	loginForm := new(forms.UserLogin)
 
@@ -71,7 +71,7 @@ func (u *Users) Login() {
 // @Description Logout a user from the system
 // @Success 200 {object} models.User
 // @Failure 200 bad-request
-// @router /users/logout [post]
+// @router /logout [post]
 func (u *Users) Logout() {
 	u.deauthorizeUser()
 	u.serveAJAXSuccess(nil)
@@ -81,7 +81,7 @@ func (u *Users) Logout() {
 // @Description Get info about the currently logged in user
 // @Success 200 {object} models.User
 // @Failure 200 bad-request
-// @router /users/current [get]
+// @router /current [get]
 func (u *Users) Current() {
 	u.serveAJAXSuccess(u.currentUser)
 }
@@ -92,7 +92,7 @@ func (u *Users) Current() {
 // @Success 200 {object} models.User
 // @Failure 401 Unauthorized
 // @Failure 400 bad-data
-// @router /users/update_field [post]
+// @router /update_field [post]
 func (u *Users) UpdateField() {
 	form := &forms.UserUpdate{}
 
@@ -107,12 +107,33 @@ func (u *Users) UpdateField() {
 	u.serveAJAXError(nil, http.StatusInternalServerError, form.Errors...)
 }
 
+// @Title UpdatePassword
+// @Description Updates password of the user
+// @Param body body string true "A body that should contain the current password, password and password_confirm fields"
+// @Success 200 {object} models.User
+// @Failure 401 Unauthorized
+// @Failure 400 bad-data
+// @router /update_password [post]
+func (u *Users) UpdatePassword() {
+	form := &forms.UserPasswordUpdate{}
+
+	if ok := u.unmarshalJSON(form); !ok {
+		u.serveAJAXBadRequest()
+		return
+	}
+	if _, ok := form.UpdatePassword(u.currentUser); ok {
+		u.serveAJAXSuccess(u.currentUser)
+		return
+	}
+	u.serveAJAXError(nil, http.StatusInternalServerError, form.Errors...)
+}
+
 // @Title GetUser
 // @Description Get info about a user by its id
 // @Param id path int true "An id of a user you want to get"
 // @Success 200 {object} models.User
 // @Failure 400 invalid-id or no-such-user
-// @router /users/:id [get]
+// @router /:id [get]
 func (u *Users) GetUser() {
 	// TODO: Check if the requested user can be seen (publicly or privately)
 	if id, err := strconv.Atoi(u.Ctx.Input.Param(":id")); err != nil {
