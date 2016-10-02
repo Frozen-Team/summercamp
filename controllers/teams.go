@@ -35,8 +35,6 @@ func (t *Teams) Register() {
 // @Success 200 {object} models.Team
 // @router /:objectId [delete]
 func (t *Teams) Delete() {
-// @router /teams/:objectId [delete]
-func (t *Teams) Delete() {
 	form := new(forms.TeamRegistration)
 
 	if ok := t.unmarshalJSON(form); !ok {
