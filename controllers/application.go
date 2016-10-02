@@ -30,6 +30,7 @@ type ApplicationController struct {
 func (a *ApplicationController) SkipAuthorizationActions(action ...string) {
 	a.skipAuthorizationActions = append(a.skipAuthorizationActions, action...)
 }
+
 func (a *ApplicationController) Prepare() {
 	_, action := a.GetControllerAndAction()
 	for _, a := range a.skipAuthorizationActions {

@@ -61,4 +61,8 @@ swaggerAfterFucked:
 		"/v1/api/projects",
 		beego.NSRouter("/", &controllers.Projects{}, "post:Save"),
 	))
+	beego.AddNamespace(beego.NewNamespace(
+		"/v1/user_spheres",
+		beego.NSRouter("", &controllers.UserSpheres{}, "post:Save"),
+	))
 }
