@@ -12,7 +12,7 @@ type Teams struct {
 // @Description Team registration
 // @Param body body string true "Registration info"
 // @Success 200 {object} models.Team
-// @router /teams/ [post]
+// @router / [post]
 func (t *Teams) Register() {
 	form := new(forms.TeamRegistration)
 
@@ -33,7 +33,7 @@ func (t *Teams) Register() {
 // @Description Team removal
 // @Param objectId path int true "the team id you want to get"
 // @Success 200 {object} models.Team
-// @router /teams/:objectId [delete]
+// @router /:objectId [delete]
 func (t *Teams) Delete() {
 	form := new(forms.TeamRegistration)
 

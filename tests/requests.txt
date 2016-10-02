@@ -13,3 +13,6 @@ UpdateField
 {"field":"city", "value":"NewCity"}
 {"field":"country", "value":"NewCountry"}
 
+UpdatePassword
+{"current_password": "1235~", "password":"12351~", "password_confirm":"12351~"}
+

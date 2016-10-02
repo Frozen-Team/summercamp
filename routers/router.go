@@ -21,9 +21,18 @@ func init() {
 	// Add your fucking things (other controllers) below
 	_ = beego.NewNamespace(
 		"/v1",
-		beego.NSInclude(&controllers.Users{}),
-		beego.NSInclude(&controllers.Teams{}),
-		beego.NSInclude(&controllers.Projects{}),
+		beego.NSNamespace("/users",
+			beego.NSInclude(&controllers.Users{}),
+		),
+		beego.NSNamespace("/teams",
+			beego.NSInclude(&controllers.Teams{}),
+		),
+		beego.NSNamespace("/api",
+			beego.NSInclude(&controllers.Api{}),
+		),
+		beego.NSNamespace("/projects",
+			beego.NSInclude(&controllers.Projects{}),
+		),
 	)
 swaggerAfterFucked:
 
@@ -35,6 +44,7 @@ swaggerAfterFucked:
 		beego.NSRouter("/logout", &controllers.Users{}, "post:Logout"),
 		beego.NSRouter("/:id", &controllers.Users{}, "get:GetUser"),
 		beego.NSRouter("/update_field", &controllers.Users{}, "post:UpdateField"),
+		beego.NSRouter("/update_password", &controllers.Users{}, "post:UpdatePassword"),
 	))
 
 	beego.AddNamespace(beego.NewNamespace(
@@ -48,8 +58,8 @@ swaggerAfterFucked:
 		beego.NSRouter("/ping", &controllers.Api{}, "get:Ping"),
 	))
 	beego.AddNamespace(beego.NewNamespace(
-		"/v1/api",
-		beego.NSRouter("/projects", &controllers.Projects{}, "post:Save"),
+		"/v1/api/projects",
+		beego.NSRouter("/", &controllers.Projects{}, "post:Save"),
 	))
 	beego.AddNamespace(beego.NewNamespace(
 		"/v1/user_spheres",

@@ -11,9 +11,9 @@ func (a *Api) Prepare() {
 }
 
 // @Title Ping
-// @Description Service ping-pong
-// @Success 200 message Pong
-// @router /ping/ [get]
+// @Description Platform ping-pong
+// @Success 200 OK
+// @router /ping [get]
 func (a *Api) Ping() {
-	a.serveAJAXSuccess("OK`")
+	a.serveAJAXSuccess("OK")
 }
