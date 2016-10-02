@@ -6,9 +6,9 @@ import (
 )
 
 type UserSphere struct {
-	ID       int `json:"id" orm:"id"`
-	UserID   int `json:"user_id" orm:"user_id"`
-	SphereID int `json:"sphere_id" orm:"sphere_id"`
+	ID       int `json:"id" orm:"column(id)"`
+	UserID   int `json:"user_id" orm:"column(user_id)"`
+	SphereID int `json:"sphere_id" orm:"column(sphere_id)"`
 }
 
 // TableName specify the table name for UserSphere model. This name is used in the orm RegisterModel

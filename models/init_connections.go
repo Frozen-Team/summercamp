@@ -58,4 +58,5 @@ func registerModels() {
 	orm.RegisterModel(SkillModel)
 	orm.RegisterModel(ProjectModel)
 	orm.RegisterModel(ProjectSphereModel)
+	orm.RegisterModel(UserSphereModel)
 }
