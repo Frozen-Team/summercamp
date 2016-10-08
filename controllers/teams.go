@@ -63,13 +63,13 @@ func (t *Teams) Delete() {
 func (u *Users) GetTeam() {
 	// TODO: Check if the requested user can be seen (publicly or privately)
 	if id, err := strconv.Atoi(u.Ctx.Input.Param(":id")); err != nil {
-		u.serveAJAXBadRequest("invalid-id")
+		u.serveAJAXBadRequest("invalid-team-id")
 	} else {
-		user, ok := models.Users.FetchByID(id)
+		user, ok := models.Teams.FetchByID(id)
 		if ok {
 			u.serveAJAXSuccess(user)
 		} else {
-			u.serveAJAXBadRequest("no-such-user")
+			u.serveAJAXBadRequest("no-such-team")
 		}
 	}
 }
