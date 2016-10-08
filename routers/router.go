@@ -45,6 +45,7 @@ swaggerAfterFucked:
 		beego.NSRouter("/:id", &controllers.Users{}, "get:GetUser"),
 		beego.NSRouter("/update_field", &controllers.Users{}, "post:UpdateField"),
 		beego.NSRouter("/update_password", &controllers.Users{}, "post:UpdatePassword"),
+		beego.NSRouter("/update_email", &controllers.Users{}, "post:UpdateEmail"),
 	))
 
 	beego.AddNamespace(beego.NewNamespace(

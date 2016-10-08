@@ -6,7 +6,7 @@ import (
 
 type TeamRegistration struct {
 	FormModel
-	Name        string	`json:"email" valid:"Required"`
+	Name        string	`json:"name" valid:"Required"`
 	Description string	`json:"description" valid:"Required"`
 }
 

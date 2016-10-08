@@ -100,11 +100,11 @@ func (u *Users) UpdateField() {
 		u.serveAJAXBadRequest()
 		return
 	}
-	if _, ok := form.Update(u.currentUser); ok {
-		u.serveAJAXSuccess(u.currentUser)
+	if _, ok := form.Update(u.currentUser); !ok {
+		u.serveAJAXError(nil, http.StatusInternalServerError, form.Errors...)
 		return
 	}
-	u.serveAJAXError(nil, http.StatusInternalServerError, form.Errors...)
+	u.serveAJAXSuccess(u.currentUser)
 }
 
 // @Title UpdatePassword
@@ -121,11 +121,31 @@ func (u *Users) UpdatePassword() {
 		u.serveAJAXBadRequest()
 		return
 	}
-	if _, ok := form.UpdatePassword(u.currentUser); ok {
-		u.serveAJAXSuccess(u.currentUser)
+	if _, ok := form.UpdatePassword(u.currentUser); !ok {
+		u.serveAJAXError(nil, http.StatusInternalServerError, form.Errors...)
 		return
 	}
-	u.serveAJAXError(nil, http.StatusInternalServerError, form.Errors...)
+	u.serveAJAXSuccess(u.currentUser)
+}
+
+// @Title UpdateEmail
+// @Description Updates e-mail of the user
+// @Param body body string true "A body that should contain new email field"
+// @Success 200 {object} models.User
+// @Failure 401 Unauthorized
+// @Failure 400 bad-data
+// @router /update_email [post]
+func (u *Users) UpdateEmail() {
+	form := &forms.UserEmailUpdate{}
+	if ok := u.unmarshalJSON(form); !ok {
+		u.serveAJAXBadRequest()
+		return
+	}
+	if _, ok := form.UpdateEmail(u.currentUser); !ok {
+		u.serveAJAXError(nil, http.StatusInternalServerError, form.Errors...)
+		return
+	}
+	u.serveAJAXSuccess(u.currentUser)
 }
 
 // @Title GetUser
