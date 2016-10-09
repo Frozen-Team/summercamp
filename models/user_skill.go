@@ -79,7 +79,7 @@ func (us *UserSkillsAPI) FetchSkillsByUser(userID int) ([]Skill, bool) {
 	_, err := DB.Raw(`
 	SELECT skills.id,
 	       skills.name,
-	       skills.sphere_id,
+	       skills.sphere_id
 	FROM user_skills us
 	LEFT OUTER JOIN skills ON skills.id=us.skill_id
 	WHERE us.user_id=$1;`, userID).QueryRows(&skills)

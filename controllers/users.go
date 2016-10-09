@@ -165,3 +165,14 @@ func (u *Users) GetUser() {
 		u.serveAJAXBadRequest("no-such-user")
 	}
 }
+
+func (u *Users) GetSkills() {
+	userID := u.currentUser.ID
+
+	skills, ok := models.UserSkills.FetchSkillsByUser(userID)
+	if !ok {
+		u.serveAJAXBadRequest()
+		return
+	}
+	u.serveAJAXSuccess(skills)
+}
