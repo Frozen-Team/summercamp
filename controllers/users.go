@@ -166,6 +166,13 @@ func (u *Users) GetUser() {
 	}
 }
 
+// @Title GetSkills
+// @Description get skills for the user with id passed in the url
+// @Param id path int true "An id of a user you want to get skills for"
+// @Success 200 {array of objects} models.Skill
+// @Failure 400 bad-request
+// @Failure 401 unauthorized
+// @router /:id/skills [get]
 func (u *Users) GetSkills() {
 	userID := u.currentUser.ID
 
