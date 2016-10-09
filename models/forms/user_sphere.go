@@ -2,30 +2,24 @@ package forms
 
 import (
 	"bitbucket.org/SummerCampDev/summercamp/models"
+	u "bitbucket.org/SummerCampDev/summercamp/models/forms/utils"
 	"github.com/astaxie/beego/validation"
-)
-
-type action string
-
-const (
-	UserSphereAdd    action = "add"
-	UserSphereRemove action = "remove"
 )
 
 type UserSphere struct {
 	FormModel
-	ID       int    `json:"id"`
-	Action   action `json:"action" valid:"Required; Match(add|remove)"`
-	UserID   int    `json:"user_id"`
-	SphereID int    `json:"sphere_id"`
+	ID       int      `json:"id"`
+	Action   u.Action `json:"action" valid:"Required; Match(add|remove)"`
+	UserID   int      `json:"user_id"`
+	SphereID int      `json:"sphere_id"`
 }
 
 func (us *UserSphere) Valid(v *validation.Validation) {
 	switch us.Action {
-	case UserSphereAdd:
+	case u.ActionAdd:
 		v.Required(us.UserID, "user_id")
 		v.Required(us.SphereID, "sphere_id")
-	case UserSphereRemove:
+	case u.ActionRemove:
 		v.Required(us.ID, "id")
 	}
 }
@@ -36,7 +30,7 @@ func (us *UserSphere) Save() (*models.UserSphere, bool) {
 	}
 
 	switch us.Action {
-	case UserSphereAdd:
+	case u.ActionAdd:
 		userSphere := models.UserSphere{
 			UserID:   us.UserID,
 			SphereID: us.SphereID,
@@ -47,7 +41,7 @@ func (us *UserSphere) Save() (*models.UserSphere, bool) {
 
 		return &userSphere, true
 
-	case UserSphereRemove:
+	case u.ActionRemove:
 		userSphere := models.UserSphere{
 			ID: us.ID,
 		}
