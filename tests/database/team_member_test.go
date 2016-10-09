@@ -23,7 +23,7 @@ func TestTeamMembersAPI(t *testing.T) {
 		})
 
 		Convey("Test fetch members by team", func() {
-			members, ok := models.TeamMembers.FetchMembersByTeam(1)
+			members, ok := models.TeamMembers.FetchUsersByTeam(1)
 			So(ok, ShouldBeTrue)
 			So(members, ShouldHaveLength, setup.GetFixture("team_members").Filter("user_id", setup.Equal, "1").Count())
 		})

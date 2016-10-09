@@ -25,7 +25,7 @@ func (tr *TeamRegistration) Register(current *models.User) (*models.Team, bool) 
 		tr.addError("team-save-failed")
 		return nil, false
 	}
-	ok = team.AddMember(current, models.LevelAdmin)
+	_, ok = team.AddMember(current.ID, models.LevelCreator)
 	if !ok {
 		return nil, team.Delete()
 	}

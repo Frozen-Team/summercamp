@@ -9,7 +9,7 @@ import (
 type AccessLevel int
 
 const (
-	LevelAdmin AccessLevel = 0
+	LevelCreator AccessLevel = 0
 	LevelReadOnly AccessLevel = 100
 )
 
@@ -58,6 +58,14 @@ type teamsMembersAPI struct{}
 // TeamMembers is an object via which we can access helper methods for the TeamMember model
 var TeamMembers *teamsMembersAPI
 
+// FetchByUserId searches for TeamMember by user id
+func (tm *TeamMember) FetchByUserId(userId int) (*TeamMember, bool) {
+	m := TeamMember{UserID: userId}
+	err := DB.Read(&m)
+
+	return &m, utils.ProcessError(err, " fetch team member by user id")
+}
+
 // FetchByID fetch a team from the teams table by id
 func (tm *teamsMembersAPI) FetchByID(id int) (*TeamMember, bool) {
 	teamMember := TeamMember{ID: id}
@@ -89,7 +97,7 @@ func (tm *teamsMembersAPI) FetchTeamsByMember(teamMemberID int) ([]Team, bool) {
 }
 
 // FetchMembersByTeam fetch all members of the team with the given teamID
-func (tm *teamsMembersAPI) FetchMembersByTeam(teamID int) ([]User, bool) {
+func (tm *teamsMembersAPI) FetchUsersByTeam(teamID int) ([]User, bool) {
 	var teamMembers []TeamMember
 	_, err := DB.QueryTable(TeamMemberModel).Filter("team_id", teamID).All(&teamMembers)
 	if err != nil {
@@ -102,4 +110,14 @@ func (tm *teamsMembersAPI) FetchMembersByTeam(teamID int) ([]User, bool) {
 	var users []User
 	_, err = DB.QueryTable(UserModel).Filter("id__in", userIDs).All(&users)
 	return users, utils.ProcessError(err, "fetch members by userIDs")
+}
+
+// FetchMembersByTeam fetch all members of the team with the given teamID
+func (tm *teamsMembersAPI) FetchTeamMembersByTeam(teamID int) ([]TeamMember, bool) {
+	var teamMembers []TeamMember
+	_, err := DB.QueryTable(TeamMemberModel).Filter("team_id", teamID).All(&teamMembers)
+	if err != nil {
+		return nil, utils.ProcessError(err, "fetch members by team")
+	}
+	return teamMembers, true
 }

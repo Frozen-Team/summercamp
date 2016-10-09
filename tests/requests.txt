@@ -1,8 +1,10 @@
 Registration:
 {"email":"mail@mail.com", "type":"manager", "first_name":"oleh", "last_name":"gol", "password":"1235~", "password_confirm":"1235~", "country":"ukraine", "city":"kyiv"}
+{"email":"mail@mail1.com", "type":"executor", "first_name":"oleh", "last_name":"gol", "password":"1235~", "password_confirm":"1235~", "country":"ukraine", "city":"kyiv"}
 
 Login
-{"email":"mail@mail.com", "password":"1235~" }
+{"email":"mail@mail.com", "password":"12351~" }
+{"email":"mail@mail1.com", "password":"1235~" }
 
 Logout
 -
@@ -15,4 +17,11 @@ UpdateField
 
 UpdatePassword
 {"current_password": "1235~", "password":"12351~", "password_confirm":"12351~"}
+
+TeamRegistration
+{
+  "name": "STeam",
+  "description": "The Best team"
+}
+
 

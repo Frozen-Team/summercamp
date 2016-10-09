@@ -81,9 +81,24 @@ func (a *ApplicationController) setStatusCode(code int) {
 	a.Ctx.ResponseWriter.WriteHeader(code)
 }
 
-// serveAJAXUnauthorized is a convenient wrapper above serveAJAXError to serve "unauthorized" error
+// serveAJAXMethodNotAllowed is a wrapper to serve "method-not-allowed" error
+func (a *ApplicationController) serveAJAXMethodNotAllowed() {
+	a.serveAJAXError(nil, http.StatusMethodNotAllowed, "method-not-allowed")
+}
+
+// serveAJAXUnauthorized is a wrapper to serve "unauthorized" error
 func (a *ApplicationController) serveAJAXUnauthorized() {
 	a.serveAJAXError(nil, http.StatusUnauthorized, "unauthorized")
+}
+
+// serveAJAXInternalServerError is a wrapper to serve "internal-error" error
+func (a *ApplicationController) serveAJAXInternalServerError() {
+	a.serveAJAXError(nil, http.StatusInternalServerError, "internal-error")
+}
+
+// serveAJAXInternalServerError is a wrapper to serve "internal-error" error
+func (a *ApplicationController) serveAJAXForbidden() {
+	a.serveAJAXError(nil, http.StatusForbidden, "forbidden")
 }
 
 // serveAJAX response with the json with two keys: "meta" and "data".

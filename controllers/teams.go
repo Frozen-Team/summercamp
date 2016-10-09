@@ -16,8 +16,13 @@ type Teams struct {
 // @Description Team registration
 // @Param body body string true "Registration info"
 // @Success 200 {object} models.Team
+// @Failure 401 Unauthorized
 // @router / [post]
 func (t *Teams) Register() {
+	if t.currentUser.Type != models.SpecTypeExecutor {
+		t.serveAJAXMethodNotAllowed()
+		return
+	}
 	form := new(forms.TeamRegistration)
 
 	if ok := t.unmarshalJSON(form); !ok {
@@ -33,43 +38,90 @@ func (t *Teams) Register() {
 	t.serveAJAXSuccess(team)
 }
 
+// AddMember adds new member to the team
+// @Title AddMember
+// @Description Team member addition
+// @Param teamId path int true "the team id"
+// @Param body body string true "Team member"
+// @Success 200 {object} models.TeamMember
+// @Failure 400 invalid-team-id or no-such-team
+// @Failure 401 Unauthorized
+// @router /:teamId/members [post]
+func (t *Teams) AddMember() {
+	if id, err := strconv.Atoi(t.Ctx.Input.Param(":id")); err != nil {
+		t.serveAJAXBadRequest("invalid-team-id")
+		return
+	} else {
+		form := new(forms.TeamMemberAddition)
+		if ok := t.unmarshalJSON(form); !ok {
+			t.serveAJAXBadRequest()
+			return
+		}
+		if team, ok := models.Teams.FetchByID(id); ok {
+			if currentMember, found := team.IsMember(t.currentUser); found {
+				if currentMember.Access == models.LevelCreator {
+					if member, ok := form.AddMember(team); ok {
+						t.serveAJAXSuccess(member)
+					} else {
+						t.serveAJAXBadRequest()
+					}
+				} else {
+					t.serveAJAXForbidden()
+				}
+			} else {
+				t.serveAJAXForbidden()
+			}
+		} else {
+			t.serveAJAXBadRequest("no-such-team")
+		}
+	}
+}
+
 // @Title Delete
 // @Description Team removal
-// @Param objectId path int true "the team id you want to get"
-// @Success 200 {object} models.Team
-// @router /:objectId [delete]
+// @Param teamId path int true "the team id you want to delete"
+// @Success 200 OK
+// @Failure 400 invalid-team-id or no-such-team
+// @Failure 401 Unauthorized
+// @router /:teamId [delete]
 func (t *Teams) Delete() {
-	form := new(forms.TeamRegistration)
-
-	if ok := t.unmarshalJSON(form); !ok {
-		t.serveAJAXBadRequest()
+	if id, err := strconv.Atoi(t.Ctx.Input.Param(":id")); err != nil {
+		t.serveAJAXBadRequest("invalid-team-id")
 		return
-
+	} else {
+		if team, ok := models.Teams.FetchByID(id); ok {
+			if teamMember, found := team.IsMember(t.currentUser); found && teamMember.Access == models.LevelCreator {
+				if team.Delete() {
+					t.serveAJAXSuccess(team)
+				} else {
+					t.serveAJAXInternalServerError()
+				}
+			} else {
+				t.serveAJAXForbidden()
+			}
+		} else {
+			t.serveAJAXBadRequest("no-such-team")
+		}
 	}
-	team, ok := form.Register(t.currentUser)
-	if !ok {
-		t.serveAJAXBadRequest(form.Errors...)
-		return
-	}
-	t.serveAJAXSuccess(team)
 }
 
 // @Title GetTeam
 // @Description Get info about a team by its id
 // @Param id path int true "An id of a team you want to get"
-// @Success 200 {object} models.User
-// @Failure 400 invalid-id or no-such-user
+// @Success 200 {object} models.Team
+// @Failure 400 invalid-team-id or no-such-team
+// @Failure 401 Unauthorized
 // @router /:id [get]
-func (u *Users) GetTeam() {
+func (t *Teams) GetTeam() {
 	// TODO: Check if the requested user can be seen (publicly or privately)
-	if id, err := strconv.Atoi(u.Ctx.Input.Param(":id")); err != nil {
-		u.serveAJAXBadRequest("invalid-team-id")
+	if id, err := strconv.Atoi(t.Ctx.Input.Param(":id")); err != nil {
+		t.serveAJAXBadRequest("invalid-team-id")
 	} else {
-		user, ok := models.Teams.FetchByID(id)
+		team, ok := models.Teams.FetchByID(id)
 		if ok {
-			u.serveAJAXSuccess(user)
+			t.serveAJAXSuccess(team)
 		} else {
-			u.serveAJAXBadRequest("no-such-team")
+			t.serveAJAXBadRequest("no-such-team")
 		}
 	}
 }

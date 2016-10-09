@@ -51,7 +51,9 @@ swaggerAfterFucked:
 	beego.AddNamespace(beego.NewNamespace(
 		"/v1/teams",
 		beego.NSRouter("", &controllers.Teams{}, "post:Register"),
-		beego.NSRouter("/:id", &controllers.Users{}, "delete:Delete"),
+		beego.NSRouter("/:id", &controllers.Teams{}, "delete:Delete"),
+		beego.NSRouter("/:id", &controllers.Teams{}, "get:GetTeam"),
+		beego.NSRouter("/:id/members", &controllers.Teams{}, "post:AddMember"),
 	))
 
 	beego.AddNamespace(beego.NewNamespace(
