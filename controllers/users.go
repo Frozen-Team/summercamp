@@ -1,10 +1,10 @@
 package controllers
 
 import (
+	"net/http"
+
 	"bitbucket.org/SummerCampDev/summercamp/models"
 	"bitbucket.org/SummerCampDev/summercamp/models/forms"
-	"net/http"
-	"strconv"
 )
 
 // Operations about Users
@@ -156,14 +156,30 @@ func (u *Users) UpdateEmail() {
 // @router /:id [get]
 func (u *Users) GetUser() {
 	// TODO: Check if the requested user can be seen (publicly or privately)
-	if id, err := strconv.Atoi(u.Ctx.Input.Param(":id")); err != nil {
-		u.serveAJAXBadRequest("invalid-id")
+	id := u.getID()
+
+	user, ok := models.Users.FetchByID(id)
+	if ok {
+		u.serveAJAXSuccess(user)
 	} else {
-		user, ok := models.Users.FetchByID(id)
-		if ok {
-			u.serveAJAXSuccess(user)
-		} else {
-			u.serveAJAXBadRequest("no-such-user")
-		}
+		u.serveAJAXBadRequest("no-such-user")
 	}
+}
+
+// @Title GetSkills
+// @Description get skills for the user with id passed in the url
+// @Param id path int true "An id of a user you want to get skills for"
+// @Success 200 {array of objects} models.Skill
+// @Failure 400 bad-request
+// @Failure 401 unauthorized
+// @router /:id/skills [get]
+func (u *Users) GetSkills() {
+	userID := u.currentUser.ID
+
+	skills, ok := models.UserSkills.FetchSkillsByUser(userID)
+	if !ok {
+		u.serveAJAXBadRequest()
+		return
+	}
+	u.serveAJAXSuccess(skills)
 }
