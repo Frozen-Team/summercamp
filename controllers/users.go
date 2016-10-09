@@ -1,10 +1,10 @@
 package controllers
 
 import (
+	"net/http"
+
 	"bitbucket.org/SummerCampDev/summercamp/models"
 	"bitbucket.org/SummerCampDev/summercamp/models/forms"
-	"net/http"
-	"strconv"
 )
 
 // Operations about Users
@@ -156,14 +156,12 @@ func (u *Users) UpdateEmail() {
 // @router /:id [get]
 func (u *Users) GetUser() {
 	// TODO: Check if the requested user can be seen (publicly or privately)
-	if id, err := strconv.Atoi(u.Ctx.Input.Param(":id")); err != nil {
-		u.serveAJAXBadRequest("invalid-id")
+	id := u.getID()
+
+	user, ok := models.Users.FetchByID(id)
+	if ok {
+		u.serveAJAXSuccess(user)
 	} else {
-		user, ok := models.Users.FetchByID(id)
-		if ok {
-			u.serveAJAXSuccess(user)
-		} else {
-			u.serveAJAXBadRequest("no-such-user")
-		}
+		u.serveAJAXBadRequest("no-such-user")
 	}
 }
