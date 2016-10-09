@@ -1,6 +1,9 @@
 package models
 
-import "bitbucket.org/SummerCampDev/summercamp/models/utils"
+import (
+	"bitbucket.org/SummerCampDev/summercamp/models/utils"
+	"github.com/astaxie/beego"
+)
 
 type UserSkill struct {
 	ID      int `json:"id" orm:"column(id)"`
@@ -39,4 +42,68 @@ func (ps *UserSkill) Delete() bool {
 	_, err := DB.Delete(ps)
 
 	return utils.ProcessError(err, " delete a user`s skill")
+}
+
+type UserSkillsAPI struct{}
+
+var UserSkills *UserSkillsAPI
+
+// SaveSkillsForUser create a new UserSkill record for each skillID from skillIDs and userID pair.
+// If each record is successfully saved to the db, the func return false
+func (us *UserSkillsAPI) SaveSkillsForUser(userID int, skillIDs ...int) bool {
+	if len(skillIDs) == 0 {
+		beego.BeeLogger.Warning("Empty skills list is passed to SaveSkillsForUser")
+		return false
+	}
+
+	var failedSkills []int
+	for _, skillID := range skillIDs {
+		userSkill := UserSkill{
+			UserID:  userID,
+			SkillID: skillID,
+		}
+		if ok := userSkill.Save(); !ok {
+			failedSkills = append(failedSkills, skillID)
+		}
+	}
+	ok := len(failedSkills) == 0
+	if !ok {
+		beego.BeeLogger.Warning("Failed to save user skills for skills with ids: '%v'", failedSkills)
+	}
+	return ok
+}
+
+// FetchSkillsByUser fetch all skills for a given user
+func (us *UserSkillsAPI) FetchSkillsByUser(userID int) ([]Skill, bool) {
+	var skills []Skill
+	_, err := DB.Raw(`
+	SELECT skills.id,
+	       skills.name,
+	       skills.sphere_id,
+	FROM user_skills us
+	LEFT OUTER JOIN skills ON skills.id=us.skill_id
+	WHERE us.user_id=$1;`, userID).QueryRows(&skills)
+	return skills, utils.ProcessError(err, " fetch skills by a user id")
+}
+
+// FetchUsersBySkills fetch all users for a given skill id
+func (us *UserSkillsAPI) FetchUsersBySkill(skillID int) ([]User, bool) {
+	var users []User
+	_, err := DB.Raw(`
+	SELECT users.id,
+	       users.type,
+	       users.first_name,
+	       users.last_name,
+	       users.balance,
+	       users.bid,
+	       users.braintree_id,
+	       users.country,
+	       users.city,
+	       users.timezone,
+	       users.create_time,
+	       users.update_time
+	FROM user_skills us
+	LEFT OUTER JOIN users ON users.id=us.user_id
+	WHERE us.skill_id=$1;`, skillID).QueryRows(&users)
+	return users, utils.ProcessError(err, " fetch users by a skill id")
 }
