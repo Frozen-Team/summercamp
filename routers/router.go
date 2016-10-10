@@ -46,6 +46,7 @@ swaggerAfterFucked:
 		beego.NSRouter("/update_field", &controllers.Users{}, "post:UpdateField"),
 		beego.NSRouter("/update_password", &controllers.Users{}, "post:UpdatePassword"),
 		beego.NSRouter("/update_email", &controllers.Users{}, "post:UpdateEmail"),
+		beego.NSRouter("/update_summary", &controllers.Users{}, "post:UpdateSummary"),
 		beego.NSRouter("/:id/skills", &controllers.Users{}, "get:GetSkills"),
 	))
 

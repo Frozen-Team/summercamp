@@ -13,6 +13,8 @@ type User struct {
 	Type        Speciality `json:"type" orm:"column(type)"`
 	FirstName   string     `json:"first_name" orm:"column(first_name)"`
 	LastName    string     `json:"last_name" orm:"column(last_name)"`
+	Overview    string     `json:"overview" orm:"column(overview)"`
+	Summary     string     `json:"summary" orm:"column(summary)"`
 	Email       string     `json:"email" orm:"column(email)"`
 	Password    string     `json:"-" orm:"column(password)"`
 	Balance     int        `json:"balance" orm:"column(balance)"`
