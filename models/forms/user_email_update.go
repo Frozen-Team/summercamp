@@ -8,9 +8,6 @@ type UserEmailUpdate struct {
 }
 
 func (eu *UserEmailUpdate) UpdateEmail(user *models.User) (*models.User, bool) {
-	if ok := eu.validate(eu); !ok {
-		return nil, false
-	}
 	user.Email = eu.Email
 	ok := user.Save()
 	if !ok {

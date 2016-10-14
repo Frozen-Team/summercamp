@@ -26,10 +26,6 @@ func (us *UserSkill) Valid(v *validation.Validation) {
 }
 
 func (us *UserSkill) Save() (*models.UserSkill, bool) {
-	if ok := us.validate(us); !ok {
-		return nil, false
-	}
-
 	switch us.Action {
 	case u.ActionAdd:
 		userSkill := models.UserSkill{

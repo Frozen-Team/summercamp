@@ -22,16 +22,22 @@ func (t *Teams) Register() {
 		t.serveAJAXMethodNotAllowed()
 		return
 	}
+
 	form := new(forms.TeamRegistration)
 
 	if ok := t.unmarshalJSON(form); !ok {
-		t.serveAJAXBadRequest()
+		t.serveAJAXInternalServerError()
+		return
+	}
+
+	if ok := forms.Validate(form); !ok {
+		t.serveAJAXBadRequest(form.Errors...)
 		return
 	}
 
 	team, ok := form.Register(t.currentUser)
 	if !ok {
-		t.serveAJAXBadRequest(form.Errors...)
+		t.serveAJAXInternalServerError()
 		return
 	}
 	t.serveAJAXSuccess(team)
@@ -51,7 +57,12 @@ func (t *Teams) AddMember() {
 
 	form := new(forms.TeamMemberAddition)
 	if ok := t.unmarshalJSON(form); !ok {
-		t.serveAJAXBadRequest()
+		t.serveAJAXInternalServerError()
+		return
+	}
+
+	if ok := forms.Validate(form); !ok {
+		t.serveAJAXBadRequest(form.Errors...)
 		return
 	}
 

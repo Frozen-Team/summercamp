@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"net/http"
-
 	"bitbucket.org/SummerCampDev/summercamp/models"
 	"bitbucket.org/SummerCampDev/summercamp/models/forms"
 )
@@ -24,21 +22,26 @@ func (u *Users) Prepare() {
 // @Success 200 {object} models.User
 // @Failure 200 Nil object and error tag
 // @router / [post]
-func (uc *Users) Register() {
+func (u *Users) Register() {
 	regForm := new(forms.UserRegistration)
 
-	if ok := uc.unmarshalJSON(regForm); !ok {
-		uc.serveAJAXBadRequest()
+	if ok := u.unmarshalJSON(regForm); !ok {
+		u.serveAJAXInternalServerError()
+		return
+	}
+
+	if ok := forms.Validate(regForm); !ok {
+		u.serveAJAXBadRequest(regForm.Errors...)
 		return
 	}
 
 	user, ok := regForm.Register()
 	if !ok {
-		uc.serveAJAXBadRequest(regForm.Errors...)
+		u.serveAJAXInternalServerError()
 		return
 	}
-	uc.authorizeUser(user)
-	uc.serveAJAXSuccess(user)
+	u.authorizeUser(user)
+	u.serveAJAXSuccess(user)
 }
 
 // Login reads the data from the request body into forms.UserLogin struct, attempts to query a user from the db
@@ -53,13 +56,18 @@ func (u *Users) Login() {
 	loginForm := new(forms.UserLogin)
 
 	if ok := u.unmarshalJSON(loginForm); !ok {
-		u.serveAJAXBadRequest()
+		u.serveAJAXInternalServerError()
+		return
+	}
+
+	if ok := forms.Validate(loginForm); !ok {
+		u.serveAJAXBadRequest(loginForm.Errors...)
 		return
 	}
 
 	user, ok := loginForm.Login()
 	if !ok {
-		u.serveAJAXBadRequest(loginForm.Errors...)
+		u.serveAJAXInternalServerError()
 		return
 	}
 	u.authorizeUser(user)
@@ -94,14 +102,20 @@ func (u *Users) Current() {
 // @Failure 400 bad-data
 // @router /update_field [post]
 func (u *Users) UpdateField() {
-	form := &forms.UserUpdate{}
+	form := new(forms.UserUpdate)
 
 	if ok := u.unmarshalJSON(form); !ok {
-		u.serveAJAXBadRequest()
+		u.serveAJAXInternalServerError()
 		return
 	}
+
+	if ok := forms.Validate(form); !ok {
+		u.serveAJAXBadRequest(form.Errors...)
+		return
+	}
+
 	if _, ok := form.Update(u.currentUser); !ok {
-		u.serveAJAXError(nil, http.StatusInternalServerError, form.Errors...)
+		u.serveAJAXInternalServerError()
 		return
 	}
 	u.serveAJAXSuccess(u.currentUser)
@@ -115,14 +129,20 @@ func (u *Users) UpdateField() {
 // @Failure 400 bad-data
 // @router /update_password [post]
 func (u *Users) UpdatePassword() {
-	form := &forms.UserPasswordUpdate{}
+	form := new(forms.UserPasswordUpdate)
 
 	if ok := u.unmarshalJSON(form); !ok {
-		u.serveAJAXBadRequest()
+		u.serveAJAXInternalServerError()
 		return
 	}
+
+	if ok := forms.Validate(form); !ok {
+		u.serveAJAXBadRequest(form.Errors...)
+		return
+	}
+
 	if _, ok := form.UpdatePassword(u.currentUser); !ok {
-		u.serveAJAXError(nil, http.StatusInternalServerError, form.Errors...)
+		u.serveAJAXInternalServerError()
 		return
 	}
 	u.serveAJAXSuccess(u.currentUser)
@@ -136,13 +156,20 @@ func (u *Users) UpdatePassword() {
 // @Failure 400 bad-data
 // @router /update_email [post]
 func (u *Users) UpdateEmail() {
-	form := &forms.UserEmailUpdate{}
+	form := new(forms.UserEmailUpdate)
+
 	if ok := u.unmarshalJSON(form); !ok {
-		u.serveAJAXBadRequest()
+		u.serveAJAXInternalServerError()
 		return
 	}
+
+	if ok := forms.Validate(form); !ok {
+		u.serveAJAXBadRequest(form.Errors...)
+		return
+	}
+
 	if _, ok := form.UpdateEmail(u.currentUser); !ok {
-		u.serveAJAXError(nil, http.StatusInternalServerError, form.Errors...)
+		u.serveAJAXInternalServerError()
 		return
 	}
 	u.serveAJAXSuccess(u.currentUser)
@@ -178,7 +205,7 @@ func (u *Users) GetSkills() {
 
 	skills, ok := models.UserSkills.FetchSkillsByUser(userID)
 	if !ok {
-		u.serveAJAXBadRequest()
+		u.serveAJAXInternalServerError()
 		return
 	}
 	u.serveAJAXSuccess(skills)
@@ -192,15 +219,20 @@ func (u *Users) GetSkills() {
 // @Failure 401 unauthorized
 // @router /update_summary [post]
 func (u *Users) UpdateSummary() {
-	userSummaryForm := forms.UserSummary{}
+	userSummaryForm := new(forms.UserSummary)
 
-	if ok := u.unmarshalJSON(&userSummaryForm); !ok {
-		u.serveAJAXBadRequest()
+	if ok := u.unmarshalJSON(userSummaryForm); !ok {
+		u.serveAJAXInternalServerError()
+		return
+	}
+
+	if ok := forms.Validate(userSummaryForm); !ok {
+		u.serveAJAXBadRequest(userSummaryForm.Errors...)
 		return
 	}
 
 	if ok := userSummaryForm.Update(u.currentUser); !ok {
-		u.serveAJAXBadRequest(userSummaryForm.Errors...)
+		u.serveAJAXInternalServerError()
 		return
 	}
 

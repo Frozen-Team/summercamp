@@ -11,10 +11,6 @@ type Project struct {
 }
 
 func (p *Project) Save() (*models.Project, bool) {
-	if !p.validate(p) {
-		return nil, false
-	}
-
 	project := &models.Project{
 		ClientID:    p.ClientID,
 		Description: p.Description,
@@ -32,7 +28,6 @@ func (p *Project) Save() (*models.Project, bool) {
 		}
 
 		if !projectSphere.Save() {
-			p.addError("project-sphere-save-failed")
 			return nil, false
 		}
 
@@ -42,7 +37,6 @@ func (p *Project) Save() (*models.Project, bool) {
 				SkillID:   skill,
 			}
 			if !projectSkill.Save() {
-				p.addError("project-skill-save-failed")
 				return nil, false
 			}
 		}

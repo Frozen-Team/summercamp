@@ -18,14 +18,18 @@ func (p *Projects) Save() {
 	newProjectForm := new(forms.Project)
 
 	if ok := p.unmarshalJSON(newProjectForm); !ok {
-		p.serveAJAXBadRequest()
+		p.serveAJAXInternalServerError()
+		return
+	}
+
+	if ok := forms.Validate(newProjectForm); !ok {
+		p.serveAJAXBadRequest(newProjectForm.Errors...)
 		return
 	}
 
 	project, ok := newProjectForm.Save()
-
 	if !ok {
-		p.serveAJAXBadRequest(newProjectForm.Errors...)
+		p.serveAJAXInternalServerError()
 		return
 	}
 

@@ -31,10 +31,6 @@ func (ur *UserRegistration) Valid(v *validation.Validation) {
 // Register validates the input data and if everything is OK, initialize the models.User struct with
 // the data from Registration struct and save the record to the db.
 func (ur *UserRegistration) Register() (*models.User, bool) {
-	if ok := ur.validate(ur); !ok {
-		return nil, false
-	}
-
 	user := &models.User{
 		Email:     ur.Email,
 		Type:      ur.Type,

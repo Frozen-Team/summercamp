@@ -12,21 +12,21 @@ type UserSkill struct {
 }
 
 // TableName specify the table name for UserSkill model. This name is used in the orm RegisterModel
-func (ps *UserSkill) TableName() string {
+func (us *UserSkill) TableName() string {
 	return "user_skills"
 }
 
 // Save insert a new record to the db if ID field is of default value. Otherwise an existing
 // record is updated.
-func (ps *UserSkill) Save() bool {
+func (us *UserSkill) Save() bool {
 	var err error
 	var action string
 
-	if ps.ID == 0 {
-		_, err = DB.Insert(ps)
+	if us.ID == 0 {
+		_, err = DB.Insert(us)
 		action = "create"
 	} else {
-		_, err = DB.Update(ps)
+		_, err = DB.Update(us)
 		action = "update"
 	}
 
@@ -35,11 +35,11 @@ func (ps *UserSkill) Save() bool {
 
 // Delete deletes a record from the db. If the record is successfully deleted, the return value
 // is true, false - otherwise.
-func (ps *UserSkill) Delete() bool {
-	if ps.ID == 0 {
+func (us *UserSkill) Delete() bool {
+	if us.ID == 0 {
 		return false
 	}
-	_, err := DB.Delete(ps)
+	_, err := DB.Delete(us)
 
 	return utils.ProcessError(err, " delete a user`s skill")
 }
@@ -106,4 +106,9 @@ func (us *UserSkillsAPI) FetchUsersBySkill(skillID int) ([]User, bool) {
 	LEFT OUTER JOIN users ON users.id=us.user_id
 	WHERE us.skill_id=$1;`, skillID).QueryRows(&users)
 	return users, utils.ProcessError(err, " fetch users by a skill id")
+}
+
+func (us *UserSkillsAPI) SkillsCountByUser(userID int) (int, bool) {
+	count, err := DB.QueryTable(UserSkillModel).Filter("user_id", userID).Count()
+	return int(count), utils.ProcessError(err, " fetch skills count for user")
 }

@@ -18,7 +18,12 @@ func (us *UserSpheres) Save() {
 	form := new(forms.UserSphere)
 
 	if ok := us.unmarshalJSON(form); !ok {
-		us.serveAJAXBadRequest()
+		us.serveAJAXInternalServerError()
+		return
+	}
+
+	if ok := forms.Validate(form); !ok {
+		us.serveAJAXBadRequest(form.Errors...)
 		return
 	}
 
@@ -26,7 +31,7 @@ func (us *UserSpheres) Save() {
 
 	userSphere, ok := form.Save()
 	if !ok {
-		us.serveAJAXBadRequest(form.Errors...)
+		us.serveAJAXInternalServerError()
 		return
 	}
 

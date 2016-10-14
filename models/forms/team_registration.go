@@ -13,9 +13,6 @@ type TeamRegistration struct {
 // Register validates the input data and if everything is OK, initialize the models.Team struct with
 // the data from Registration struct and save the record to the db.
 func (tr *TeamRegistration) Register(current *models.User) (*models.Team, bool) {
-	if ok := tr.validate(tr); !ok {
-		return nil, false
-	}
 	team := &models.Team{
 		Name:        tr.Name,
 		Description: tr.Description,

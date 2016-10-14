@@ -8,10 +8,6 @@ type UserSummary struct {
 }
 
 func (us *UserSummary) Update(user *models.User) bool {
-	if !us.validate(us) {
-		return false
-	}
-
 	user.Summary = us.Summary
 
 	ok := user.Save()

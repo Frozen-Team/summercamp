@@ -25,10 +25,6 @@ func (us *UserSphere) Valid(v *validation.Validation) {
 }
 
 func (us *UserSphere) Save() (*models.UserSphere, bool) {
-	if ok := us.validate(us); !ok {
-		return nil, false
-	}
-
 	switch us.Action {
 	case u.ActionAdd:
 		userSphere := models.UserSphere{
