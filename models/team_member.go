@@ -9,17 +9,17 @@ import (
 type AccessLevel int
 
 const (
-	LevelCreator AccessLevel = 0
-	LevelReadOnly AccessLevel = 100
+	AccessCreator  AccessLevel = 0
+	AccessReadOnly AccessLevel = 100
 )
 
 // TeamMember represents a member with UserID who is in the team with TeamID.
 type TeamMember struct {
-	ID         int        `json:"id" orm:"column(id)"`
-	TeamID     int        `json:"team_id" orm:"column(team_id)"`
-	UserID     int        `json:"user_id" orm:"column(user_id)"`
-	Access     AccessLevel        `json:"access" orm:"column(access)"`
-	CreateTime time.Time `json:"create_time" orm:"column(create_time);auto_now_add;type(datetime)"`
+	ID         int         `json:"id" orm:"column(id)"`
+	TeamID     int         `json:"team_id" orm:"column(team_id)"`
+	UserID     int         `json:"user_id" orm:"column(user_id)"`
+	Access     AccessLevel `json:"access" orm:"column(access)"`
+	CreateTime time.Time   `json:"create_time" orm:"column(create_time);auto_now_add;type(datetime)"`
 }
 
 // TableName specify the table name for Team model. This name is used in the orm RegisterModel.
@@ -41,7 +41,7 @@ func (tm *TeamMember) Save() bool {
 		action = "update"
 	}
 
-	return utils.ProcessError(err, action + " team member")
+	return utils.ProcessError(err, action+" team member")
 }
 
 // Delete deletes a team member record from the db. If the record is successfully deleted, the return value

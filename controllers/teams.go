@@ -1,9 +1,8 @@
 package controllers
 
 import (
-	"bitbucket.org/SummerCampDev/summercamp/models/forms"
-	"strconv"
 	"bitbucket.org/SummerCampDev/summercamp/models"
+	"bitbucket.org/SummerCampDev/summercamp/models/forms"
 )
 
 // Operations about Teams
@@ -46,34 +45,33 @@ func (t *Teams) Register() {
 // @Success 200 {object} models.TeamMember
 // @Failure 400 invalid-team-id or no-such-team
 // @Failure 401 Unauthorized
-// @router /:teamId/members [post]
+// @router /:id/members [post]
 func (t *Teams) AddMember() {
-	if id, err := strconv.Atoi(t.Ctx.Input.Param(":id")); err != nil {
-		t.serveAJAXBadRequest("invalid-team-id")
+	id := t.getID()
+
+	form := new(forms.TeamMemberAddition)
+	if ok := t.unmarshalJSON(form); !ok {
+		t.serveAJAXBadRequest()
 		return
+	}
+
+	team, ok := models.Teams.FetchByID(id)
+	if !ok {
+		t.serveAJAXBadRequest("no-such-team")
+		return
+	}
+
+	currentMember, found := team.IsMember(t.currentUser)
+	if !found || currentMember.Access != models.AccessCreator {
+		t.serveAJAXForbidden()
+		return
+	}
+
+	member, ok := form.AddMember(team)
+	if ok {
+		t.serveAJAXSuccess(member)
 	} else {
-		form := new(forms.TeamMemberAddition)
-		if ok := t.unmarshalJSON(form); !ok {
-			t.serveAJAXBadRequest()
-			return
-		}
-		if team, ok := models.Teams.FetchByID(id); ok {
-			if currentMember, found := team.IsMember(t.currentUser); found {
-				if currentMember.Access == models.LevelCreator {
-					if member, ok := form.AddMember(team); ok {
-						t.serveAJAXSuccess(member)
-					} else {
-						t.serveAJAXBadRequest()
-					}
-				} else {
-					t.serveAJAXForbidden()
-				}
-			} else {
-				t.serveAJAXForbidden()
-			}
-		} else {
-			t.serveAJAXBadRequest("no-such-team")
-		}
+		t.serveAJAXInternalServerError()
 	}
 }
 
@@ -83,25 +81,26 @@ func (t *Teams) AddMember() {
 // @Success 200 OK
 // @Failure 400 invalid-team-id or no-such-team
 // @Failure 401 Unauthorized
-// @router /:teamId [delete]
+// @router /:id [delete]
 func (t *Teams) Delete() {
-	if id, err := strconv.Atoi(t.Ctx.Input.Param(":id")); err != nil {
-		t.serveAJAXBadRequest("invalid-team-id")
+	id := t.getID()
+
+	team, ok := models.Teams.FetchByID(id)
+	if !ok {
+		t.serveAJAXBadRequest("no-such-team")
 		return
+	}
+
+	teamMember, found := team.IsMember(t.currentUser)
+	if found && teamMember.Access != models.AccessCreator {
+		t.serveAJAXForbidden()
+		return
+	}
+
+	if team.Delete() {
+		t.serveAJAXSuccess(team)
 	} else {
-		if team, ok := models.Teams.FetchByID(id); ok {
-			if teamMember, found := team.IsMember(t.currentUser); found && teamMember.Access == models.LevelCreator {
-				if team.Delete() {
-					t.serveAJAXSuccess(team)
-				} else {
-					t.serveAJAXInternalServerError()
-				}
-			} else {
-				t.serveAJAXForbidden()
-			}
-		} else {
-			t.serveAJAXBadRequest("no-such-team")
-		}
+		t.serveAJAXInternalServerError()
 	}
 }
 
@@ -114,14 +113,12 @@ func (t *Teams) Delete() {
 // @router /:id [get]
 func (t *Teams) GetTeam() {
 	// TODO: Check if the requested user can be seen (publicly or privately)
-	if id, err := strconv.Atoi(t.Ctx.Input.Param(":id")); err != nil {
-		t.serveAJAXBadRequest("invalid-team-id")
+	id := t.getID()
+
+	team, ok := models.Teams.FetchByID(id)
+	if ok {
+		t.serveAJAXSuccess(team)
 	} else {
-		team, ok := models.Teams.FetchByID(id)
-		if ok {
-			t.serveAJAXSuccess(team)
-		} else {
-			t.serveAJAXBadRequest("no-such-team")
-		}
+		t.serveAJAXBadRequest("no-such-team")
 	}
 }
