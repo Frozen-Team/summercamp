@@ -213,7 +213,7 @@ func (u *Users) GetSkills() {
 
 // @Title UpdateSummary
 // @Description updates summary for the currently logged in user
-// @Param summary body string true "short summary about the user" "max length is 64 chars"
+// @Param summary body string true "short summary about the user, max length is 64 chars"
 // @Success 200 {object} models.User
 // @Failure 400 bad-request and validation error
 // @Failure 401 unauthorized
@@ -237,4 +237,64 @@ func (u *Users) UpdateSummary() {
 	}
 
 	u.serveAJAXSuccess(u.currentUser)
+}
+
+// @Title AddSkill
+// @Description add skill for the currently logged in user
+// @Param skill_id body int true "skill id of the skill, max 10 skills"
+// @Success 200 {object} models.UserSKill
+// @Failure 400 bad-request and validation error
+// @Failure 401 unauthorized
+// @Failure 500 internal-error
+// @router /skills [post]
+func (u *Users) AddSkill() {
+	form := new(forms.UserSkill)
+
+	if ok := u.unmarshalJSON(form); !ok {
+		u.serveAJAXInternalServerError()
+		return
+	}
+
+	form.UserID = u.currentUser.ID
+
+	if ok := forms.Validate(form); !ok {
+		u.serveAJAXBadRequest(form.Errors...)
+		return
+	}
+
+	canAdd, ok := u.currentUser.CanAddSkill()
+	if !ok {
+		u.serveAJAXInternalServerError()
+		return
+	}
+	if !canAdd {
+		u.serveAJAXBadRequest("max-skills-count")
+		return
+	}
+
+	if userSkill, ok := form.Process(); ok {
+		u.serveAJAXSuccess(userSkill)
+	} else {
+		u.serveAJAXInternalServerError()
+	}
+}
+
+// @Title RemoveSkill
+// @Description remove skill for the user
+// @Param id path int true "id of the userSkill to be removed"
+// @Success 200 {nil}
+// @Failure 400 invalid-id
+// @Failure 401 unauthorized
+// @Failure 500 internal-error
+// @router /skills/:id [delete]
+func (u *Users) RemoveSkill() {
+	userSkillID := u.getID()
+
+	userSkill := models.UserSkill{ID: userSkillID}
+
+	if ok := userSkill.Delete(); ok {
+		u.serveAJAXSuccess(nil)
+	} else {
+		u.serveAJAXInternalServerError()
+	}
 }

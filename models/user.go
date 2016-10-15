@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"bitbucket.org/SummerCampDev/summercamp/models/utils"
+	"github.com/astaxie/beego"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -45,6 +46,21 @@ func (u *User) Save() bool {
 		action = "update"
 	}
 	return utils.ProcessError(err, action+" user")
+}
+
+// CanAddSkill checks if the user has less skills than the system allows.
+func (u *User) CanAddSkill() (bool, bool) {
+	currentSkillsCount, ok := UserSkills.SkillsCountByUser(u.ID)
+	if !ok {
+		return false, false
+	}
+
+	maxSkillsCount, err := beego.AppConfig.Int("UserSkillsMaxCount")
+	if err != nil {
+		return false, utils.ProcessError(err, " failed to get value for config `UserSkillsMaxCount`")
+	}
+
+	return currentSkillsCount < maxSkillsCount, true
 }
 
 // SetPassword generate the encrypted password based on the given string
