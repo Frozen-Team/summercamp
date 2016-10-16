@@ -1,7 +1,10 @@
 package forms
 
 import (
+	"strings"
+
 	"bitbucket.org/SummerCampDev/summercamp/models"
+	"github.com/astaxie/beego/validation"
 )
 
 type UserUpdate struct {
@@ -10,9 +13,19 @@ type UserUpdate struct {
 	Value string `json:"value" valid:"Required"`
 }
 
+func (u *UserUpdate) Valid(v *validation.Validation) {
+	u.Field = strings.TrimSpace(u.Field)
+	u.Value = strings.TrimSpace(u.Value)
+	if u.Field == "email" {
+		v.Email(u, "value")
+	}
+}
+
 // Update changes a value of the user field with value from the UserUpdate.Value
 func (u *UserUpdate) Update(cu *models.User) (*models.User, bool) {
 	switch u.Field {
+	case "email":
+		cu.Email = u.Value
 	case "first_name":
 		cu.FirstName = u.Value
 	case "last_name":

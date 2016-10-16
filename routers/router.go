@@ -37,14 +37,12 @@ func init() {
 swaggerAfterFucked:
 
 	beego.AddNamespace(beego.NewNamespace("/v1/users",
-		beego.NSRouter("", &controllers.Users{}, "post:Register"),
+		beego.NSRouter("", &controllers.Users{}, "post:Register;put:UpdateField"),
 		beego.NSRouter("/current", &controllers.Users{}, "get:Current"),
 		beego.NSRouter("/login", &controllers.Users{}, "post:Login"),
 		beego.NSRouter("/logout", &controllers.Users{}, "post:Logout"),
 		beego.NSRouter("/:id", &controllers.Users{}, "get:GetUser"),
-		beego.NSRouter("/update_field", &controllers.Users{}, "post:UpdateField"),
 		beego.NSRouter("/update_password", &controllers.Users{}, "post:UpdatePassword"),
-		beego.NSRouter("/update_email", &controllers.Users{}, "post:UpdateEmail"),
 		beego.NSRouter("/:id/skills", &controllers.Users{}, "get:GetSkills"),
 		beego.NSRouter("/skills", &controllers.Users{}, "post:AddSkill"),
 		beego.NSRouter("/skills/:id", &controllers.Users{}, "delete:RemoveSkill"),

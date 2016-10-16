@@ -99,7 +99,7 @@ func (u *Users) Current() {
 // @Failure 400 bad-data
 // @Failure 401 unauthorized
 // @Failure 500 internal-error
-// @router /update_field [post]
+// @router / [put]
 func (u *Users) UpdateField() {
 	form := new(forms.UserUpdate)
 
@@ -142,34 +142,6 @@ func (u *Users) UpdatePassword() {
 	}
 
 	if _, ok := form.UpdatePassword(u.currentUser); !ok {
-		u.serveAJAXInternalServerError()
-		return
-	}
-	u.serveAJAXSuccess(u.currentUser)
-}
-
-// @Title UpdateEmail
-// @Description Updates e-mail of the user
-// @Param body body string true "A body that should contain new email field"
-// @Success 200 {object} models.User
-// @Failure 401 unauthorized
-// @Failure 400 bad-data
-// @Failure 500 internal-error
-// @router /update_email [post]
-func (u *Users) UpdateEmail() {
-	form := new(forms.UserEmailUpdate)
-
-	if ok := u.unmarshalJSON(form); !ok {
-		u.serveAJAXInternalServerError()
-		return
-	}
-
-	if ok := forms.Validate(form); !ok {
-		u.serveAJAXBadRequest(form.Errors...)
-		return
-	}
-
-	if _, ok := form.UpdateEmail(u.currentUser); !ok {
 		u.serveAJAXInternalServerError()
 		return
 	}
