@@ -28,11 +28,11 @@ func init() {
 // with some user logged in the system
 func login() *http.Cookie {
 	body := bytes.NewReader([]byte(`{"email":"my_mail@mail.com", "password":"1235~"}`))
-	r_, _ := http.NewRequest("POST", "/v1/users/login", body)
-	w_ := httptest.NewRecorder()
-	beego.BeeApp.Handlers.ServeHTTP(w_, r_)
-	if len(r_.Cookies()) == 0 || r_.Cookies()[0] == nil {
+	r, _ := http.NewRequest("POST", "/v1/users/login", body)
+	w := httptest.NewRecorder()
+	beego.BeeApp.Handlers.ServeHTTP(w, r)
+	if len(r.Cookies()) == 0 || r.Cookies()[0] == nil {
 		panic("invalid cookies after login")
 	}
-	return r_.Cookies()[0]
+	return r.Cookies()[0]
 }

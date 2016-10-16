@@ -62,3 +62,120 @@ func TestCurrentAction(t *testing.T) {
 		})
 	})
 }
+
+func TestUpdateField(t *testing.T) {
+	cookie := login()
+
+	Convey("Test update field", t, func() {
+		w := httptest.NewRecorder()
+		Convey("first_name update", func() {
+			body := bytes.NewReader([]byte(`{"field":"first_name", "value":"petro"}`))
+			r, _ := http.NewRequest("PUT", "/v1/users", body)
+			r.AddCookie(cookie)
+			beego.BeeApp.Handlers.ServeHTTP(w, r)
+			So(w.Code, ShouldEqual, http.StatusOK)
+			response, err := ReadResponse(w.Body)
+			So(err, ShouldBeNil)
+
+			So(response.Meta.HasError, ShouldBeFalse)
+			So(response.Data, ShouldNotBeNil)
+		})
+
+		Convey("last_name update", func() {
+			body := bytes.NewReader([]byte(`{"field":"last_name", "value":"petrenko"}`))
+			r, _ := http.NewRequest("PUT", "/v1/users", body)
+			r.AddCookie(cookie)
+			beego.BeeApp.Handlers.ServeHTTP(w, r)
+			So(w.Code, ShouldEqual, http.StatusOK)
+			response, err := ReadResponse(w.Body)
+			So(err, ShouldBeNil)
+
+			So(response.Meta.HasError, ShouldBeFalse)
+			So(response.Data, ShouldNotBeNil)
+		})
+
+		Convey("country update", func() {
+			body := bytes.NewReader([]byte(`{"field":"country", "value":"USA"}`))
+			r, _ := http.NewRequest("PUT", "/v1/users", body)
+			r.AddCookie(cookie)
+			beego.BeeApp.Handlers.ServeHTTP(w, r)
+			So(w.Code, ShouldEqual, http.StatusOK)
+			response, err := ReadResponse(w.Body)
+			So(err, ShouldBeNil)
+
+			So(response.Meta.HasError, ShouldBeFalse)
+			So(response.Data, ShouldNotBeNil)
+		})
+
+		Convey("city update", func() {
+			body := bytes.NewReader([]byte(`{"field":"city", "value":"New-York"}`))
+			r, _ := http.NewRequest("PUT", "/v1/users", body)
+			r.AddCookie(cookie)
+			beego.BeeApp.Handlers.ServeHTTP(w, r)
+			So(w.Code, ShouldEqual, http.StatusOK)
+			response, err := ReadResponse(w.Body)
+			So(err, ShouldBeNil)
+
+			So(response.Meta.HasError, ShouldBeFalse)
+			So(response.Data, ShouldNotBeNil)
+		})
+
+		Convey("overview update", func() {
+			body := bytes.NewReader([]byte(`{"field":"overview", "value":"software engineer"}`))
+			r, _ := http.NewRequest("PUT", "/v1/users", body)
+			r.AddCookie(cookie)
+			beego.BeeApp.Handlers.ServeHTTP(w, r)
+			So(w.Code, ShouldEqual, http.StatusOK)
+			response, err := ReadResponse(w.Body)
+			So(err, ShouldBeNil)
+
+			So(response.Meta.HasError, ShouldBeFalse)
+			So(response.Data, ShouldNotBeNil)
+		})
+
+		Convey("summary update", func() {
+			body := bytes.NewReader([]byte(`{"field":"  summary   ", "value":"   i'm the best of the best   "}`))
+			r, _ := http.NewRequest("PUT", "/v1/users", body)
+			r.AddCookie(cookie)
+			beego.BeeApp.Handlers.ServeHTTP(w, r)
+			So(w.Code, ShouldEqual, http.StatusOK)
+			response, err := ReadResponse(w.Body)
+			So(err, ShouldBeNil)
+
+			So(response.Meta.HasError, ShouldBeFalse)
+			So(response.Data, ShouldNotBeNil)
+		})
+
+		Convey("email update:valid email", func() {
+			body := bytes.NewReader([]byte(`{"field":"  email   ", "value":" hello@mail.com  "}`))
+			r, _ := http.NewRequest("PUT", "/v1/users", body)
+			r.AddCookie(cookie)
+			beego.BeeApp.Handlers.ServeHTTP(w, r)
+			So(w.Code, ShouldEqual, http.StatusOK)
+			response, err := ReadResponse(w.Body)
+			So(err, ShouldBeNil)
+
+			So(response.Meta.HasError, ShouldBeFalse)
+			So(response.Data, ShouldNotBeNil)
+
+			body_ := bytes.NewReader([]byte(`{"field":"  email   ", "value":" my_mail@mail.com  "}`))
+			r_, _ := http.NewRequest("PUT", "/v1/users", body_)
+			r_.AddCookie(cookie)
+			beego.BeeApp.Handlers.ServeHTTP(w, r_)
+		})
+
+		Convey("email update:invalid email", func() {
+			body := bytes.NewReader([]byte(`{"field":"  email   ", "value":" hello_mail.com  "}`))
+			r, _ := http.NewRequest("PUT", "/v1/users", body)
+			r.AddCookie(cookie)
+			beego.BeeApp.Handlers.ServeHTTP(w, r)
+			So(w.Code, ShouldEqual, http.StatusBadRequest)
+			response, err := ReadResponse(w.Body)
+			So(err, ShouldBeNil)
+
+			So(response.Meta.HasError, ShouldBeTrue)
+			So(response.Data, ShouldBeNil)
+
+		})
+	})
+}
