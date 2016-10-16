@@ -17,7 +17,7 @@ func (u *Users) Prepare() {
 
 // Register reads the data from the request body into forms.UserReg struct and attempts to save a user to db
 // @Title Register
-// @Description User registration
+// @Description User registration. If successful, the user is also authorized
 // @Param body body string true "Registration info"
 // @Success 200 {object} models.User
 // @Failure 200 Nil object and error tag
@@ -35,13 +35,12 @@ func (u *Users) Register() {
 		return
 	}
 
-	user, ok := regForm.Register()
-	if !ok {
+	if user, ok := regForm.Register(); ok {
+		u.authorizeUser(user)
+		u.serveAJAXSuccess(user)
+	} else {
 		u.serveAJAXInternalServerError()
-		return
 	}
-	u.authorizeUser(user)
-	u.serveAJAXSuccess(user)
 }
 
 // Login reads the data from the request body into forms.UserLogin struct, attempts to query a user from the db
@@ -65,20 +64,19 @@ func (u *Users) Login() {
 		return
 	}
 
-	user, ok := loginForm.Login()
-	if !ok {
+	if user, ok := loginForm.Login(); ok {
+		u.authorizeUser(user)
+		u.serveAJAXSuccess(user)
+	} else {
 		u.serveAJAXInternalServerError()
-		return
 	}
-	u.authorizeUser(user)
-	u.serveAJAXSuccess(user)
 }
 
 // Logout deauthorizes logged in User otherwise responses "bad-request"
 // @Title Logout
 // @Description Logout a user from the system
-// @Success 200 {object} models.User
-// @Failure 200 bad-request
+// @Success 200 {object}
+// @Failure 401 unauthorized
 // @router /logout [post]
 func (u *Users) Logout() {
 	u.deauthorizeUser()
@@ -88,7 +86,7 @@ func (u *Users) Logout() {
 // @Title Current
 // @Description Get info about the currently logged in user
 // @Success 200 {object} models.User
-// @Failure 200 bad-request
+// @Failure 401 unauthorized
 // @router /current [get]
 func (u *Users) Current() {
 	u.serveAJAXSuccess(u.currentUser)
@@ -98,8 +96,9 @@ func (u *Users) Current() {
 // @Description Updates user field
 // @Param body body string true "A body that should contain a field name and new value"
 // @Success 200 {object} models.User
-// @Failure 401 Unauthorized
 // @Failure 400 bad-data
+// @Failure 401 unauthorized
+// @Failure 500 internal-error
 // @router /update_field [post]
 func (u *Users) UpdateField() {
 	form := new(forms.UserUpdate)
@@ -125,8 +124,9 @@ func (u *Users) UpdateField() {
 // @Description Updates password of the user
 // @Param body body string true "A body that should contain the current password, password and password_confirm fields"
 // @Success 200 {object} models.User
-// @Failure 401 Unauthorized
+// @Failure 401 unauthorized
 // @Failure 400 bad-data
+// @Failure 500 internal-error
 // @router /update_password [post]
 func (u *Users) UpdatePassword() {
 	form := new(forms.UserPasswordUpdate)
@@ -152,8 +152,9 @@ func (u *Users) UpdatePassword() {
 // @Description Updates e-mail of the user
 // @Param body body string true "A body that should contain new email field"
 // @Success 200 {object} models.User
-// @Failure 401 Unauthorized
+// @Failure 401 unauthorized
 // @Failure 400 bad-data
+// @Failure 500 internal-error
 // @router /update_email [post]
 func (u *Users) UpdateEmail() {
 	form := new(forms.UserEmailUpdate)
@@ -180,13 +181,13 @@ func (u *Users) UpdateEmail() {
 // @Param id path int true "An id of a user you want to get"
 // @Success 200 {object} models.User
 // @Failure 400 invalid-id or no-such-user
+// @Failure 401 unauthorized
 // @router /:id [get]
 func (u *Users) GetUser() {
 	// TODO: Check if the requested user can be seen (publicly or privately)
 	id := u.getID()
 
-	user, ok := models.Users.FetchByID(id)
-	if ok {
+	if user, ok := models.Users.FetchByID(id); ok {
 		u.serveAJAXSuccess(user)
 	} else {
 		u.serveAJAXBadRequest("no-such-user")
@@ -199,16 +200,16 @@ func (u *Users) GetUser() {
 // @Success 200 {array of objects} models.Skill
 // @Failure 400 bad-request
 // @Failure 401 unauthorized
+// @Failure 500 internal-error
 // @router /:id/skills [get]
 func (u *Users) GetSkills() {
 	userID := u.currentUser.ID
 
-	skills, ok := models.UserSkills.FetchSkillsByUser(userID)
-	if !ok {
+	if skills, ok := models.UserSkills.FetchSkillsByUser(userID); ok {
+		u.serveAJAXSuccess(skills)
+	} else {
 		u.serveAJAXInternalServerError()
-		return
 	}
-	u.serveAJAXSuccess(skills)
 }
 
 // @Title AddSkill
@@ -294,13 +295,11 @@ func (u *Users) AddSphere() {
 
 	form.UserID = u.currentUser.ID
 
-	userSphere, ok := form.Save()
-	if !ok {
+	if userSphere, ok := form.Save(); ok {
+		u.serveAJAXSuccess(userSphere)
+	} else {
 		u.serveAJAXInternalServerError()
-		return
 	}
-
-	u.serveAJAXSuccess(userSphere)
 }
 
 // @Title RemoveSphere
