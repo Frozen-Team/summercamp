@@ -8,7 +8,7 @@ type UserSkill struct {
 	SkillID int `json:"skill_id" valid:"Required"`
 }
 
-func (us *UserSkill) Process() (*models.UserSkill, bool) {
+func (us *UserSkill) Save() (*models.UserSkill, bool) {
 	userSkill := models.UserSkill{
 		UserID:  us.UserID,
 		SkillID: us.SkillID,

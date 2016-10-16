@@ -12,13 +12,13 @@ import (
 	"github.com/astaxie/beego"
 )
 
-// Fuck beego swagger
+// for beego swagger.
 type beegoNewNamespace func(prefix string, params ...beego.LinkNamespace) *beego.Namespace
 
 func init() {
 	goto swaggerAfterFucked
-	// Here is a place where beego's swagger being extremely FUCKED UP
-	// Add your fucking things (other controllers) below
+	// Beego's swagger internal implementation requires such a huck.
+	// Add new controllers below.
 	_ = beego.NewNamespace(
 		"/v1",
 		beego.NSNamespace("/users",
@@ -36,8 +36,7 @@ func init() {
 	)
 swaggerAfterFucked:
 
-	beego.AddNamespace(beego.NewNamespace(
-		"/v1/users",
+	beego.AddNamespace(beego.NewNamespace("/v1/users",
 		beego.NSRouter("", &controllers.Users{}, "post:Register"),
 		beego.NSRouter("/current", &controllers.Users{}, "get:Current"),
 		beego.NSRouter("/login", &controllers.Users{}, "post:Login"),
@@ -46,10 +45,11 @@ swaggerAfterFucked:
 		beego.NSRouter("/update_field", &controllers.Users{}, "post:UpdateField"),
 		beego.NSRouter("/update_password", &controllers.Users{}, "post:UpdatePassword"),
 		beego.NSRouter("/update_email", &controllers.Users{}, "post:UpdateEmail"),
-		beego.NSRouter("/update_summary", &controllers.Users{}, "post:UpdateSummary"),
 		beego.NSRouter("/:id/skills", &controllers.Users{}, "get:GetSkills"),
 		beego.NSRouter("/skills", &controllers.Users{}, "post:AddSkill"),
 		beego.NSRouter("/skills/:id", &controllers.Users{}, "delete:RemoveSkill"),
+		beego.NSRouter("/spheres", &controllers.Users{}, "post:AddSphere"),
+		beego.NSRouter("/spheres/:id", &controllers.Users{}, "delete:RemoveSphere"),
 	))
 
 	beego.AddNamespace(beego.NewNamespace(
@@ -67,9 +67,5 @@ swaggerAfterFucked:
 	beego.AddNamespace(beego.NewNamespace(
 		"/v1/api/projects",
 		beego.NSRouter("/", &controllers.Projects{}, "post:Save"),
-	))
-	beego.AddNamespace(beego.NewNamespace(
-		"/v1/user_spheres",
-		beego.NSRouter("", &controllers.UserSpheres{}, "post:Save"),
 	))
 }

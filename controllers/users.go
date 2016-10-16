@@ -272,7 +272,7 @@ func (u *Users) AddSkill() {
 		return
 	}
 
-	if userSkill, ok := form.Process(); ok {
+	if userSkill, ok := form.Save(); ok {
 		u.serveAJAXSuccess(userSkill)
 	} else {
 		u.serveAJAXInternalServerError()
@@ -293,6 +293,58 @@ func (u *Users) RemoveSkill() {
 	userSkill := models.UserSkill{ID: userSkillID}
 
 	if ok := userSkill.Delete(); ok {
+		u.serveAJAXSuccess(nil)
+	} else {
+		u.serveAJAXInternalServerError()
+	}
+}
+
+// @Title AddSphere
+// @Description Create a new user sphere record
+// @Param sphere_id body int true "sphere id to be added for the current user"
+// @Success 200 {object} models.UserSphere
+// @Failure 400 bad-request + validation errors
+// @Failure 401 unauthorized
+// @Failure 500 internal-error
+// @router /spheres [post]
+func (u *Users) AddSphere() {
+	form := new(forms.UserSphere)
+
+	if ok := u.unmarshalJSON(form); !ok {
+		u.serveAJAXInternalServerError()
+		return
+	}
+
+	if ok := forms.Validate(form); !ok {
+		u.serveAJAXBadRequest(form.Errors...)
+		return
+	}
+
+	form.UserID = u.currentUser.ID
+
+	userSphere, ok := form.Save()
+	if !ok {
+		u.serveAJAXInternalServerError()
+		return
+	}
+
+	u.serveAJAXSuccess(userSphere)
+}
+
+// @Title RemoveSphere
+// @Description remove sphere for the user
+// @Param id path int true "id of the userSphere to be removed"
+// @Success 200 {nil}
+// @Failure 400 invalid-id
+// @Failure 401 unauthorized
+// @Failure 500 internal-error
+// @router /spheres/:id [delete]
+func (u *Users) RemoveSphere() {
+	userSphereID := u.getID()
+
+	userSphere := models.UserSphere{ID: userSphereID}
+
+	if ok := userSphere.Delete(); ok {
 		u.serveAJAXSuccess(nil)
 	} else {
 		u.serveAJAXInternalServerError()
