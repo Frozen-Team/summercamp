@@ -211,34 +211,6 @@ func (u *Users) GetSkills() {
 	u.serveAJAXSuccess(skills)
 }
 
-// @Title UpdateSummary
-// @Description updates summary for the currently logged in user
-// @Param summary body string true "short summary about the user, max length is 64 chars"
-// @Success 200 {object} models.User
-// @Failure 400 bad-request and validation error
-// @Failure 401 unauthorized
-// @router /update_summary [post]
-func (u *Users) UpdateSummary() {
-	userSummaryForm := new(forms.UserSummary)
-
-	if ok := u.unmarshalJSON(userSummaryForm); !ok {
-		u.serveAJAXInternalServerError()
-		return
-	}
-
-	if ok := forms.Validate(userSummaryForm); !ok {
-		u.serveAJAXBadRequest(userSummaryForm.Errors...)
-		return
-	}
-
-	if ok := userSummaryForm.Update(u.currentUser); !ok {
-		u.serveAJAXInternalServerError()
-		return
-	}
-
-	u.serveAJAXSuccess(u.currentUser)
-}
-
 // @Title AddSkill
 // @Description add skill for the currently logged in user
 // @Param skill_id body int true "skill id of the skill, max 10 skills"

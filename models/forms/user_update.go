@@ -21,6 +21,10 @@ func (u *UserUpdate) Update(cu *models.User) (*models.User, bool) {
 		cu.Country = u.Value
 	case "city":
 		cu.City = u.Value
+	case "summary":
+		cu.Summary = u.Value
+	case "overview":
+		cu.Overview = u.Value
 	case "timezone":
 	// TODO: implement timezone
 	default:
@@ -34,9 +38,3 @@ func (u *UserUpdate) Update(cu *models.User) (*models.User, bool) {
 	}
 	return cu, true
 }
-
-
-
-
-
-
