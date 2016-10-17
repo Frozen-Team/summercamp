@@ -260,12 +260,12 @@ func (u *Users) AddSphere() {
 		return
 	}
 
+	form.UserID = u.currentUser.ID
+
 	if ok := forms.Validate(form); !ok {
 		u.serveAJAXBadRequest(form.Errors...)
 		return
 	}
-
-	form.UserID = u.currentUser.ID
 
 	if userSphere, ok := form.Save(); ok {
 		u.serveAJAXSuccess(userSphere)

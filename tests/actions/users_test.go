@@ -302,3 +302,38 @@ func TestAddAndRemoveSkill(t *testing.T) {
 		So(response_.Data, ShouldBeNil)
 	})
 }
+
+func TestAddAndRemoveSphere(t *testing.T) {
+	cookie := login()
+
+	Convey("Test valid add and remove", t, func() {
+		w := httptest.NewRecorder()
+		body := bytes.NewReader([]byte(`{"sphere_id":1}`))
+		r, _ := http.NewRequest("POST", "/v1/users/spheres", body)
+		r.AddCookie(cookie)
+
+		beego.BeeApp.Handlers.ServeHTTP(w, r)
+
+		So(w.Code, ShouldEqual, http.StatusOK)
+		response, err := ReadResponse(w.Body)
+
+		So(err, ShouldBeNil)
+		So(response.Meta.HasError, ShouldBeFalse)
+		So(response.Data, ShouldNotBeNil)
+
+		responseMap, ok := response.Data.(map[string]interface{})
+		So(ok, ShouldBeTrue)
+		id := int(responseMap["id"].(float64))
+		r, _ = http.NewRequest("DELETE", "/v1/users/spheres/"+strconv.FormatInt(int64(id), 10), body)
+		w_ := httptest.NewRecorder()
+		r.AddCookie(cookie)
+
+		beego.BeeApp.Handlers.ServeHTTP(w_, r)
+		So(w_.Code, ShouldEqual, http.StatusOK)
+		response_, err := ReadResponse(w_.Body)
+		So(err, ShouldBeNil)
+
+		So(response_.Meta.HasError, ShouldBeFalse)
+		So(response_.Data, ShouldBeNil)
+	})
+}
