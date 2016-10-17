@@ -20,7 +20,7 @@
   first_name: oleh
   last_name: holovko
   email: olehgol260@gmail.com
-  password: 12345
+  password: $2a$10$fvEu9.cZnXY0XYZ8RYxE.uhq79IBf0ON7feg7sBccZCY1CmrO4e/u
   balance: 1
   bid: 1
   braintree_id: 1234

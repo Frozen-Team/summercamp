@@ -9,6 +9,8 @@ import (
 	_ "bitbucket.org/SummerCampDev/summercamp/routers"
 	_ "bitbucket.org/SummerCampDev/summercamp/tests/setup"
 
+	"strconv"
+
 	"github.com/astaxie/beego"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -158,7 +160,7 @@ func TestUpdateField(t *testing.T) {
 			So(response.Meta.HasError, ShouldBeFalse)
 			So(response.Data, ShouldNotBeNil)
 
-			body_ := bytes.NewReader([]byte(`{"field":"  email   ", "value":" my_mail@mail.com  "}`))
+			body_ := bytes.NewReader([]byte(`{"field":"  email   ", "value":" olehgol260@gmail.com  "}`))
 			r_, _ := http.NewRequest("PUT", "/v1/users", body_)
 			r_.AddCookie(cookie)
 			beego.BeeApp.Handlers.ServeHTTP(w, r_)
@@ -229,5 +231,74 @@ func TestUpdatePassword(t *testing.T) {
 			So(response.Meta.HasError, ShouldBeTrue)
 			So(response.Data, ShouldBeNil)
 		})
+	})
+}
+
+func TestGetUser(t *testing.T) {
+	cookie := login()
+
+	Convey("Test get valid user", t, func() {
+		w := httptest.NewRecorder()
+		r, _ := http.NewRequest("GET", "/v1/users/1", nil)
+		r.AddCookie(cookie)
+		beego.BeeApp.Handlers.ServeHTTP(w, r)
+
+		So(w.Code, ShouldEqual, http.StatusOK)
+		response, err := ReadResponse(w.Body)
+		So(err, ShouldBeNil)
+
+		So(response.Meta.HasError, ShouldBeFalse)
+		So(response.Data, ShouldNotBeNil)
+
+	})
+
+	Convey("Test get invalid user", t, func() {
+		w := httptest.NewRecorder()
+		r, _ := http.NewRequest("GET", "/v1/users/100500", nil)
+		r.AddCookie(cookie)
+		beego.BeeApp.Handlers.ServeHTTP(w, r)
+
+		So(w.Code, ShouldEqual, http.StatusBadRequest)
+		response, err := ReadResponse(w.Body)
+		So(err, ShouldBeNil)
+
+		So(response.Meta.HasError, ShouldBeTrue)
+		So(response.Data, ShouldBeNil)
+
+	})
+}
+
+func TestAddAndRemoveSkill(t *testing.T) {
+	cookie := login()
+
+	Convey("Test valid add and remove", t, func() {
+		w := httptest.NewRecorder()
+		body := bytes.NewReader([]byte(`{"skill_id":1}`))
+		r, _ := http.NewRequest("POST", "/v1/users/skills", body)
+		r.AddCookie(cookie)
+
+		beego.BeeApp.Handlers.ServeHTTP(w, r)
+
+		So(w.Code, ShouldEqual, http.StatusOK)
+		response, err := ReadResponse(w.Body)
+
+		So(err, ShouldBeNil)
+		So(response.Meta.HasError, ShouldBeFalse)
+		So(response.Data, ShouldNotBeNil)
+
+		responseMap, ok := response.Data.(map[string]interface{})
+		So(ok, ShouldBeTrue)
+		id := int(responseMap["id"].(float64))
+		r, _ = http.NewRequest("DELETE", "/v1/users/skills/"+strconv.FormatInt(int64(id), 10), body)
+		w_ := httptest.NewRecorder()
+		r.AddCookie(cookie)
+
+		beego.BeeApp.Handlers.ServeHTTP(w_, r)
+		So(w_.Code, ShouldEqual, http.StatusOK)
+		response_, err := ReadResponse(w_.Body)
+		So(err, ShouldBeNil)
+
+		So(response_.Meta.HasError, ShouldBeFalse)
+		So(response_.Data, ShouldBeNil)
 	})
 }
