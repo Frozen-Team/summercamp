@@ -179,3 +179,55 @@ func TestUpdateField(t *testing.T) {
 		})
 	})
 }
+
+func TestUpdatePassword(t *testing.T) {
+	cookie := login()
+
+	Convey("Test update password", t, func() {
+		w := httptest.NewRecorder()
+
+		Convey("Test valid password change", func() {
+			body := bytes.NewReader([]byte(`{"current_password":"1235~", "password":"1234~", "password_confirm":"1234~"}`))
+			r, _ := http.NewRequest("POST", "/v1/users/update_password", body)
+			r.AddCookie(cookie)
+			beego.BeeApp.Handlers.ServeHTTP(w, r)
+			So(w.Code, ShouldEqual, http.StatusOK)
+			response, err := ReadResponse(w.Body)
+			So(err, ShouldBeNil)
+
+			So(response.Meta.HasError, ShouldBeFalse)
+			So(response.Data, ShouldNotBeNil)
+
+			body = bytes.NewReader([]byte(`{"current_password":"1234~", "password":"1235~", "password_confirm":"1235~"}`))
+			r, _ = http.NewRequest("POST", "/v1/users/update_password", body)
+			r.AddCookie(cookie)
+			beego.BeeApp.Handlers.ServeHTTP(w, r)
+		})
+
+		Convey("Test invalid password change: different pass and confirm", func() {
+			body := bytes.NewReader([]byte(`{"current_password":"1235~", "password":"1234~", "password_confirm":"1231~"}`))
+			r, _ := http.NewRequest("POST", "/v1/users/update_password", body)
+			r.AddCookie(cookie)
+			beego.BeeApp.Handlers.ServeHTTP(w, r)
+			So(w.Code, ShouldEqual, http.StatusBadRequest)
+			response, err := ReadResponse(w.Body)
+			So(err, ShouldBeNil)
+
+			So(response.Meta.HasError, ShouldBeTrue)
+			So(response.Data, ShouldBeNil)
+		})
+
+		Convey("Test invalid password change: weak pass", func() {
+			body := bytes.NewReader([]byte(`{"current_password":"1235~", "password":"12345", "password_confirm":"12345"}`))
+			r, _ := http.NewRequest("POST", "/v1/users/update_password", body)
+			r.AddCookie(cookie)
+			beego.BeeApp.Handlers.ServeHTTP(w, r)
+			So(w.Code, ShouldEqual, http.StatusBadRequest)
+			response, err := ReadResponse(w.Body)
+			So(err, ShouldBeNil)
+
+			So(response.Meta.HasError, ShouldBeTrue)
+			So(response.Data, ShouldBeNil)
+		})
+	})
+}
