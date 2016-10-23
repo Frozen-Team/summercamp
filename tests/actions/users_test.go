@@ -17,7 +17,7 @@ import (
 
 func TestRegistrationAction(t *testing.T) {
 	Convey("Test registration action", t, func() {
-		body := bytes.NewReader([]byte(`{"email":"mail@mail.com", "type":"manager", "first_name":"oleh",
+		body := bytes.NewReader([]byte(`{"email":"mail@mail.com", "type":"executor", "first_name":"oleh",
 		 "last_name":"gol", "password":"1235~", "password_confirm":"1235~",
 		  "country":"ukraine", "city":"kyiv"}`))
 		r, _ := http.NewRequest("POST", "/v1/users", body)
