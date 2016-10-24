@@ -7,13 +7,14 @@ import (
 	_ "bitbucket.org/SummerCampDev/summercamp/tests/setup"
 
 	"bytes"
-	"github.com/astaxie/beego"
-	. "github.com/smartystreets/goconvey/convey"
 	"net/http"
 	"net/http/httptest"
+
+	"github.com/astaxie/beego"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestSave(t *testing.T) {
+func TestProjectSave(t *testing.T) {
 	Convey("Valid save", t, func() {
 		body := bytes.NewReader([]byte(`{"description":"a good project", "budget":100500, "sphere_skills":[{"sphere":1, "skills":[1, 2]}]}`))
 		r, _ := http.NewRequest("POST", "/v1/projects", body)
