@@ -8,6 +8,7 @@ import (
 
 type AccessLevel int
 
+//TODO: add default value for DB column as readonly
 const (
 	AccessCreator  AccessLevel = 0
 	AccessReadOnly AccessLevel = 100

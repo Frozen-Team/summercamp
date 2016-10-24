@@ -15,10 +15,12 @@ type Teams struct {
 // @Param body body string true "Registration info"
 // @Success 200 {object} models.Team
 // @Failure 401 Unauthorized
+// @Failure 403 Forbidden
+// @Failure 500 internal-error
 // @router / [post]
 func (t *Teams) Save() {
 	if t.currentUser.Type != models.SpecTypeExecutor {
-		t.serveAJAXMethodNotAllowed()
+		t.serveAJAXForbidden()
 		return
 	}
 
@@ -48,6 +50,8 @@ func (t *Teams) Save() {
 // @Success 200 {object} models.TeamMember
 // @Failure 400 invalid-team-id or no-such-team
 // @Failure 401 Unauthorized
+// @Failure 403 forbidden
+// @Failure 500 internal-error
 // @router /:id/members [post]
 func (t *Teams) AddMember() {
 	id := t.getID()
@@ -82,12 +86,15 @@ func (t *Teams) AddMember() {
 	}
 }
 
+// TODO: if there are members in the team, what then?
 // @Title Delete
 // @Description Team removal
 // @Param teamId path int true "the team id you want to delete"
 // @Success 200 OK
 // @Failure 400 invalid-team-id or no-such-team
 // @Failure 401 Unauthorized
+// @Failure 403 forbidden
+// @Failure 500 internal-error
 // @router /:id [delete]
 func (t *Teams) Delete() {
 	id := t.getID()
