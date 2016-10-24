@@ -33,7 +33,7 @@ func TestRegistrationAction(t *testing.T) {
 
 func TestCurrentAction(t *testing.T) {
 	Convey("Test current action", t, func() {
-		cookie := login()
+		cookie := loginExec()
 
 		Convey("With login: Test current action", func() {
 			r, _ := http.NewRequest("GET", "/v1/users/current", nil)
@@ -66,7 +66,7 @@ func TestCurrentAction(t *testing.T) {
 }
 
 func TestUpdateField(t *testing.T) {
-	cookie := login()
+	cookie := loginExec()
 
 	Convey("Test update field", t, func() {
 		w := httptest.NewRecorder()
@@ -183,7 +183,7 @@ func TestUpdateField(t *testing.T) {
 }
 
 func TestUpdatePassword(t *testing.T) {
-	cookie := login()
+	cookie := loginExec()
 
 	Convey("Test update password", t, func() {
 		w := httptest.NewRecorder()
@@ -235,7 +235,7 @@ func TestUpdatePassword(t *testing.T) {
 }
 
 func TestGetUser(t *testing.T) {
-	cookie := login()
+	cookie := loginExec()
 
 	Convey("Test get valid user", t, func() {
 		w := httptest.NewRecorder()
@@ -269,7 +269,7 @@ func TestGetUser(t *testing.T) {
 }
 
 func TestAddAndRemoveSkill(t *testing.T) {
-	cookie := login()
+	cookie := loginExec()
 
 	Convey("Test valid add and remove", t, func() {
 		w := httptest.NewRecorder()
@@ -304,7 +304,7 @@ func TestAddAndRemoveSkill(t *testing.T) {
 }
 
 func TestAddAndRemoveSphere(t *testing.T) {
-	cookie := login()
+	cookie := loginExec()
 
 	Convey("Test valid add and remove", t, func() {
 		w := httptest.NewRecorder()
