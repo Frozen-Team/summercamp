@@ -82,6 +82,16 @@ func (u *User) Delete() bool {
 	return utils.ProcessError(err, "delete user")
 }
 
+// IsClient is a helper function to check if the user`s type is client.
+func (u *User) IsClient() bool {
+	return u.Type == SpecTypeClient
+}
+
+// IsClient is a helper function to check if the user`s type is executor.
+func (u *User) IsExecutor() bool {
+	return u.Type == SpecTypeExecutor
+}
+
 // Teams returns teams for the current user. If everything is okay, the second
 // returned value is true, false - otherwise.
 func (u *User) Teams() ([]Team, bool) {

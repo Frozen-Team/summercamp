@@ -9,29 +9,35 @@ type Projects struct {
 
 // @Title Save
 // @Description saves a new project in the db
-// @Param body body string true "fields:client_id, description, budget, array of sphere_skills"
+// @Param body body string true "fields:description, budget, array of sphere_skills"
 // @Success 200 {object} models.Project
 // @Failure 400 possible errors, nil object
 // @Failure 401 unauthorized
 // @router / [post]
 func (p *Projects) Save() {
-	newProjectForm := new(forms.Project)
+	form := new(forms.Project)
 
-	if ok := p.unmarshalJSON(newProjectForm); !ok {
+	if !p.currentUser.IsClient() {
+		p.serveAJAXForbidden()
+		return
+	}
+
+	if ok := p.unmarshalJSON(form); !ok {
 		p.serveAJAXInternalServerError()
 		return
 	}
 
-	if ok := forms.Validate(newProjectForm); !ok {
-		p.serveAJAXBadRequest(newProjectForm.Errors...)
+	form.ClientID = p.currentUser.ID
+
+	if ok := forms.Validate(form); !ok {
+		p.serveAJAXBadRequest(form.Errors...)
 		return
 	}
 
-	project, ok := newProjectForm.Save()
-	if !ok {
+	if project, ok := form.Save(); ok {
+		p.serveAJAXSuccess(project)
+	} else {
 		p.serveAJAXInternalServerError()
-		return
 	}
 
-	p.serveAJAXSuccess(project)
 }
