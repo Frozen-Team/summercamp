@@ -36,34 +36,36 @@ func init() {
 	)
 swaggerAfterFucked:
 
-	beego.AddNamespace(beego.NewNamespace("/v1/users",
-		beego.NSRouter("", &controllers.Users{}, "post:Register;put:UpdateField"),
-		beego.NSRouter("/current", &controllers.Users{}, "get:Current"),
-		beego.NSRouter("/login", &controllers.Users{}, "post:Login"),
-		beego.NSRouter("/logout", &controllers.Users{}, "post:Logout"),
-		beego.NSRouter("/:id", &controllers.Users{}, "get:GetUser"),
-		beego.NSRouter("/update_password", &controllers.Users{}, "post:UpdatePassword"),
-		beego.NSRouter("/:id/skills", &controllers.Users{}, "get:GetSkills"),
-		beego.NSRouter("/skills", &controllers.Users{}, "post:AddSkill"),
-		beego.NSRouter("/skills/:id", &controllers.Users{}, "delete:RemoveSkill"),
-		beego.NSRouter("/spheres", &controllers.Users{}, "post:AddSphere"),
-		beego.NSRouter("/spheres/:id", &controllers.Users{}, "delete:RemoveSphere"),
-	))
+	beego.AddNamespace(beego.NewNamespace("/v1",
+		beego.NSNamespace("/users",
+			beego.NSRouter("", &controllers.Users{}, "post:Register;put:UpdateField"),
+			beego.NSRouter("/current", &controllers.Users{}, "get:Current"),
+			beego.NSRouter("/login", &controllers.Users{}, "post:Login"),
+			beego.NSRouter("/logout", &controllers.Users{}, "post:Logout"),
+			beego.NSRouter("/:id", &controllers.Users{}, "get:GetUser"),
+			beego.NSRouter("/update_password", &controllers.Users{}, "post:UpdatePassword"),
+			beego.NSRouter("/:id/skills", &controllers.Users{}, "get:GetSkills"),
+			beego.NSRouter("/skills", &controllers.Users{}, "post:AddSkill"),
+			beego.NSRouter("/skills/:id", &controllers.Users{}, "delete:RemoveSkill"),
+			beego.NSRouter("/spheres", &controllers.Users{}, "post:AddSphere"),
+			beego.NSRouter("/spheres/:id", &controllers.Users{}, "delete:RemoveSphere"),
+		),
 
-	beego.AddNamespace(beego.NewNamespace(
-		"/v1/teams",
-		beego.NSRouter("", &controllers.Teams{}, "post:Register"),
-		beego.NSRouter("/:id", &controllers.Teams{}, "delete:Delete"),
-		beego.NSRouter("/:id", &controllers.Teams{}, "get:GetTeam"),
-		beego.NSRouter("/:id/members", &controllers.Teams{}, "post:AddMember"),
-	))
+		beego.NSNamespace("/teams",
+			beego.NSRouter("", &controllers.Teams{}, "post:Register"),
+			beego.NSRouter("/:id", &controllers.Teams{}, "delete:Delete"),
+			beego.NSRouter("/:id", &controllers.Teams{}, "get:GetTeam"),
+			beego.NSRouter("/:id/members", &controllers.Teams{}, "post:AddMember"),
+		),
 
-	beego.AddNamespace(beego.NewNamespace(
-		"/v1/api",
-		beego.NSRouter("/ping", &controllers.Api{}, "get:Ping"),
-	))
-	beego.AddNamespace(beego.NewNamespace(
-		"/v1/api/projects",
-		beego.NSRouter("/", &controllers.Projects{}, "post:Save"),
+		beego.NSNamespace(
+			"/projects",
+			beego.NSRouter("/", &controllers.Projects{}, "post:Save"),
+		),
+
+		beego.NSNamespace(
+			"/api",
+			beego.NSRouter("/ping", &controllers.Api{}, "get:Ping"),
+		),
 	))
 }
