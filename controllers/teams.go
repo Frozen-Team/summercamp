@@ -10,14 +10,13 @@ type Teams struct {
 	ApplicationController
 }
 
-// Register reads the data from the request body into forms.TeamRegistration struct and attempts to save a team to db
 // @Title Register
-// @Description Team registration
+// @Description register a new team
 // @Param body body string true "Registration info"
 // @Success 200 {object} models.Team
 // @Failure 401 Unauthorized
 // @router / [post]
-func (t *Teams) Register() {
+func (t *Teams) Save() {
 	if t.currentUser.Type != models.SpecTypeExecutor {
 		t.serveAJAXMethodNotAllowed()
 		return
@@ -35,17 +34,15 @@ func (t *Teams) Register() {
 		return
 	}
 
-	team, ok := form.Register(t.currentUser)
-	if !ok {
+	if team, ok := form.Register(t.currentUser); ok {
+		t.serveAJAXSuccess(team)
+	} else {
 		t.serveAJAXInternalServerError()
-		return
 	}
-	t.serveAJAXSuccess(team)
 }
 
-// AddMember adds new member to the team
 // @Title AddMember
-// @Description Team member addition
+// @Description adds a new member to the team
 // @Param teamId path int true "the team id"
 // @Param body body string true "Team member"
 // @Success 200 {object} models.TeamMember
@@ -73,13 +70,12 @@ func (t *Teams) AddMember() {
 	}
 
 	currentMember, found := team.IsMember(t.currentUser)
-	if !found || currentMember.Access != models.AccessCreator {
+	if !found || !currentMember.IsCreator() {
 		t.serveAJAXForbidden()
 		return
 	}
 
-	member, ok := form.AddMember(team)
-	if ok {
+	if member, ok := form.AddMember(team); ok {
 		t.serveAJAXSuccess(member)
 	} else {
 		t.serveAJAXInternalServerError()
@@ -103,7 +99,7 @@ func (t *Teams) Delete() {
 	}
 
 	teamMember, found := team.IsMember(t.currentUser)
-	if found && teamMember.Access != models.AccessCreator {
+	if found && !teamMember.IsCreator() {
 		t.serveAJAXForbidden()
 		return
 	}
@@ -119,15 +115,14 @@ func (t *Teams) Delete() {
 // @Description Get info about a team by its id
 // @Param id path int true "An id of a team you want to get"
 // @Success 200 {object} models.Team
-// @Failure 400 invalid-team-id or no-such-team
+// @Failure 400 no-such-team
 // @Failure 401 Unauthorized
 // @router /:id [get]
 func (t *Teams) GetTeam() {
 	// TODO: Check if the requested user can be seen (publicly or privately)
 	id := t.getID()
 
-	team, ok := models.Teams.FetchByID(id)
-	if ok {
+	if team, ok := models.Teams.FetchByID(id); ok {
 		t.serveAJAXSuccess(team)
 	} else {
 		t.serveAJAXBadRequest("no-such-team")

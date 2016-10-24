@@ -51,6 +51,11 @@ func (tm *TeamMember) Delete() bool {
 	return utils.ProcessError(err, " delete team member")
 }
 
+// IsCreator is a helper to check if the current team member is a creator of the team.
+func (tm *TeamMember) IsCreator() bool {
+	return tm.Access == AccessCreator
+}
+
 // teamsMembersAPI is an empty struct which is a receiver of helper methods
 // which can be useful while working with TeamMember model and are not directly relate to it
 type teamsMembersAPI struct{}

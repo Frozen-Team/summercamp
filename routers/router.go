@@ -52,7 +52,7 @@ swaggerAfterFucked:
 		),
 
 		beego.NSNamespace("/teams",
-			beego.NSRouter("", &controllers.Teams{}, "post:Register"),
+			beego.NSRouter("", &controllers.Teams{}, "post:Save"),
 			beego.NSRouter("/:id", &controllers.Teams{}, "delete:Delete"),
 			beego.NSRouter("/:id", &controllers.Teams{}, "get:GetTeam"),
 			beego.NSRouter("/:id/members", &controllers.Teams{}, "post:AddMember"),
