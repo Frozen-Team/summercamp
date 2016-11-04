@@ -19,7 +19,7 @@ func (v *Vacancy) TableName() string {
 }
 
 // Save inserts a new element to the db or update columns columnToUpdate of an existing record.
-func (v *Vacancy) Save(columnToUpdate ...string) string {
+func (v *Vacancy) Save(columnToUpdate ...string) bool {
 	_, err := DB.InsertOrUpdate(v, columnToUpdate...)
 	return utils.ProcessError(err, "insert of update a vacancy")
 }
