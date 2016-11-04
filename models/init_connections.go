@@ -49,15 +49,18 @@ func InitDB() {
 
 // all models will be registered here
 func registerModels() {
-	orm.RegisterModel(UserModel)
-	orm.RegisterModel(TeamModel)
-	orm.RegisterModel(TransactionModel)
-	orm.RegisterModel(TeamMemberModel)
-	orm.RegisterModel(ProjectSkillModel)
-	orm.RegisterModel(SphereModel)
-	orm.RegisterModel(SkillModel)
-	orm.RegisterModel(ProjectModel)
-	orm.RegisterModel(ProjectSphereModel)
-	orm.RegisterModel(UserSphereModel)
-	orm.RegisterModel(UserSkillModel)
+	orm.RegisterModel(
+		UserModel,
+		TeamModel,
+		TransactionModel,
+		TeamMemberModel,
+		ProjectSkillModel,
+		SphereModel,
+		SkillModel,
+		ProjectModel,
+		ProjectSphereModel,
+		UserSphereModel,
+		UserSkillModel,
+		VacancyModel,
+	)
 }
