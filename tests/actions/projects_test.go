@@ -22,10 +22,7 @@ func TestProjectSave(t *testing.T) {
 		w := httptest.NewRecorder()
 		beego.BeeApp.Handlers.ServeHTTP(w, r)
 
-		So(w.Code, ShouldEqual, http.StatusOK)
-		response, err := ReadResponse(w.Body)
-		So(err, ShouldBeNil)
-		So(response.Meta.HasError, ShouldBeFalse)
+		checkOK(w)
 	})
 
 	Convey("Invalid save: executor login", t, func() {
@@ -35,10 +32,7 @@ func TestProjectSave(t *testing.T) {
 		w := httptest.NewRecorder()
 		beego.BeeApp.Handlers.ServeHTTP(w, r)
 
-		So(w.Code, ShouldEqual, http.StatusForbidden)
-		response, err := ReadResponse(w.Body)
-		So(err, ShouldBeNil)
-		So(response.Meta.HasError, ShouldBeTrue)
+		checkBad(w, http.StatusForbidden)
 	})
 
 	Convey("Invalid save: missing field", t, func() {
@@ -48,9 +42,6 @@ func TestProjectSave(t *testing.T) {
 		w := httptest.NewRecorder()
 		beego.BeeApp.Handlers.ServeHTTP(w, r)
 
-		So(w.Code, ShouldEqual, http.StatusBadRequest)
-		response, err := ReadResponse(w.Body)
-		So(err, ShouldBeNil)
-		So(response.Meta.HasError, ShouldBeTrue)
+		checkBad(w, http.StatusBadRequest)
 	})
 }

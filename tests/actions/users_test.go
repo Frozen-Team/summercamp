@@ -40,27 +40,14 @@ func TestCurrentAction(t *testing.T) {
 			r.AddCookie(cookie)
 			w := httptest.NewRecorder()
 			beego.BeeApp.Handlers.ServeHTTP(w, r)
-
-			So(w.Code, ShouldEqual, http.StatusOK)
-			So(w.Body.Len(), ShouldBeGreaterThan, 0)
-
-			response, err := ReadResponse(w.Body)
-			So(err, ShouldBeNil)
-
-			So(response.Meta.HasError, ShouldBeFalse)
-			So(response.Data, ShouldNotBeNil)
+			checkOK(w)
 		})
 
 		Convey("Without login: Test current action", func() {
 			r, _ := http.NewRequest("GET", "/v1/users/current", nil)
 			w := httptest.NewRecorder()
 			beego.BeeApp.Handlers.ServeHTTP(w, r)
-			So(w.Code, ShouldEqual, http.StatusUnauthorized)
-			response, err := ReadResponse(w.Body)
-			So(err, ShouldBeNil)
-
-			So(response.Meta.HasError, ShouldBeTrue)
-			So(response.Data, ShouldBeNil)
+			checkBad(w, http.StatusUnauthorized)
 		})
 	})
 }
@@ -75,12 +62,7 @@ func TestUpdateField(t *testing.T) {
 			r, _ := http.NewRequest("PUT", "/v1/users", body)
 			r.AddCookie(cookie)
 			beego.BeeApp.Handlers.ServeHTTP(w, r)
-			So(w.Code, ShouldEqual, http.StatusOK)
-			response, err := ReadResponse(w.Body)
-			So(err, ShouldBeNil)
-
-			So(response.Meta.HasError, ShouldBeFalse)
-			So(response.Data, ShouldNotBeNil)
+			checkOK(w)
 		})
 
 		Convey("last_name update", func() {
@@ -88,12 +70,7 @@ func TestUpdateField(t *testing.T) {
 			r, _ := http.NewRequest("PUT", "/v1/users", body)
 			r.AddCookie(cookie)
 			beego.BeeApp.Handlers.ServeHTTP(w, r)
-			So(w.Code, ShouldEqual, http.StatusOK)
-			response, err := ReadResponse(w.Body)
-			So(err, ShouldBeNil)
-
-			So(response.Meta.HasError, ShouldBeFalse)
-			So(response.Data, ShouldNotBeNil)
+			checkOK(w)
 		})
 
 		Convey("country update", func() {
@@ -101,12 +78,7 @@ func TestUpdateField(t *testing.T) {
 			r, _ := http.NewRequest("PUT", "/v1/users", body)
 			r.AddCookie(cookie)
 			beego.BeeApp.Handlers.ServeHTTP(w, r)
-			So(w.Code, ShouldEqual, http.StatusOK)
-			response, err := ReadResponse(w.Body)
-			So(err, ShouldBeNil)
-
-			So(response.Meta.HasError, ShouldBeFalse)
-			So(response.Data, ShouldNotBeNil)
+			checkOK(w)
 		})
 
 		Convey("city update", func() {
@@ -114,12 +86,7 @@ func TestUpdateField(t *testing.T) {
 			r, _ := http.NewRequest("PUT", "/v1/users", body)
 			r.AddCookie(cookie)
 			beego.BeeApp.Handlers.ServeHTTP(w, r)
-			So(w.Code, ShouldEqual, http.StatusOK)
-			response, err := ReadResponse(w.Body)
-			So(err, ShouldBeNil)
-
-			So(response.Meta.HasError, ShouldBeFalse)
-			So(response.Data, ShouldNotBeNil)
+			checkOK(w)
 		})
 
 		Convey("overview update", func() {
@@ -127,12 +94,7 @@ func TestUpdateField(t *testing.T) {
 			r, _ := http.NewRequest("PUT", "/v1/users", body)
 			r.AddCookie(cookie)
 			beego.BeeApp.Handlers.ServeHTTP(w, r)
-			So(w.Code, ShouldEqual, http.StatusOK)
-			response, err := ReadResponse(w.Body)
-			So(err, ShouldBeNil)
-
-			So(response.Meta.HasError, ShouldBeFalse)
-			So(response.Data, ShouldNotBeNil)
+			checkOK(w)
 		})
 
 		Convey("summary update", func() {
@@ -140,12 +102,7 @@ func TestUpdateField(t *testing.T) {
 			r, _ := http.NewRequest("PUT", "/v1/users", body)
 			r.AddCookie(cookie)
 			beego.BeeApp.Handlers.ServeHTTP(w, r)
-			So(w.Code, ShouldEqual, http.StatusOK)
-			response, err := ReadResponse(w.Body)
-			So(err, ShouldBeNil)
-
-			So(response.Meta.HasError, ShouldBeFalse)
-			So(response.Data, ShouldNotBeNil)
+			checkOK(w)
 		})
 
 		Convey("email update:valid email", func() {
@@ -153,12 +110,7 @@ func TestUpdateField(t *testing.T) {
 			r, _ := http.NewRequest("PUT", "/v1/users", body)
 			r.AddCookie(cookie)
 			beego.BeeApp.Handlers.ServeHTTP(w, r)
-			So(w.Code, ShouldEqual, http.StatusOK)
-			response, err := ReadResponse(w.Body)
-			So(err, ShouldBeNil)
-
-			So(response.Meta.HasError, ShouldBeFalse)
-			So(response.Data, ShouldNotBeNil)
+			checkOK(w)
 
 			body_ := bytes.NewReader([]byte(`{"field":"  email   ", "value":" olehgol260@gmail.com  "}`))
 			r_, _ := http.NewRequest("PUT", "/v1/users", body_)
@@ -171,13 +123,7 @@ func TestUpdateField(t *testing.T) {
 			r, _ := http.NewRequest("PUT", "/v1/users", body)
 			r.AddCookie(cookie)
 			beego.BeeApp.Handlers.ServeHTTP(w, r)
-			So(w.Code, ShouldEqual, http.StatusBadRequest)
-			response, err := ReadResponse(w.Body)
-			So(err, ShouldBeNil)
-
-			So(response.Meta.HasError, ShouldBeTrue)
-			So(response.Data, ShouldBeNil)
-
+			checkBad(w, http.StatusBadRequest)
 		})
 	})
 }
@@ -193,12 +139,7 @@ func TestUpdatePassword(t *testing.T) {
 			r, _ := http.NewRequest("POST", "/v1/users/update_password", body)
 			r.AddCookie(cookie)
 			beego.BeeApp.Handlers.ServeHTTP(w, r)
-			So(w.Code, ShouldEqual, http.StatusOK)
-			response, err := ReadResponse(w.Body)
-			So(err, ShouldBeNil)
-
-			So(response.Meta.HasError, ShouldBeFalse)
-			So(response.Data, ShouldNotBeNil)
+			checkOK(w)
 
 			body = bytes.NewReader([]byte(`{"current_password":"1234~", "password":"1235~", "password_confirm":"1235~"}`))
 			r, _ = http.NewRequest("POST", "/v1/users/update_password", body)
@@ -211,12 +152,7 @@ func TestUpdatePassword(t *testing.T) {
 			r, _ := http.NewRequest("POST", "/v1/users/update_password", body)
 			r.AddCookie(cookie)
 			beego.BeeApp.Handlers.ServeHTTP(w, r)
-			So(w.Code, ShouldEqual, http.StatusBadRequest)
-			response, err := ReadResponse(w.Body)
-			So(err, ShouldBeNil)
-
-			So(response.Meta.HasError, ShouldBeTrue)
-			So(response.Data, ShouldBeNil)
+			checkBad(w, http.StatusBadRequest)
 		})
 
 		Convey("Test invalid password change: weak pass", func() {
@@ -224,12 +160,7 @@ func TestUpdatePassword(t *testing.T) {
 			r, _ := http.NewRequest("POST", "/v1/users/update_password", body)
 			r.AddCookie(cookie)
 			beego.BeeApp.Handlers.ServeHTTP(w, r)
-			So(w.Code, ShouldEqual, http.StatusBadRequest)
-			response, err := ReadResponse(w.Body)
-			So(err, ShouldBeNil)
-
-			So(response.Meta.HasError, ShouldBeTrue)
-			So(response.Data, ShouldBeNil)
+			checkBad(w, http.StatusBadRequest)
 		})
 	})
 }
@@ -243,13 +174,7 @@ func TestGetUser(t *testing.T) {
 		r.AddCookie(cookie)
 		beego.BeeApp.Handlers.ServeHTTP(w, r)
 
-		So(w.Code, ShouldEqual, http.StatusOK)
-		response, err := ReadResponse(w.Body)
-		So(err, ShouldBeNil)
-
-		So(response.Meta.HasError, ShouldBeFalse)
-		So(response.Data, ShouldNotBeNil)
-
+		checkOK(w)
 	})
 
 	Convey("Test get invalid user", t, func() {
@@ -258,13 +183,7 @@ func TestGetUser(t *testing.T) {
 		r.AddCookie(cookie)
 		beego.BeeApp.Handlers.ServeHTTP(w, r)
 
-		So(w.Code, ShouldEqual, http.StatusBadRequest)
-		response, err := ReadResponse(w.Body)
-		So(err, ShouldBeNil)
-
-		So(response.Meta.HasError, ShouldBeTrue)
-		So(response.Data, ShouldBeNil)
-
+		checkBad(w, http.StatusBadRequest)
 	})
 }
 

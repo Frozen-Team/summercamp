@@ -22,10 +22,7 @@ func TestTeamSave(t *testing.T) {
 		w := httptest.NewRecorder()
 		beego.BeeApp.Handlers.ServeHTTP(w, r)
 
-		So(w.Code, ShouldEqual, http.StatusOK)
-		response, err := ReadResponse(w.Body)
-		So(err, ShouldBeNil)
-		So(response.Meta.HasError, ShouldBeFalse)
+		checkOK(w)
 	})
 
 	Convey("invalid save: missing field", t, func() {
@@ -35,10 +32,7 @@ func TestTeamSave(t *testing.T) {
 		w := httptest.NewRecorder()
 		beego.BeeApp.Handlers.ServeHTTP(w, r)
 
-		So(w.Code, ShouldEqual, http.StatusBadRequest)
-		response, err := ReadResponse(w.Body)
-		So(err, ShouldBeNil)
-		So(response.Meta.HasError, ShouldBeTrue)
+		checkBad(w, http.StatusBadRequest)
 	})
 
 	Convey("invalid save: unauthorized", t, func() {
@@ -47,10 +41,7 @@ func TestTeamSave(t *testing.T) {
 		w := httptest.NewRecorder()
 		beego.BeeApp.Handlers.ServeHTTP(w, r)
 
-		So(w.Code, ShouldEqual, http.StatusUnauthorized)
-		response, err := ReadResponse(w.Body)
-		So(err, ShouldBeNil)
-		So(response.Meta.HasError, ShouldBeTrue)
+		checkBad(w, http.StatusUnauthorized)
 	})
 }
 
@@ -62,10 +53,7 @@ func TestAddMember(t *testing.T) {
 		w := httptest.NewRecorder()
 		beego.BeeApp.Handlers.ServeHTTP(w, r)
 
-		So(w.Code, ShouldEqual, http.StatusOK)
-		response, err := ReadResponse(w.Body)
-		So(err, ShouldBeNil)
-		So(response.Meta.HasError, ShouldBeFalse)
+		checkOK(w)
 	})
 
 	Convey("invalid addition:invalid team", t, func() {
@@ -75,10 +63,7 @@ func TestAddMember(t *testing.T) {
 		w := httptest.NewRecorder()
 		beego.BeeApp.Handlers.ServeHTTP(w, r)
 
-		So(w.Code, ShouldEqual, http.StatusBadRequest)
-		response, err := ReadResponse(w.Body)
-		So(err, ShouldBeNil)
-		So(response.Meta.HasError, ShouldBeTrue)
+		checkBad(w, http.StatusBadRequest)
 	})
 }
 
@@ -103,11 +88,7 @@ func TestGetTeam(t *testing.T) {
 		w := httptest.NewRecorder()
 		beego.BeeApp.Handlers.ServeHTTP(w, r)
 
-		So(w.Code, ShouldEqual, http.StatusOK)
-		response, err := ReadResponse(w.Body)
-		So(err, ShouldBeNil)
-		So(response.Meta.HasError, ShouldBeFalse)
-		So(response.Data, ShouldNotBeNil)
+		checkOK(w)
 	})
 
 	Convey("invalid get", t, func() {
@@ -116,10 +97,7 @@ func TestGetTeam(t *testing.T) {
 		w := httptest.NewRecorder()
 		beego.BeeApp.Handlers.ServeHTTP(w, r)
 
-		So(w.Code, ShouldEqual, http.StatusBadRequest)
-		response, err := ReadResponse(w.Body)
-		So(err, ShouldBeNil)
-		So(response.Meta.HasError, ShouldBeTrue)
+		checkBad(w, http.StatusBadRequest)
 	})
 }
 
@@ -132,6 +110,16 @@ func TestAddVacancy(t *testing.T) {
 		beego.BeeApp.Handlers.ServeHTTP(w, r)
 
 		checkOK(w)
+	})
+
+	Convey("Invalid addition: bad team", t, func() {
+		body := bytes.NewReader([]byte(`{"name":"front-end", "description":"we need a front-end dev", "skills":[1,2], "spheres":[1] }`))
+		r, _ := http.NewRequest("POST", "/v1/teams/100500/vacancies", body)
+		r.AddCookie(loginExec())
+		w := httptest.NewRecorder()
+		beego.BeeApp.Handlers.ServeHTTP(w, r)
+
+		checkBad(w, http.StatusBadRequest)
 	})
 
 	Convey("Invalid addition: unauthorized", t, func() {
