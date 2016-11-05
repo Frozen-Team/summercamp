@@ -18,20 +18,20 @@ func init() {
 
 // Run the migrations
 func (m *Vacancy_20161103_172859) Up() {
-	m.SQL(`CREATE TABLE public.vacancy
+	m.SQL(`CREATE TABLE public.vacancies
 (
     id SERIAL PRIMARY KEY NOT NULL,
     name TEXT NOT NULL,
     description TEXT NOT NULL,
     team_id INT NOT NULL,
-    published TIMESTAMP DEFAULT now(),
-    CONSTRAINT vacancy_teams_id_fk FOREIGN KEY (team_id) REFERENCES teams (id) ON DELETE CASCADE ON UPDATE CASCADE
+    published TIMESTAMP NOT NULL DEFAULT now(),
+    CONSTRAINT vacancies_teams_id_fk FOREIGN KEY (team_id) REFERENCES teams (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
-CREATE UNIQUE INDEX vacancy_id_uindex ON public.vacancy (id);
-CREATE UNIQUE INDEX vacancy_name_team_id_uindex ON public.vacancy (name, team_id);`)
+CREATE UNIQUE INDEX vacancies_id_uindex ON public.vacancies (id);
+CREATE UNIQUE INDEX vacancies_name_team_id_uindex ON public.vacancies (name, team_id);`)
 }
 
 // Reverse the migrations
 func (m *Vacancy_20161103_172859) Down() {
-	m.SQL(`DROP TABLE IF EXISTS public.vacancy;`)
+	m.SQL(`DROP TABLE IF EXISTS public.vacancies;`)
 }

@@ -31,7 +31,7 @@ func (t *Team) Save() bool {
 		action = "update"
 	}
 
-	return utils.ProcessError(err, action + " team")
+	return utils.ProcessError(err, action+" team")
 }
 
 func (t *Team) Delete() bool {
@@ -68,7 +68,7 @@ func (t *Team) AddMember(userID int, l AccessLevel) (*TeamMember, bool) {
 }
 
 // IsMember returns true and TeamMember if user is member of the team otherwise false
-func (t *Team) IsMember(u *User) (*TeamMember, bool) {
+func (t *Team) GetMember(u *User) (*TeamMember, bool) {
 	if members, ok := t.Members(); !ok {
 		utils.ProcessError(errors.New("Cannot retrieve members of the team"), "Check if an user is member of the team")
 		return nil, false
@@ -83,8 +83,8 @@ func (t *Team) IsMember(u *User) (*TeamMember, bool) {
 }
 
 // DeleteMember removes user from the team members
-func (t *Team) DeleteMember(u *User) (bool) {
-	if teamMember, found := t.IsMember(u); found {
+func (t *Team) DeleteMember(u *User) bool {
+	if teamMember, found := t.GetMember(u); found {
 		return teamMember.Delete()
 	}
 	return false

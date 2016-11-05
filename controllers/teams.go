@@ -73,7 +73,7 @@ func (t *Teams) AddMember() {
 		return
 	}
 
-	currentMember, found := team.IsMember(t.currentUser)
+	currentMember, found := team.GetMember(t.currentUser)
 	if !found || !currentMember.IsCreator() {
 		t.serveAJAXForbidden()
 		return
@@ -105,7 +105,7 @@ func (t *Teams) Delete() {
 		return
 	}
 
-	teamMember, found := team.IsMember(t.currentUser)
+	teamMember, found := team.GetMember(t.currentUser)
 	if found && !teamMember.IsCreator() {
 		t.serveAJAXForbidden()
 		return
@@ -133,5 +133,47 @@ func (t *Teams) GetTeam() {
 		t.serveAJAXSuccess(team)
 	} else {
 		t.serveAJAXBadRequest("no-such-team")
+	}
+}
+
+// @Title AddVacancy
+// @Description Add vacancy for a given team
+// @Param id path int true "An id of a team you want to get"
+// @Success 200 {object} models.Vacancy
+// @Failure 400 no-such-team
+// @Failure 401 Unauthorized
+// @Failure 403 Forbidden
+// @router /:id/vacancies [post]
+func (t *Teams) AddVacancy() {
+	teamID := t.getID()
+
+	team, ok := models.Teams.FetchByID(teamID)
+	if !ok {
+		t.serveAJAXBadRequest("no-such-team")
+		return
+	}
+
+	teamMember, found := team.GetMember(t.currentUser)
+	if !found || !teamMember.IsCreator() {
+		t.serveAJAXForbidden()
+		return
+	}
+
+	form := new(forms.Vacancy)
+	if ok := t.unmarshalJSON(form); !ok {
+		t.serveAJAXInternalServerError()
+		return
+	}
+
+	form.TeamID = teamID
+	if ok := forms.Validate(form); !ok {
+		t.serveAJAXBadRequest(form.Errors...)
+		return
+	}
+
+	if vacancy, ok := form.Save(); ok {
+		t.serveAJAXSuccess(vacancy)
+	} else {
+		t.serveAJAXInternalServerError()
 	}
 }
