@@ -13,18 +13,15 @@ import (
 // the cookie is then can be added to the request so, the app know the request is being done
 // with some user logged in the system
 func loginExec() *http.Cookie {
-	body := bytes.NewReader([]byte(`{"email":"olehgol260@gmail.com", "password":"1235~"}`))
-	r, _ := http.NewRequest("POST", "/v1/users/login", body)
-	w := httptest.NewRecorder()
-	beego.BeeApp.Handlers.ServeHTTP(w, r)
-	if len(r.Cookies()) == 0 || r.Cookies()[0] == nil {
-		panic("invalid cookies after login")
-	}
-	return r.Cookies()[0]
+	return login(`{"email":"olehgol260@gmail.com", "password":"1235~"}`)
 }
 
 func loginClient() *http.Cookie {
-	body := bytes.NewReader([]byte(`{"email":"olehgol260_@gmail.com", "password":"1235~"}`))
+	return login(`{"email":"olehgol260_@gmail.com", "password":"1235~"}`)
+}
+
+func login(credentials string) *http.Cookie {
+	body := bytes.NewReader([]byte(credentials))
 	r, _ := http.NewRequest("POST", "/v1/users/login", body)
 	w := httptest.NewRecorder()
 	beego.BeeApp.Handlers.ServeHTTP(w, r)
