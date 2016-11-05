@@ -121,15 +121,35 @@ func TestGetTeam(t *testing.T) {
 		So(err, ShouldBeNil)
 		So(response.Meta.HasError, ShouldBeTrue)
 	})
+}
 
-	Convey("valid get", t, func() {
-		r, _ := http.NewRequest("GET", "/v1/teams/1", nil)
+func TestAddVacancy(t *testing.T) {
+	Convey("Valid addition", t, func() {
+		body := bytes.NewReader([]byte(`{"name":"front-end", "description":"we need a front-end dev", "skills":[1,2], "spheres":[1] }`))
+		r, _ := http.NewRequest("POST", "/v1/teams/1/vacancies", body)
+		r.AddCookie(loginExec())
 		w := httptest.NewRecorder()
 		beego.BeeApp.Handlers.ServeHTTP(w, r)
 
-		So(w.Code, ShouldEqual, http.StatusUnauthorized)
-		response, err := ReadResponse(w.Body)
-		So(err, ShouldBeNil)
-		So(response.Meta.HasError, ShouldBeTrue)
+		checkOK(w)
+	})
+
+	Convey("Invalid addition: unauthorized", t, func() {
+		body := bytes.NewReader([]byte(`{"name":"front-end", "description":"we need a front-end dev", "skills":[1,2], "spheres":[1] }`))
+		r, _ := http.NewRequest("POST", "/v1/teams/1/vacancies", body)
+		w := httptest.NewRecorder()
+		beego.BeeApp.Handlers.ServeHTTP(w, r)
+
+		checkBad(w, http.StatusUnauthorized)
+	})
+
+	Convey("Invalid addition: unauthorized", t, func() {
+		body := bytes.NewReader([]byte(`{"name":"front-end", "description":"we need a front-end dev", "skills":[1,2], "spheres":[1] }`))
+		r, _ := http.NewRequest("POST", "/v1/teams/1/vacancies", body)
+		r.AddCookie(loginClient())
+		w := httptest.NewRecorder()
+		beego.BeeApp.Handlers.ServeHTTP(w, r)
+
+		checkBad(w, http.StatusForbidden)
 	})
 }

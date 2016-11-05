@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 
 	"github.com/astaxie/beego"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 // login loges the user in the system and returns the cookie after the request.
@@ -31,4 +32,19 @@ func loginClient() *http.Cookie {
 		panic("invalid cookies after login")
 	}
 	return r.Cookies()[0]
+}
+
+func checkOK(w *httptest.ResponseRecorder) {
+	So(w.Code, ShouldEqual, http.StatusOK)
+	response, err := ReadResponse(w.Body)
+	So(err, ShouldBeNil)
+	So(response.Meta.HasError, ShouldBeFalse)
+	So(response.Data, ShouldNotBeNil)
+}
+
+func checkBad(w *httptest.ResponseRecorder, code int) {
+	So(w.Code, ShouldEqual, code)
+	response, err := ReadResponse(w.Body)
+	So(err, ShouldBeNil)
+	So(response.Meta.HasError, ShouldBeTrue)
 }
