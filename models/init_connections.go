@@ -63,5 +63,6 @@ func registerModels() {
 		UserSkillModel,
 		VacancyModel,
 		VacancySkillModel,
+		VacancySphereModel,
 	)
 }

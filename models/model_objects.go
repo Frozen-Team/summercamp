@@ -15,4 +15,5 @@ var (
 	UserSkillModel     = new(UserSkill)
 	VacancyModel       = new(Vacancy)
 	VacancySkillModel  = new(VacancySkill)
+	VacancySphereModel = new(VacancySphere)
 )

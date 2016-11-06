@@ -29,7 +29,10 @@ func (v *Vacancy) Save() (*models.Vacancy, bool) {
 	if !ok {
 		return nil, false
 	}
-	// TODO: vacancy spheres
+	ok = models.VacancySpheres.SaveSpheresForVacancy(vacancy.ID, v.Spheres...)
+	if !ok {
+		return nil, false
+	}
 
 	return vacancy, ok
 }
