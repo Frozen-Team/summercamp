@@ -22,7 +22,8 @@ const (
 )
 
 const (
-	URLParamID = ":id"
+	URLParamID        = ":id"
+	URLParamVacancyID = ":v_id"
 )
 
 // ApplicationController is a base controller for all controllers in the project.
@@ -177,10 +178,16 @@ func (a *ApplicationController) unmarshalJSON(v interface{}) bool {
 // getID retrieve an id from the url (not as a url parameter). If the id is of an invalid
 // value, the "invalid-id" error is served and the caller action  terminates with a StopRun method.
 func (a *ApplicationController) getID() int {
-	id, err := strconv.Atoi(a.Ctx.Input.Param(URLParamID))
+	id, err := a.getUrlIntValue(URLParamID)
 	if err != nil {
 		a.serveAJAXBadRequest("invalid-id")
 		a.StopRun()
 	}
 	return id
+}
+
+// getID retrieve an id from the url (not as a url parameter). If the id is of an invalid
+// value, the "invalid-id" error is served and the caller action  terminates with a StopRun method.
+func (a *ApplicationController) getUrlIntValue(key string) (int, error) {
+	return strconv.Atoi(a.Ctx.Input.Param(key))
 }

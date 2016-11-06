@@ -39,6 +39,14 @@ func checkOK(w *httptest.ResponseRecorder) {
 	So(response.Data, ShouldNotBeNil)
 }
 
+func checkOKNoData(w *httptest.ResponseRecorder) {
+	So(w.Code, ShouldEqual, http.StatusOK)
+	response, err := ReadResponse(w.Body)
+	So(err, ShouldBeNil)
+	So(response.Meta.HasError, ShouldBeFalse)
+	So(response.Data, ShouldBeNil)
+}
+
 func checkBad(w *httptest.ResponseRecorder, code int) {
 	So(w.Code, ShouldEqual, code)
 	response, err := ReadResponse(w.Body)

@@ -34,3 +34,20 @@ func (v *Vacancy) Save(columnToUpdate ...string) bool {
 
 	return utils.ProcessError(err, action+" a vacancy")
 }
+
+// Delete deletes the vacancy record from the db
+func (v *Vacancy) Delete() bool {
+	_, err := DB.Delete(v)
+	return utils.ProcessError(err, "delete vacancy")
+}
+
+type vacanciesAPI struct{}
+
+var Vacancies *vacanciesAPI
+
+func (v *vacanciesAPI) DeleteByID(id int) bool {
+	vacancy := &Vacancy{
+		ID: id,
+	}
+	return vacancy.Delete()
+}

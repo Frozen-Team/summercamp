@@ -74,10 +74,7 @@ func TestDeleteTeam(t *testing.T) {
 		w := httptest.NewRecorder()
 		beego.BeeApp.Handlers.ServeHTTP(w, r)
 
-		So(w.Code, ShouldEqual, http.StatusOK)
-		response, err := ReadResponse(w.Body)
-		So(err, ShouldBeNil)
-		So(response.Meta.HasError, ShouldBeFalse)
+		checkOKNoData(w)
 	})
 }
 
@@ -139,5 +136,16 @@ func TestAddVacancy(t *testing.T) {
 		beego.BeeApp.Handlers.ServeHTTP(w, r)
 
 		checkBad(w, http.StatusForbidden)
+	})
+}
+
+func TestRemoveVacancy(t *testing.T) {
+	Convey("Valid vacancy deletion", t, func() {
+		r, _ := http.NewRequest("DELETE", "/v1/teams/1/vacancies/2", nil)
+		r.AddCookie(loginExec())
+		w := httptest.NewRecorder()
+		beego.BeeApp.Handlers.ServeHTTP(w, r)
+
+		checkOKNoData(w)
 	})
 }
