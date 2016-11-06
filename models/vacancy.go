@@ -21,6 +21,16 @@ func (v *Vacancy) TableName() string {
 
 // Save inserts a new or updates an existing vacancy record in the DB.
 func (v *Vacancy) Save(columnToUpdate ...string) bool {
-	_, err := DB.InsertOrUpdate(v)
-	return utils.ProcessError(err, "insert or update vacancy")
+	var err error
+	var action string
+
+	if v.ID == 0 {
+		_, err = DB.Insert(v)
+		action = "create"
+	} else {
+		_, err = DB.Update(v)
+		action = "update"
+	}
+
+	return utils.ProcessError(err, action+" a vacancy")
 }

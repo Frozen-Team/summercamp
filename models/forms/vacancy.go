@@ -4,7 +4,7 @@ import (
 	"bitbucket.org/SummerCampDev/summercamp/models"
 )
 
-// TODO: consider MaxSize and Length values
+// TODO: consider MaxSize values
 type Vacancy struct {
 	FormModel
 	Name        string `json:"name" valid:"Required; MaxSize(100)"`
@@ -20,9 +20,17 @@ func (v *Vacancy) Save() (*models.Vacancy, bool) {
 		Description: v.Description,
 		TeamID:      v.TeamID,
 	}
-	// TODO: vacancy skill
-	// TODO: vacancy spheres
+
 	ok := vacancy.Save()
+	if !ok {
+		return nil, false
+	}
+	ok = models.VacancySkills.SaveSkillsForVacancy(vacancy.ID, v.Skills...)
+	if !ok {
+		return nil, false
+	}
+	// TODO: vacancy spheres
+
 	return vacancy, ok
 }
 

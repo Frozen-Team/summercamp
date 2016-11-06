@@ -29,7 +29,6 @@ func (ps *VacancySkill) Save() bool {
 		_, err = DB.Update(ps)
 		action = "update"
 	}
-
 	return utils.ProcessError(err, action+" a vacancy`s skill")
 }
 
@@ -49,25 +48,34 @@ type VacancySkillsAPI struct{}
 var VacancySkills *VacancySkillsAPI
 
 // SaveSkillsForVacancy create a new VacancySkill record for each skillID from skillIDs and vacancyID pair.
-// If each record is successfully saved to the db, the func return false
 func (ps *VacancySkillsAPI) SaveSkillsForVacancy(vacancyID int, skillIDs ...int) bool {
 	if len(skillIDs) == 0 {
 		beego.BeeLogger.Warning("Empty skills list is passed to SaveSkillsForVacancy")
 		return false
 	}
 
-	vacancySkills := make([]VacancySkill, 0, len(skillIDs))
+	i, err := DB.QueryTable(VacancySkillModel).PrepareInsert()
+	if err != nil {
+		return utils.ProcessError(err, " create an inserter")
+	}
+
+	var failedSkills []int
+
 	for _, skillID := range skillIDs {
-		vacancySkills = append(vacancySkills, VacancySkill{
+		_, err = i.Insert(&VacancySkill{
 			VacancyID: vacancyID,
 			SkillID:   skillID,
 		})
+		if err != nil {
+			failedSkills = append(failedSkills, skillID)
+		}
 	}
 
-	i, err := DB.QueryTable(VacancySkillModel).PrepareInsert()
-	if !utils.ProcessError(err, " prepare insert") {
-		return false
+	ok := len(failedSkills) == 0
+	if !ok {
+		beego.BeeLogger.Warning("Failed to save vacancy skills for skills with ids: '%v'", failedSkills)
 	}
-	_, err = i.Insert(vacancySkills)
+
+	err = i.Close()
 	return utils.ProcessError(err, " insert multiple vacancy skills")
 }
