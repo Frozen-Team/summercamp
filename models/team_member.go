@@ -28,21 +28,10 @@ func (tm *TeamMember) TableName() string {
 	return "team_members"
 }
 
-// Save insert a new record to the db if ID field is of default value. Otherwise an existing
-// record is updated.
+// Save inserts a new or updates an existing team member record in the DB.
 func (tm *TeamMember) Save() bool {
-	var err error
-	var action string
-
-	if tm.ID == 0 {
-		_, err = DB.Insert(tm)
-		action = "create"
-	} else {
-		_, err = DB.Update(tm)
-		action = "update"
-	}
-
-	return utils.ProcessError(err, action+" team member")
+	_, err := DB.InsertOrUpdate(tm)
+	return utils.ProcessError(err, "insert or update team member")
 }
 
 // Delete deletes a team member record from the db. If the record is successfully deleted, the return value

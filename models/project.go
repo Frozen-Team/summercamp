@@ -20,19 +20,10 @@ func (p *Project) TableName() string {
 	return "projects"
 }
 
-// Save creates a project record in the db
+// Save inserts a new or updates an existing project record in the DB.
 func (p *Project) Save() bool {
-	var err error
-	var action string
-
-	if p.ID == 0 {
-		_, err = DB.Insert(p)
-		action = "create"
-	} else {
-		_, err = DB.Update(p)
-		action = "update"
-	}
-	return utils.ProcessError(err, action+" project")
+	_, err := DB.InsertOrUpdate(p)
+	return utils.ProcessError(err, "insert or update project")
 }
 
 // Delete deletes the project record from the db

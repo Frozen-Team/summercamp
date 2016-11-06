@@ -19,19 +19,10 @@ func (t *Team) TableName() string {
 	return "teams"
 }
 
+// Save inserts a new or updates an existing team record in the DB.
 func (t *Team) Save() bool {
-	var err error
-	var action string
-
-	if t.ID == 0 {
-		_, err = DB.Insert(t)
-		action = "create"
-	} else {
-		_, err = DB.Update(t)
-		action = "update"
-	}
-
-	return utils.ProcessError(err, action+" team")
+	_, err := DB.InsertOrUpdate(t)
+	return utils.ProcessError(err, "insert or update team")
 }
 
 func (t *Team) Delete() bool {
