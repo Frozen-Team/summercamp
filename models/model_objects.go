@@ -12,4 +12,6 @@ var (
 	ProjectSkillModel  = new(ProjectSkill)
 	ProjectSphereModel = new(ProjectSphere)
 	UserSphereModel    = new(UserSphere)
+	UserSkillModel     = new(UserSkill)
+	VacancyModel = new(Vacancy)
 )

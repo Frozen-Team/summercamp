@@ -22,10 +22,6 @@ func (ur *UserPasswordUpdate) Valid(v *validation.Validation) {
 }
 
 func (upu *UserPasswordUpdate) UpdatePassword(user *models.User) (*models.User, bool) {
-	if ok := upu.validate(upu); !ok {
-		return nil, false
-	}
-
 	if ok := user.CheckPassword(upu.CurrentPassword); !ok {
 		upu.addError("user-login-or-password-incorrect")
 		return nil, false

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"bitbucket.org/SummerCampDev/summercamp/models/utils"
+	"github.com/astaxie/beego"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -13,6 +14,8 @@ type User struct {
 	Type        Speciality `json:"type" orm:"column(type)"`
 	FirstName   string     `json:"first_name" orm:"column(first_name)"`
 	LastName    string     `json:"last_name" orm:"column(last_name)"`
+	Overview    string     `json:"overview" orm:"column(overview)"`
+	Summary     string     `json:"summary" orm:"column(summary)"`
 	Email       string     `json:"email" orm:"column(email)"`
 	Password    string     `json:"-" orm:"column(password)"`
 	Balance     int        `json:"balance" orm:"column(balance)"`
@@ -45,6 +48,21 @@ func (u *User) Save() bool {
 	return utils.ProcessError(err, action+" user")
 }
 
+// CanAddSkill checks if the user has less skills than the system allows.
+func (u *User) CanAddSkill() (bool, bool) {
+	currentSkillsCount, ok := UserSkills.SkillsCountByUser(u.ID)
+	if !ok {
+		return false, false
+	}
+
+	maxSkillsCount, err := beego.AppConfig.Int("UserSkillsMaxCount")
+	if err != nil {
+		return false, utils.ProcessError(err, " failed to get value for config `UserSkillsMaxCount`")
+	}
+
+	return currentSkillsCount < maxSkillsCount, true
+}
+
 // SetPassword generate the encrypted password based on the given string
 func (u *User) SetPassword(password string) bool {
 	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -62,6 +80,16 @@ func (u *User) CheckPassword(password string) bool {
 func (u *User) Delete() bool {
 	_, err := DB.Delete(u)
 	return utils.ProcessError(err, "delete user")
+}
+
+// IsClient is a helper function to check if the user`s type is client.
+func (u *User) IsClient() bool {
+	return u.Type == SpecTypeClient
+}
+
+// IsClient is a helper function to check if the user`s type is executor.
+func (u *User) IsExecutor() bool {
+	return u.Type == SpecTypeExecutor
 }
 
 // Teams returns teams for the current user. If everything is okay, the second

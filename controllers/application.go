@@ -5,6 +5,8 @@ import (
 
 	"net/http"
 
+	"strconv"
+
 	"bitbucket.org/SummerCampDev/summercamp/models"
 	"github.com/astaxie/beego"
 )
@@ -17,6 +19,10 @@ const (
 )
 const (
 	SessionKeyUser = "user"
+)
+
+const (
+	URLParamID = ":id"
 )
 
 // ApplicationController is a base controller for all controllers in the project.
@@ -81,9 +87,24 @@ func (a *ApplicationController) setStatusCode(code int) {
 	a.Ctx.ResponseWriter.WriteHeader(code)
 }
 
-// serveAJAXUnauthorized is a convenient wrapper above serveAJAXError to serve "unauthorized" error
+// serveAJAXMethodNotAllowed is a wrapper to serve "method-not-allowed" error
+func (a *ApplicationController) serveAJAXMethodNotAllowed() {
+	a.serveAJAXError(nil, http.StatusMethodNotAllowed, "method-not-allowed")
+}
+
+// serveAJAXUnauthorized is a wrapper to serve "unauthorized" error
 func (a *ApplicationController) serveAJAXUnauthorized() {
 	a.serveAJAXError(nil, http.StatusUnauthorized, "unauthorized")
+}
+
+// serveAJAXInternalServerError is a wrapper to serve "internal-error" error
+func (a *ApplicationController) serveAJAXInternalServerError() {
+	a.serveAJAXError(nil, http.StatusInternalServerError, "internal-error")
+}
+
+// serveAJAXInternalServerError is a wrapper to serve "internal-error" error
+func (a *ApplicationController) serveAJAXForbidden() {
+	a.serveAJAXError(nil, http.StatusForbidden, "forbidden")
 }
 
 // serveAJAX response with the json with two keys: "meta" and "data".
@@ -151,4 +172,15 @@ func (a *ApplicationController) unmarshalJSON(v interface{}) bool {
 		return false
 	}
 	return true
+}
+
+// getID retrieve an id from the url (not as a url parameter). If the id is of an invalid
+// value, the "invalid-id" error is served and the caller action  terminates with a StopRun method.
+func (a *ApplicationController) getID() int {
+	id, err := strconv.Atoi(a.Ctx.Input.Param(URLParamID))
+	if err != nil {
+		a.serveAJAXBadRequest("invalid-id")
+		a.StopRun()
+	}
+	return id
 }
