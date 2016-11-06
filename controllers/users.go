@@ -11,7 +11,7 @@ type Users struct {
 }
 
 func (u *Users) Prepare() {
-	u.SkipAuthorizationActions("Register", "Login")
+	u.SkipAuthorizationActions("Register", "LogIn")
 	u.ApplicationController.Prepare()
 }
 
@@ -43,15 +43,16 @@ func (u *Users) Register() {
 	}
 }
 
-// Login reads the data from the request body into forms.UserLogin struct, attempts to query a user from the db
+// LogIn reads the data from the request body into forms.UserLogin struct, attempts to query a user from the db
 // by email and checks password. In case of success the user is authorized
-// @Title Login
-// @Description Login a user to the system
+// @Title LogIn
+// @Description LogIn a user to the system
 // @Param body body string true "Json body message with user credentials"
 // @Success 200 {object} models.User
-// @Failure 200 nil object
+// @Failure 500 Internal server error
+// @Failure 400 bad-request
 // @router /login [post]
-func (u *Users) Login() {
+func (u *Users) LogIn() {
 	loginForm := new(forms.UserLogin)
 
 	if ok := u.unmarshalJSON(loginForm); !ok {
@@ -64,7 +65,7 @@ func (u *Users) Login() {
 		return
 	}
 
-	if user, ok := loginForm.Login(); ok {
+	if user, ok := loginForm.LogIn(); ok {
 		u.authorizeUser(user)
 		u.serveAJAXSuccess(user)
 	} else {
@@ -72,19 +73,19 @@ func (u *Users) Login() {
 	}
 }
 
-// Logout deauthorizes logged in User otherwise responses "bad-request"
-// @Title Logout
-// @Description Logout a user from the system
-// @Success 200 {object}
+// LogOut deauthorizes logged-in User otherwise responses "bad-request"
+// @Title LogOut
+// @Description LogOut a user from the system
+// @Success 200 OK
 // @Failure 401 unauthorized
 // @router /logout [post]
-func (u *Users) Logout() {
+func (u *Users) LogOut() {
 	u.deauthorizeUser()
 	u.serveAJAXSuccess(nil)
 }
 
 // @Title Current
-// @Description Get info about the currently logged in user
+// @Description Get info about the currently logged-in user
 // @Success 200 {object} models.User
 // @Failure 401 unauthorized
 // @router /current [get]
@@ -169,7 +170,7 @@ func (u *Users) GetUser() {
 // @Title GetSkills
 // @Description get skills for the user with id passed in the url
 // @Param id path int true "An id of a user you want to get skills for"
-// @Success 200 {array of objects} models.Skill
+// @Success 200 {array} models.Skill
 // @Failure 400 bad-request
 // @Failure 401 unauthorized
 // @Failure 500 internal-error
@@ -227,7 +228,7 @@ func (u *Users) AddSkill() {
 // @Title RemoveSkill
 // @Description remove skill for the user
 // @Param id path int true "id of the userSkill to be removed"
-// @Success 200 {nil}
+// @Success 200 OK
 // @Failure 400 invalid-id
 // @Failure 401 unauthorized
 // @Failure 500 internal-error
@@ -277,7 +278,7 @@ func (u *Users) AddSphere() {
 // @Title RemoveSphere
 // @Description remove sphere for the user
 // @Param id path int true "id of the userSphere to be removed"
-// @Success 200 {nil}
+// @Success 200 OK
 // @Failure 400 invalid-id
 // @Failure 401 unauthorized
 // @Failure 500 internal-error

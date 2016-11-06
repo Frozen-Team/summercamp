@@ -16,21 +16,10 @@ func (ps *ProjectSphere) TableName() string {
 	return "project_spheres"
 }
 
-// Save insert a new record to the db if ID field is of default value. Otherwise an existing
-// record is updated.
+// Save inserts a new or updates an existing project's sphere record in the DB.
 func (ps *ProjectSphere) Save() bool {
-	var err error
-	var action string
-
-	if ps.ID == 0 {
-		_, err = DB.Insert(ps)
-		action = "create"
-	} else {
-		_, err = DB.Update(ps)
-		action = "update"
-	}
-
-	return utils.ProcessError(err, action+" a project`s sphere")
+	_, err := DB.InsertOrUpdate(ps)
+	return utils.ProcessError(err, "insert or update project's sphere")
 }
 
 // Delete deletes a record from the db. If the record is successfully deleted, the return value
@@ -41,7 +30,7 @@ func (ps *ProjectSphere) Delete() bool {
 	}
 	_, err := DB.Delete(ps)
 
-	return utils.ProcessError(err, " delete a project`s sphere")
+	return utils.ProcessError(err, "delete a project`s sphere")
 }
 
 type ProjectSpheresAPI struct{}

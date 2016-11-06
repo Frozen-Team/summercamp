@@ -33,19 +33,10 @@ func (u *User) TableName() string {
 	return "users"
 }
 
-// Save creates a user record in the db
+// Save inserts a new or updates an existing user record in the DB.
 func (u *User) Save() bool {
-	var err error
-	var action string
-
-	if u.ID == 0 {
-		_, err = DB.Insert(u)
-		action = "create"
-	} else {
-		_, err = DB.Update(u)
-		action = "update"
-	}
-	return utils.ProcessError(err, action+" user")
+	_, err := DB.InsertOrUpdate(u)
+	return utils.ProcessError(err, "insert or update user")
 }
 
 // CanAddSkill checks if the user has less skills than the system allows.

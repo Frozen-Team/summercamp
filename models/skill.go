@@ -15,21 +15,10 @@ func (s *Skill) TableName() string {
 	return "skills"
 }
 
-// Save insert a new record to the db if ID field is of default value. Otherwise an existing
-// record is updated.
+// Save inserts a new or updates an existing skill record in the DB.
 func (s *Skill) Save() bool {
-	var err error
-	var action string
-
-	if s.ID == 0 {
-		_, err = DB.Insert(s)
-		action = "create"
-	} else {
-		_, err = DB.Update(s)
-		action = "update"
-	}
-
-	return utils.ProcessError(err, action+" skill")
+	_, err := DB.InsertOrUpdate(s)
+	return utils.ProcessError(err, "insert or update skill")
 }
 
 // Delete deletes a record from the db. If the record is successfully deleted, the return value

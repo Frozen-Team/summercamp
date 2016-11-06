@@ -16,21 +16,10 @@ func (ps *ProjectSkill) TableName() string {
 	return "project_skills"
 }
 
-// Save insert a new record to the db if ID field is of default value. Otherwise an existing
-// record is updated.
+// Save inserts a new or updates an existing project's skill record in the DB.
 func (ps *ProjectSkill) Save() bool {
-	var err error
-	var action string
-
-	if ps.ID == 0 {
-		_, err = DB.Insert(ps)
-		action = "create"
-	} else {
-		_, err = DB.Update(ps)
-		action = "update"
-	}
-
-	return utils.ProcessError(err, action+" a project`s skill")
+	_, err := DB.InsertOrUpdate(ps)
+	return utils.ProcessError(err, "insert or update project's skill")
 }
 
 // Delete deletes a record from the db. If the record is successfully deleted, the return value
