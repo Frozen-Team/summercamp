@@ -48,6 +48,7 @@ type VacancySkillsAPI struct{}
 var VacancySkills *VacancySkillsAPI
 
 // SaveSkillsForVacancy create a new VacancySkill record for each skillID from skillIDs and vacancyID pair.
+// If the DB inserter successfully closes, the function returns true, false - otherwise.
 func (ps *VacancySkillsAPI) SaveSkillsForVacancy(vacancyID int, skillIDs ...int) bool {
 	if len(skillIDs) == 0 {
 		beego.BeeLogger.Warning("Empty skills list is passed to SaveSkillsForVacancy")

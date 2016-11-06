@@ -38,7 +38,7 @@ type VacancySpheresAPI struct{}
 var VacancySpheres *VacancySpheresAPI
 
 // SaveSpheresForVacancy create a new VacancySphere record for each sphereID from sphereIDs and vacancyID pair.
-// If each record is successfully saved to the db, the func return false
+// If the DB inserter successfully closes, the function returns true, false - otherwise.
 func (us *VacancySpheresAPI) SaveSpheresForVacancy(vacancyID int, sphereIDs ...int) bool {
 	if len(sphereIDs) == 0 {
 		beego.BeeLogger.Warning("Empty spheres list is passed to SaveSpheresForVacancy")

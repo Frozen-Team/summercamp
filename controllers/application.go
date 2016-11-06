@@ -186,8 +186,7 @@ func (a *ApplicationController) getID() int {
 	return id
 }
 
-// getID retrieve an id from the url (not as a url parameter). If the id is of an invalid
-// value, the "invalid-id" error is served and the caller action  terminates with a StopRun method.
+// getUrlIntValue retrieve an int value by the given key(e.g. :id) from the url
 func (a *ApplicationController) getUrlIntValue(key string) (int, error) {
 	return strconv.Atoi(a.Ctx.Input.Param(key))
 }
