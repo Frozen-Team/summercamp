@@ -19,6 +19,7 @@ func (v *Vacancy) Save() (*models.Vacancy, bool) {
 		Name:        v.Name,
 		Description: v.Description,
 		TeamID:      v.TeamID,
+		Status:models.VacancyStatusActive,
 	}
 
 	ok := vacancy.Save()
@@ -43,8 +44,15 @@ type VacancyUpdate struct {
 	Value string
 }
 
-func (vu *VacancyUpdate) Update() bool {
+func (vu *VacancyUpdate) Update(id int) bool {
 	switch vu.Field {
+	case "status":
+		switch vu.Value {
+		case models.VacancyStatusActive:
+			return models.Vacancies.Activate(id)
+		case models.VacancyStatusArchived:
+			return models.Vacancies.Archive(id)
+		}
 	case "skill":
 	case "sphere":
 	default:

@@ -4,6 +4,14 @@ import (
 	"time"
 
 	"bitbucket.org/SummerCampDev/summercamp/models/utils"
+	"golang.org/x/crypto/openpgp/packet"
+)
+
+type VacancyStatus string
+
+const (
+	VacancyStatusActive VacancyStatus = "active"
+	VacancyStatusArchived VacancyStatus = "archived"
 )
 
 // Vacancy is a model to represent a vacancy of a team
@@ -12,6 +20,7 @@ type Vacancy struct {
 	Name        string    `json:"name" orm:"column(name)"`
 	Description string    `json:"description" orm:"column(description)"`
 	TeamID      int       `json:"team_id" orm:"column(team_id)"`
+	Status VacancyStatus `json:"status" orm:"column(status);"`
 	Published   time.Time `json:"published" orm:"column(published);auto_now;type(datetime)"`
 }
 
@@ -28,11 +37,24 @@ func (v *Vacancy) Save(columnToUpdate ...string) bool {
 		_, err = DB.Insert(v)
 		action = "create"
 	} else {
-		_, err = DB.Update(v)
+		_, err = DB.Update(v, columnToUpdate...)
 		action = "update"
 	}
 
 	return utils.ProcessError(err, action+" a vacancy")
+}
+
+// Activate set the status of the vacancy as "archive".
+func (v *Vacancy) Archive() bool {
+	v.Status = VacancyStatusArchived
+	return v.Save("status")
+}
+
+// Activate set the status of the vacancy as "active" and update the "published" column to the current time.
+func (v *Vacancy) Activate() bool {
+	v.Status = VacancyStatusActive
+	v.Published = time.Now()
+	return v.Save("status", "published")
 }
 
 // Delete deletes the vacancy record from the db
@@ -45,10 +67,19 @@ type vacanciesAPI struct{}
 
 var Vacancies *vacanciesAPI
 
-// DeleteByID delete a vacancy by a given id.
-func (v *vacanciesAPI) DeleteByID(id int) bool {
-	vacancy := &Vacancy{
+// NewByID is a helper to create a new vacancy with the specified id.
+func (v *vacanciesAPI) NewByID(id int) *Vacancy {
+	return &Vacancy{
 		ID: id,
 	}
-	return vacancy.Delete()
+}
+
+// Archive is a wrapper to archive the vacancy specified with the id.
+func (v *vacanciesAPI) Archive(id int) bool {
+	return v.NewByID(id).Archive()
+}
+
+// Activate is a wrapper to activate the vacancy specified with the id.
+func (v *vacanciesAPI) Activate(id int) bool {
+	return v.NewByID(id).Activate()
 }

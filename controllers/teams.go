@@ -221,7 +221,37 @@ func (t *Teams) AddVacancy() {
 // @Failure 401 Unauthorized
 // @Failure 403 Forbidden
 // @router /:id/vacancies/:v_id [delete]
-func (t *Teams) RemoveVacancy() {
+//func (t *Teams) RemoveVacancy() {
+//	_, ok := t.checkIfAllowed()
+//	if !ok {
+//		return
+//	}
+//
+//	vacancyID, err := t.getUrlIntValue(URLParamVacancyID)
+//	if err != nil {
+//		t.serveAJAXBadRequest("no-" + URLParamVacancyID)
+//		return
+//	}
+//
+//	if ok := models.Vacancies.DeleteByID(vacancyID); ok {
+//		t.serveAJAXSuccess(nil)
+//	} else {
+//		t.serveAJAXInternalServerError()
+//	}
+//}
+
+// @Title UpdateVacancy
+// @Description updates one of the column of a vacancy
+// @Param id path int true "An id of a team for which the vacancy is attached"
+// @Param v_id path int true "An id of a vacancy to update"
+// @Param body body string true "key-value pair of what needs to be updated"
+// @Success 200 {object} nil means the request field is successfully updated
+// @Failure 400 no-such-team
+// @Failure 400 no-v_id
+// @Failure 401 Unauthorized
+// @Failure 403 Forbidden
+// @router /:id/vacancies/:v_id [put]
+func (t *Teams) UpdateVacancy()  {
 	_, ok := t.checkIfAllowed()
 	if !ok {
 		return
@@ -233,7 +263,17 @@ func (t *Teams) RemoveVacancy() {
 		return
 	}
 
-	if ok := models.Vacancies.DeleteByID(vacancyID); ok {
+	form := new(forms.VacancyUpdate)
+	if ok := t.unmarshalJSON(form); !ok {
+		t.serveAJAXInternalServerError()
+		return
+	}
+	if ok := forms.Validate(form); !ok {
+		t.serveAJAXBadRequest(form.Errors...)
+		return
+	}
+
+	if ok := form.Update(vacancyID); ok {
 		t.serveAJAXSuccess(nil)
 	} else {
 		t.serveAJAXInternalServerError()
