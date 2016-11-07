@@ -57,7 +57,7 @@ swaggerAfterFucked:
 			beego.NSRouter("/:id/members", &controllers.Teams{}, "post:AddMember"),
 			beego.NSRouter("/:id/vacancies", &controllers.Teams{}, "post:AddVacancy"),
 			//beego.NSRouter("/:id/vacancies/:v_id", &controllers.Teams{}, "delete:RemoveVacancy"),
-			beego.NSRouter("/:id/vacancies/:v_id", &controllers.Teams{}, "delete:RemoveVacancy"),
+			beego.NSRouter("/:id/vacancies/:v_id", &controllers.Teams{}, "put:UpdateVacancy"),
 		),
 
 		beego.NSNamespace(

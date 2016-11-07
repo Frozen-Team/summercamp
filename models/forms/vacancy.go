@@ -47,7 +47,8 @@ type VacancyUpdate struct {
 func (vu *VacancyUpdate) Update(id int) bool {
 	switch vu.Field {
 	case "status":
-		switch vu.Value {
+
+		switch models.VacancyStatus(vu.Value) {
 		case models.VacancyStatusActive:
 			return models.Vacancies.Activate(id)
 		case models.VacancyStatusArchived:

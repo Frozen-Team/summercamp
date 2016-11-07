@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"bitbucket.org/SummerCampDev/summercamp/models/utils"
-	"golang.org/x/crypto/openpgp/packet"
 )
 
 type VacancyStatus string
