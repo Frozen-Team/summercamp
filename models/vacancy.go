@@ -9,18 +9,18 @@ import (
 type VacancyStatus string
 
 const (
-	VacancyStatusActive VacancyStatus = "active"
+	VacancyStatusActive   VacancyStatus = "active"
 	VacancyStatusArchived VacancyStatus = "archived"
 )
 
 // Vacancy is a model to represent a vacancy of a team
 type Vacancy struct {
-	ID          int       `json:"id" orm:"column(id)"`
-	Name        string    `json:"name" orm:"column(name)"`
-	Description string    `json:"description" orm:"column(description)"`
-	TeamID      int       `json:"team_id" orm:"column(team_id)"`
-	Status VacancyStatus `json:"status" orm:"column(status);"`
-	Published   time.Time `json:"published" orm:"column(published);auto_now;type(datetime)"`
+	ID          int           `json:"id" orm:"column(id)"`
+	Name        string        `json:"name" orm:"column(name)"`
+	Description string        `json:"description" orm:"column(description)"`
+	TeamID      int           `json:"team_id" orm:"column(team_id)"`
+	Status      VacancyStatus `json:"status" orm:"column(status);"`
+	Published   time.Time     `json:"published" orm:"column(published);auto_now;type(datetime)"`
 }
 
 func (v *Vacancy) TableName() string {
@@ -71,14 +71,4 @@ func (v *vacanciesAPI) NewByID(id int) *Vacancy {
 	return &Vacancy{
 		ID: id,
 	}
-}
-
-// Archive is a wrapper to archive the vacancy specified with the id.
-func (v *vacanciesAPI) Archive(id int) bool {
-	return v.NewByID(id).Archive()
-}
-
-// Activate is a wrapper to activate the vacancy specified with the id.
-func (v *vacanciesAPI) Activate(id int) bool {
-	return v.NewByID(id).Activate()
 }

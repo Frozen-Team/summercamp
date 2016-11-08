@@ -139,9 +139,10 @@ func TestAddVacancy(t *testing.T) {
 	})
 }
 
-func TestRemoveVacancy(t *testing.T) {
-	Convey("Valid vacancy deletion", t, func() {
-		r, _ := http.NewRequest("DELETE", "/v1/teams/1/vacancies/2", nil)
+func TestUpdateVacancy(t *testing.T) {
+	Convey("valid archive", t, func() {
+		body := bytes.NewReader([]byte(`{"field":"status", "value":"archived"}`))
+		r, _ := http.NewRequest("PUT", "/v1/teams/1/vacancies/1", body)
 		r.AddCookie(loginExec())
 		w := httptest.NewRecorder()
 		beego.BeeApp.Handlers.ServeHTTP(w, r)

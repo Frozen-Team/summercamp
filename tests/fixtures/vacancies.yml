@@ -3,9 +3,11 @@
   name: dev
   description: good dev
   team_id: 1
+  status: active
 
-- # this one is going to be deleted with the api
+-
   id: 2
   name: fuck this
   description: and this
   team_id: 1
+  status: active

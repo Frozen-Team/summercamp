@@ -2,6 +2,8 @@ package forms
 
 import (
 	"bitbucket.org/SummerCampDev/summercamp/models"
+	"github.com/astaxie/beego/validation"
+	"regexp"
 )
 
 // TODO: consider MaxSize values
@@ -19,7 +21,7 @@ func (v *Vacancy) Save() (*models.Vacancy, bool) {
 		Name:        v.Name,
 		Description: v.Description,
 		TeamID:      v.TeamID,
-		Status:models.VacancyStatusActive,
+		Status:      models.VacancyStatusActive,
 	}
 
 	ok := vacancy.Save()
@@ -40,24 +42,44 @@ func (v *Vacancy) Save() (*models.Vacancy, bool) {
 
 type VacancyUpdate struct {
 	FormModel
-	Field string
-	Value string
+	Field string `json:"field" valid:"Required"`
+	Value string `json:"value" valid:"Required"`
+}
+
+func (vu *VacancyUpdate) Valid(v *validation.Validation) {
+	switch vu.Field {
+	case "status":
+		r, err := regexp.Compile("(archived|active)")
+		if err != nil {
+			panic("internal Golang error: failed to compile regexp")
+		}
+
+		v.Match(vu.Value, r, "value")
+	case "name":
+		v.MaxSize(vu.Value, 100, "value")
+	case "description":
+		v.MaxSize(vu.Value, 1000, "value")
+	default:
+		v.SetError("field", "Invalid field name")
+	}
 }
 
 func (vu *VacancyUpdate) Update(id int) bool {
+	v := models.Vacancies.NewByID(id)
+
 	switch vu.Field {
 	case "status":
-
 		switch models.VacancyStatus(vu.Value) {
 		case models.VacancyStatusActive:
-			return models.Vacancies.Activate(id)
+			return v.Activate()
 		case models.VacancyStatusArchived:
-			return models.Vacancies.Archive(id)
+			return v.Archive()
 		}
-	case "skill":
-	case "sphere":
-	default:
-
+	case "name":
+		v.Name = vu.Field
+	case "description":
+		v.Description = vu.Field
 	}
-	return true
+
+	return v.Save(vu.Field)
 }
