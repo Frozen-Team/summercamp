@@ -12,6 +12,7 @@ install:
   - go get github.com/beego/bee
   - go get github.com/tools/godep
   - go get gopkg.in/testfixtures.v1
+  - go get github.com/astaxie/beego/migration
   - godep get
   - go get -u github.com/alecthomas/gometalinter
   - gometalinter --install
