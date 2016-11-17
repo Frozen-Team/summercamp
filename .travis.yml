@@ -8,6 +8,7 @@ go:
 services:
   - postgresql
 install:
+  - ./prepare_version.sh
   - go get github.com/beego/bee
   - go get github.com/tools/godep
   - godep get
@@ -15,6 +16,5 @@ install:
   - gometalinter --install
 before_script:
   - psql -c 'create database summercamp_test;' -U postgres
-  - ./prepare_version.sh
 script:
   - gometalinter ./... && go test ./tests && bee pack
