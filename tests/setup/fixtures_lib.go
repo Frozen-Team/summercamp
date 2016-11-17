@@ -99,6 +99,7 @@ func (f *fixturesSearch) Count() int {
 	return len(data)
 }
 
+// GetFixture return fixturesSearch object to search rows in fixtures
 func GetFixture(name string) *fixturesSearch {
 	file, err := ioutil.ReadFile(filepath.Join(FixturesPath, name+".yml"))
 	if err != nil {
