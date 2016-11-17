@@ -12,6 +12,7 @@ install:
   - go get github.com/tools/godep
   - godep get
   - go get -u github.com/alecthomas/gometalinter
+  - gometalinter --install
 before_script:
   - psql -c 'create database summercamp_test;' -U postgres
 script:
