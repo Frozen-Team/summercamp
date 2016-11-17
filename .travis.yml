@@ -5,8 +5,9 @@ go:
   - 1.7
   - master
 install:
-  - go get github.com/astaxie/beego
   - go get github.com/beego/bee
+  - go get github.com/tools/godep
+  - godep get
   - go get -u github.com/alecthomas/gometalinter
 script:
   - gometalinter ./... && bee pack
