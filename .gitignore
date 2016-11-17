@@ -68,3 +68,5 @@ Godeps/Readme
 
 # ignore swagger
 swagger/
+
+version.go
