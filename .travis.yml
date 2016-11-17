@@ -11,6 +11,7 @@ install:
   - ./prepare_version.sh
   - go get github.com/beego/bee
   - go get github.com/tools/godep
+  - go get gopkg.in/testfixtures.v1
   - godep get
   - go get -u github.com/alecthomas/gometalinter
   - gometalinter --install
