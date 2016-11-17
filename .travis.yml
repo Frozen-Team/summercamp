@@ -1,5 +1,6 @@
 language: go
-
+env:
+  TRAVIS_BUILD=true
 go:
   - 1.6
   - 1.7
