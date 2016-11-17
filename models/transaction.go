@@ -3,7 +3,7 @@ package models
 import (
 	"time"
 
-	"bitbucket.org/SummerCampDev/summercamp/models/utils"
+	"github.com/Frozen-Team/summercamp/models/utils"
 	"github.com/astaxie/beego"
 )
 

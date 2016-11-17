@@ -3,8 +3,8 @@ package database
 import (
 	"testing"
 
-	"bitbucket.org/SummerCampDev/summercamp/models"
-	"bitbucket.org/SummerCampDev/summercamp/tests/setup"
+	"github.com/Frozen-Team/summercamp/models"
+	"github.com/Frozen-Team/summercamp/tests/setup"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

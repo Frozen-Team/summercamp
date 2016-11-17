@@ -1,6 +1,6 @@
 package forms
 
-import "bitbucket.org/SummerCampDev/summercamp/models"
+import "github.com/Frozen-Team/summercamp/models"
 
 type UserSkill struct {
 	FormModel

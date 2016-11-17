@@ -4,10 +4,14 @@ go:
   - 1.6
   - 1.7
   - master
+services:
+  - postgresql
 install:
   - go get github.com/beego/bee
   - go get github.com/tools/godep
   - godep get
   - go get -u github.com/alecthomas/gometalinter
+before_script:
+  - psql -c 'create database summercamp_test;' -U postgres
 script:
-  - gometalinter ./... && bee pack
+  - gometalinter ./... && go test ./tests/actions && bee pack

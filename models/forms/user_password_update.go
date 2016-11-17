@@ -1,7 +1,7 @@
 package forms
 
 import (
-	"bitbucket.org/SummerCampDev/summercamp/models"
+	"github.com/Frozen-Team/summercamp/models"
 	"github.com/astaxie/beego/validation"
 )
 

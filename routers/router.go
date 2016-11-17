@@ -8,7 +8,7 @@
 package routers
 
 import (
-	"bitbucket.org/SummerCampDev/summercamp/controllers"
+	"github.com/Frozen-Team/summercamp/controllers"
 	"github.com/astaxie/beego"
 )
 

@@ -76,6 +76,9 @@ case $MODE in
     test)
         DSN=$dsn_test
         ;;
+    travis)
+        DSN=$dsn_travis
+        ;;
     *)
         error "Unknown mode"
         ;;

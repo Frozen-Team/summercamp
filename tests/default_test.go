@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"testing"
 
-	_ "bitbucket.org/SummerCampDev/summercamp/routers"
+	_ "github.com/Frozen-Team/summercamp/routers"
 	"github.com/astaxie/beego"
 	. "github.com/smartystreets/goconvey/convey"
 )

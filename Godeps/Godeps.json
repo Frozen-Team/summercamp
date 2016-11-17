@@ -1,5 +1,5 @@
 {
-	"ImportPath": "bitbucket.org/SummerCampDev/summercamp",
+	"ImportPath": "github.com/Frozen-Team/summercamp",
 	"GoVersion": "go1.7",
 	"GodepVersion": "v74",
 	"Deps": [

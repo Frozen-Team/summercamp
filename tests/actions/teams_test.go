@@ -3,8 +3,8 @@ package actions
 import (
 	"testing"
 
-	_ "bitbucket.org/SummerCampDev/summercamp/routers"
-	_ "bitbucket.org/SummerCampDev/summercamp/tests/setup"
+	_ "github.com/Frozen-Team/summercamp/routers"
+	_ "github.com/Frozen-Team/summercamp/tests/setup"
 
 	"bytes"
 	"net/http"

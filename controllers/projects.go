@@ -1,6 +1,6 @@
 package controllers
 
-import "bitbucket.org/SummerCampDev/summercamp/models/forms"
+import "github.com/Frozen-Team/summercamp/models/forms"
 
 // Operations about Projects
 type Projects struct {

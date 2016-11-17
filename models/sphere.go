@@ -1,6 +1,6 @@
 package models
 
-import "bitbucket.org/SummerCampDev/summercamp/models/utils"
+import "github.com/Frozen-Team/summercamp/models/utils"
 
 type Sphere struct {
 	ID   int    `json:"id" orm:"column(id)"`

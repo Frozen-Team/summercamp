@@ -7,7 +7,7 @@ import (
 
 	"strconv"
 
-	"bitbucket.org/SummerCampDev/summercamp/models"
+	"github.com/Frozen-Team/summercamp/models"
 	"github.com/astaxie/beego"
 )
 
