@@ -19,4 +19,4 @@ install:
 before_script:
   - psql -c 'create database summercamp_test;' -U postgres
 script:
-  - gometalinter --disable-all --enable=vet --enable=vetshadow && go test ./tests && bee pack
+  - gometalinter --disable-all --enable=vet --enable=vetshadow && go test ./tests/... && bee pack
