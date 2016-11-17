@@ -46,6 +46,9 @@ case $1 in
     refresh)
         SUBCMD="refresh"
         ;;
+    "")
+        SUBCMD=""
+        ;;
     *)
         # Checking if it's not a key
         if [[ $1 != \-* ]];
