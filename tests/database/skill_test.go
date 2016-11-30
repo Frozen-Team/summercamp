@@ -8,19 +8,19 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestSkillModel(t *testing.T) {
-	Convey("Test skill model", t, func() {
-		skill := models.Skills.NewSkill("Golang", 1)
-
-		ok := skill.Save()
-
-		So(ok, ShouldBeTrue)
-		So(skill.ID, ShouldNotEqual, 0)
-
-		ok = skill.Delete()
-		So(ok, ShouldBeTrue)
-	})
-}
+//func TestSkillModel(t *testing.T) {
+//	Convey("Test skill model", t, func() {
+//		skill := models.Skills.NewSkill("Golang", 1)
+//
+//		ok := skill.Save()
+//
+//		So(ok, ShouldBeTrue)
+//		So(skill.ID, ShouldNotEqual, 0)
+//
+//		ok = skill.Delete()
+//		So(ok, ShouldBeTrue)
+//	})
+//}
 
 func TestSkillsAPI(t *testing.T) {
 	Convey("Test skills api", t, func() {

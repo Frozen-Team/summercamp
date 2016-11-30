@@ -51,21 +51,21 @@ func TestTransactionsAPI(t *testing.T) {
 	})
 }
 
-func TestTransactionModel(t *testing.T) {
-	Convey("Test transaction model", t, func() {
-		transaction := models.Transaction{
-			UserID:    1,
-			ProjectID: 1,
-			Type:      "balance",
-			Amount:    100,
-		}
-
-		ok := transaction.Save()
-		So(ok, ShouldBeTrue)
-		So(transaction.ID, ShouldNotEqual, 0)
-
-		ok = transaction.Delete()
-		So(ok, ShouldBeTrue)
-
-	})
-}
+//func TestTransactionModel(t *testing.T) {
+//	Convey("Test transaction model", t, func() {
+//		transaction := models.Transaction{
+//			UserID:    1,
+//			ProjectID: 1,
+//			Type:      "balance",
+//			Amount:    100,
+//		}
+//
+//		ok := transaction.Save()
+//		So(ok, ShouldBeTrue)
+//		So(transaction.ID, ShouldNotEqual, 0)
+//
+//		ok = transaction.Delete()
+//		So(ok, ShouldBeTrue)
+//
+//	})
+//}
