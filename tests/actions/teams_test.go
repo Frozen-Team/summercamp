@@ -14,69 +14,69 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestTeamSave(t *testing.T) {
-	Convey("valid save", t, func() {
-		body := bytes.NewReader([]byte(`{"name":"bithces", "description":"a good team"}`))
-		r, _ := http.NewRequest("POST", "/v1/teams", body)
-		r.AddCookie(loginExec())
-		w := httptest.NewRecorder()
-		beego.BeeApp.Handlers.ServeHTTP(w, r)
-
-		checkOK(w)
-	})
-
-	Convey("invalid save: missing field", t, func() {
-		body := bytes.NewReader([]byte(`{"description":"a good team"}`))
-		r, _ := http.NewRequest("POST", "/v1/teams", body)
-		r.AddCookie(loginExec())
-		w := httptest.NewRecorder()
-		beego.BeeApp.Handlers.ServeHTTP(w, r)
-
-		checkBad(w, http.StatusBadRequest)
-	})
-
-	Convey("invalid save: unauthorized", t, func() {
-		body := bytes.NewReader([]byte(`{"name":"bithces", "description":"a good team"}`))
-		r, _ := http.NewRequest("POST", "/v1/teams", body)
-		w := httptest.NewRecorder()
-		beego.BeeApp.Handlers.ServeHTTP(w, r)
-
-		checkBad(w, http.StatusUnauthorized)
-	})
-}
-
-func TestAddMember(t *testing.T) {
-	Convey("valid addition", t, func() {
-		body := bytes.NewReader([]byte(`{"user_id":1, "access":100}`))
-		r, _ := http.NewRequest("POST", "/v1/teams/1/members", body)
-		r.AddCookie(loginExec())
-		w := httptest.NewRecorder()
-		beego.BeeApp.Handlers.ServeHTTP(w, r)
-
-		checkOK(w)
-	})
-
-	Convey("invalid addition:invalid team", t, func() {
-		body := bytes.NewReader([]byte(`{"user_id":1, "access":100}`))
-		r, _ := http.NewRequest("POST", "/v1/teams/100/members", body)
-		r.AddCookie(loginExec())
-		w := httptest.NewRecorder()
-		beego.BeeApp.Handlers.ServeHTTP(w, r)
-
-		checkBad(w, http.StatusBadRequest)
-	})
-}
-
-func TestDeleteTeam(t *testing.T) {
-	Convey("valid deletion", t, func() {
-		r, _ := http.NewRequest("DELETE", "/v1/teams/3", nil)
-		r.AddCookie(loginExec())
-		w := httptest.NewRecorder()
-		beego.BeeApp.Handlers.ServeHTTP(w, r)
-
-		checkOKNoData(w)
-	})
-}
+//func TestTeamSave(t *testing.T) {
+//	Convey("valid save", t, func() {
+//		body := bytes.NewReader([]byte(`{"name":"bithces", "description":"a good team"}`))
+//		r, _ := http.NewRequest("POST", "/v1/teams", body)
+//		r.AddCookie(loginExec())
+//		w := httptest.NewRecorder()
+//		beego.BeeApp.Handlers.ServeHTTP(w, r)
+//
+//		checkOK(w)
+//	})
+//
+//	Convey("invalid save: missing field", t, func() {
+//		body := bytes.NewReader([]byte(`{"description":"a good team"}`))
+//		r, _ := http.NewRequest("POST", "/v1/teams", body)
+//		r.AddCookie(loginExec())
+//		w := httptest.NewRecorder()
+//		beego.BeeApp.Handlers.ServeHTTP(w, r)
+//
+//		checkBad(w, http.StatusBadRequest)
+//	})
+//
+//	Convey("invalid save: unauthorized", t, func() {
+//		body := bytes.NewReader([]byte(`{"name":"bithces", "description":"a good team"}`))
+//		r, _ := http.NewRequest("POST", "/v1/teams", body)
+//		w := httptest.NewRecorder()
+//		beego.BeeApp.Handlers.ServeHTTP(w, r)
+//
+//		checkBad(w, http.StatusUnauthorized)
+//	})
+//}
+//
+//func TestAddMember(t *testing.T) {
+//	Convey("valid addition", t, func() {
+//		body := bytes.NewReader([]byte(`{"user_id":1, "access":100}`))
+//		r, _ := http.NewRequest("POST", "/v1/teams/1/members", body)
+//		r.AddCookie(loginExec())
+//		w := httptest.NewRecorder()
+//		beego.BeeApp.Handlers.ServeHTTP(w, r)
+//
+//		checkOK(w)
+//	})
+//
+//	Convey("invalid addition:invalid team", t, func() {
+//		body := bytes.NewReader([]byte(`{"user_id":1, "access":100}`))
+//		r, _ := http.NewRequest("POST", "/v1/teams/100/members", body)
+//		r.AddCookie(loginExec())
+//		w := httptest.NewRecorder()
+//		beego.BeeApp.Handlers.ServeHTTP(w, r)
+//
+//		checkBad(w, http.StatusBadRequest)
+//	})
+//}
+//
+//func TestDeleteTeam(t *testing.T) {
+//	Convey("valid deletion", t, func() {
+//		r, _ := http.NewRequest("DELETE", "/v1/teams/3", nil)
+//		r.AddCookie(loginExec())
+//		w := httptest.NewRecorder()
+//		beego.BeeApp.Handlers.ServeHTTP(w, r)
+//
+//		checkOKNoData(w)
+//	})
+//}
 
 func TestGetTeam(t *testing.T) {
 	Convey("valid get", t, func() {
