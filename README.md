@@ -11,3 +11,12 @@ The following instructions are only applicable if the **$GOPATH** is set correct
 ## Running application
 
 Use command `bee run`
+
+## Building application
+To build application you should have `docker-compose` installed on your machine.
+This commands will start all necessary containers and will built project 
+
+
+    cd summercamp
+    docker-compose up
+    
