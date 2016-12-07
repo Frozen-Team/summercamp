@@ -5,4 +5,4 @@ services:
 install:
   - ./prepare_version.sh
 script:
-  - cd summercamp && docker-compose up
+  - cd summercamp && docker-compose up web
