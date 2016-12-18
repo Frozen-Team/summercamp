@@ -18,12 +18,12 @@ To build application or run application you should have `docker-compose` install
 ### Starting application
 These commands will start all necessary containers and will run the project
 
-    cd summercamp
+    cd summercamp_dev
     docker-compose up web-run
 ### Building application
 These commands will start all necessary containers and will build the project 
 
 
-    cd summercamp
+    cd summercamp_dev
     docker-compose up web-build
     
