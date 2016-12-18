@@ -10,9 +10,9 @@ import (
 
 func main() {
 	srv := new(PingService)
-	port, ok := beego.AppConfig.Int("pingsrv.port")
-	if !ok {
-		beego.BeeLogger.Error("Unable to load service port in config.")
+	port := beego.AppConfig.String("pingsrv.port")
+	if port == ""{
+		panic("pingsrv.port is not defined in config")
 	}
 	Run(srv, port)
 }

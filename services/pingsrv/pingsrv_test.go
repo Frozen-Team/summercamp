@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/rpc"
-	"retargetapp"
 	"testing"
 	"time"
 	"github.com/astaxie/beego"

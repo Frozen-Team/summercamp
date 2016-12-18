@@ -1,8 +1,8 @@
 package main
 
 import (
-	"retargetapp/libs/logger"
 	"time"
+	"github.com/astaxie/beego/logs"
 )
 
 type PingService bool
@@ -11,7 +11,7 @@ func (ts *PingService) Ping(requestTime *time.Time, duration *time.Duration) err
 	t := time.Now()
 	d := t.Sub(*requestTime)
 
-	logger.Info.Printf("Request latency: %s \n", d.String())
+	logs.Info("Request latency: %s \n", d.String())
 	*duration = d
 	*requestTime = time.Now()
 	return nil
